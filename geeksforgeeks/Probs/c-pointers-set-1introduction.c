@@ -16,3 +16,5 @@ void updateVar(int *a)
       // write your code here
       *a += 10;
 }
+
+// Result in GeeksForGeeks: Correct
