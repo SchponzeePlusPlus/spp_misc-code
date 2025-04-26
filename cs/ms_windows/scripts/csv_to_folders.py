@@ -1,31 +1,39 @@
 # File originally generated via Chat GPT Prompt
-# Version: Original
+# Version: 02 (Chat GPT generated)
 
 import os
 import csv
 import re
+import argparse
 
-# === CONFIGURATION ===
-csv_file_path = 'titles.csv'     # Path to your CSV file
-output_directory = 'folders'     # Directory where folders will be created
-column_index = 0                 # Index of the column with titles (0 for first column)
+# === ARGUMENT PARSER SETUP ===
+parser = argparse.ArgumentParser(description='Create folders from CSV titles.')
+parser.add_argument('csv', help='Path to CSV file')
+parser.add_argument('-o', '--output', default='folders', help='Output directory')
+parser.add_argument('-c', '--column', type=int, default=0, help='Column index (default: 0)')
+parser.add_argument('--strict', action='store_true', help='Enable strict folder name sanitization')
 
-# === MAKE OUTPUT DIRECTORY IF NOT EXISTS ===
-os.makedirs(output_directory, exist_ok=True)
+args = parser.parse_args()
 
-# === FUNCTION TO SANITIZE FOLDER NAMES ===
-def sanitize_folder_name(name):
-    # Remove invalid characters and strip whitespace
-    name = re.sub(r'[\\/*?:"<>|]', "", name)
-    return name.strip()
+# === FOLDER NAME SANITIZATION ===
+def sanitize_folder_name(name, strict=False):
+    name = name.strip()
+    name = re.sub(r'[\\/*?:"<>|]', '', name)  # Remove invalid characters
+    if strict:
+        name = re.sub(r'[^A-Za-z0-9_\- ]+', '', name)  # Keep only safe characters
+        name = re.sub(r'\s+', '_', name)  # Replace spaces with underscores
+    return name
+
+# === CREATE OUTPUT DIRECTORY ===
+os.makedirs(args.output, exist_ok=True)
 
 # === READ CSV AND CREATE FOLDERS ===
-with open(csv_file_path, 'r', newline='', encoding='utf-8') as file:
+with open(args.csv, 'r', newline='', encoding='utf-8') as file:
     reader = csv.reader(file)
     for row in reader:
-        if len(row) > column_index:
-            folder_name = sanitize_folder_name(row[column_index])
-            folder_path = os.path.join(output_directory, folder_name)
+        if len(row) > args.column:
+            folder_name = sanitize_folder_name(row[args.column], strict=args.strict)
+            folder_path = os.path.join(args.output, folder_name)
             try:
                 os.makedirs(folder_path, exist_ok=True)
                 print(f"Created: {folder_path}")
