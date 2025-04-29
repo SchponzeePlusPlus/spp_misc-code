@@ -81,8 +81,11 @@ int main()
 
 	
 	int exOneA[6] = {3,6,8,1,4,6};
-	int **exOnePreReversed;
-	*exOnePreReversed = exOneA;
+	int exOneAPreReversed[6];
+	for (int i = 0; i < 6 ; i++)
+	{
+		exOneAPreReversed[i] = exOneA[i];
+	}
 	reverse(exOneA, 6);
 
 	int exTwoA[4] = {1,4,6,8};
@@ -94,15 +97,29 @@ int main()
 	cout << "Program Console Print Initialised.\n";
 	cout << "\n";
 	cout << "Exercise 01\n";
+
 	cout << "Exercise 01 Pre-Reverse Array:\n";
 	cout << "{";
 	for (int i = 0; i < 6 ; i++)
 	{
-		cout << exOnePreReversed[i];
+		cout << exOneAPreReversed[i];
 		cout << ", ";
 	}
 	cout << "}";
 	cout << "\n";
+	cout << "\n";
+
+	cout << "Exercise 01 Post-Reverse Array:\n";
+	cout << "{";
+	for (int i = 0; i < 6 ; i++)
+	{
+		cout << exOneA[i];
+		cout << ", ";
+	}
+	cout << "}";
+	cout << "\n";
+	cout << "\n";
+
 	cout << "Program Console Print Ending.\n";
 	cout << "\n";
 	cout << "\n";
