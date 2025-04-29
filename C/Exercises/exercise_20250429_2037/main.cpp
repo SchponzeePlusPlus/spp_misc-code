@@ -81,8 +81,8 @@ int main()
 
 	
 	int exOneA[6] = {3,6,8,1,4,6};
-	int *exOnePreReversed;
-	exOnePreReversed = exOneA;
+	int **exOnePreReversed;
+	*exOnePreReversed = exOneA;
 	reverse(exOneA, 6);
 
 	int exTwoA[4] = {1,4,6,8};
