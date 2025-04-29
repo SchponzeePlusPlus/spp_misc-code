@@ -35,7 +35,7 @@ void reverse(int* array, int numElements)
 {
 // your code here
 	int intArr_rvsBuffr[numElements];
-	for (int i = 0; i < 6 ; i++)
+	for (int i = 0; i < numElements; i++)
 	{
 		intArr_rvsBuffr[i] = array[i];
 	}
@@ -49,7 +49,6 @@ void reverse(int* array, int numElements)
 		i++;
 		j--;
 	}
-	
 }
 
 /*
@@ -67,7 +66,35 @@ void reverse(int* array, int numElements)
 int* mergeSortedArray(int* array1, int numElements1, int* array2, int numElements2)
 {
 // your code here
-	return 0;
+	int* result;
+	//int buffrSmallrNum = 0;
+	int buffrBiggrNum = 0;
+
+	for (int i = 0; i < numElements1; i++)
+	{
+		result[i] = array1[i];
+	}
+	for (int i = 0; i < numElements2; i++)
+	{
+		result[i + numElements1] = array2[i];
+	}
+
+	for (int i = 0; i < (numElements1 + numElements2); i++)
+	{
+		for (int j = i + 1; j < (numElements1 + numElements2); j++)
+		{
+			if (result[i] > result[j])
+			{
+				//buffrSmallrNum = result[j];
+				buffrBiggrNum = result[i];
+				result[i] = result[j];
+				result[j] = buffrBiggrNum;
+				buffrBiggrNum = 0;
+			}
+		}
+	}
+
+	return result;
 }
 
 /*
@@ -87,7 +114,7 @@ void calcExOne(int* arr, int numElements)
 	printf("\n");
 
 	int exOneAPreReversed[numElements];
-	for (int i = 0; i < numElements ; i++)
+	for (int i = 0; i < numElements; i++)
 	{
 		exOneAPreReversed[i] = arr[i];
 	}
@@ -96,7 +123,7 @@ void calcExOne(int* arr, int numElements)
 
 	printf("Exercise 01 Pre-Reverse Array:\n");
 	printf("{");
-	for (int i = 0; i < numElements ; i++)
+	for (int i = 0; i < numElements; i++)
 	{
 		printf("%d", exOneAPreReversed[i]);
 		printf(", ");
@@ -106,13 +133,56 @@ void calcExOne(int* arr, int numElements)
 
 	printf("Exercise 01 Post-Reverse Array:\n");
 	printf("{");
-	for (int i = 0; i < numElements ; i++)
+	for (int i = 0; i < numElements; i++)
 	{
 		printf("%d", arr[i]);
 		printf(", ");
 	}
 	printf("}\n");
 	printf("\n");
+}
+
+int* calcExTwo(int* array1, int numElements1, int* array2, int numElements2)
+{
+	int* result;
+
+	printf("\n");
+	printf("Exercise 02 Calculation Procedure:\n");
+	printf("\n");
+
+	result = mergeSortedArray(array1, numElements1, array2, numElements2);
+
+	printf("Exercise 02 Input Array 01:\n");
+	printf("{");
+	for (int i = 0; i < numElements1; i++)
+	{
+		printf("%d", array1[i]);
+		printf(", ");
+	}
+	printf("}\n");
+	printf("\n");
+
+	printf("Exercise 02 Input Array 02:\n");
+	printf("{");
+	for (int i = 0; i < numElements2; i++)
+	{
+		printf("%d", array2[i]);
+		printf(", ");
+	}
+	printf("}\n");
+	printf("\n");
+
+	printf("Exercise 02 Merged & Sorted Array:\n");
+	printf("{");
+	for (int i = 0; i < (numElements1 + numElements2); i++)
+	{
+		printf("%d", result[i]);
+		printf(", ");
+	}
+	printf("}\n");
+	printf("\n");
+
+	return result;
 }
 
 int main()
@@ -144,7 +214,9 @@ int main()
 	exOneA[4] = 1;
 	exOneA[5] = 0;
 	calcExOne(exOneA, 6);
-	
+
+	int exOneA_2[10] = {0, 10, 20, 30, 40, 50, 60, 70, 80, 90};
+	calcExOne(exOneA_2, 10);
 
 	printf("\n");
 	printf("Exercise 02:\n");
@@ -152,7 +224,39 @@ int main()
 
 	int exTwoA[4] = {1,4,6,8};
 	int exTwoB[6] = {3,5,5,6,9,10};
-	//int* exTwoMerged = mergeSortedArray(exTwoA, 4, exTwoB, 6);
+	int* exTwoMerged = calcExTwo(exTwoA, 4, exTwoB, 6);
+
+	exTwoA[0] = 5;
+	exTwoA[1] = 4;
+	exTwoA[2] = 3;
+	exTwoA[3] = 2;
+
+	exTwoB[0] = 5;
+	exTwoB[1] = 4;
+	exTwoB[2] = 3;
+	exTwoB[3] = 2;
+	exTwoB[4] = 1;
+	exTwoB[5] = 0;
+
+	exTwoMerged = calcExTwo(exTwoA, 4, exTwoB, 6);
+
+	exTwoA[0] = 100;
+	exTwoA[1] = 75;
+	exTwoA[2] = 50;
+	exTwoA[3] = 25;
+
+	exTwoB[0] = 0;
+	exTwoB[1] = 20;
+	exTwoB[2] = 40;
+	exTwoB[3] = 60;
+	exTwoB[4] = 80;
+	exTwoB[5] = 98;
+
+	exTwoMerged = calcExTwo(exTwoA, 4, exTwoB, 6);
+
+	int exTwoA_2[11] = {-100, -80, -60 , -40, -20, 0, 20, 40, 60, 80, 100};
+	int exTwoB_2[10] = {-90, -70, -50, -30, -10, 10, 30, 50, 70, 90};
+	exTwoMerged = calcExTwo(exTwoA_2, 11, exTwoB_2, 10);
 
 	printf("Program Complete.\n");
 	printf("\n");
