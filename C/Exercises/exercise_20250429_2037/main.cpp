@@ -23,9 +23,7 @@
  */
 
 // For console printing to work
-#include <iostream>
-
-using namespace std;
+#include <cstdio>
 
 // Exercise #1.
 
@@ -34,7 +32,11 @@ using namespace std;
 void reverse(int* array, int numElements)
 {
 // your code here
-	int* intArr_rvsBuffr = array;
+	int intArr_rvsBuffr[numElements];
+	for (int i = 0; i < 6 ; i++)
+	{
+		intArr_rvsBuffr[i] = array[i];
+	}
 	
 	int i = 0;
 	int j = numElements - 1;
@@ -76,6 +78,11 @@ int* mergeSortedArray(int* array1, int numElements1, int* array2, int numElement
 
 // Exercise Result:
 
+void calcExOne(int* arr, int numElements)
+{
+	
+}
+
 int main()
 {
 
@@ -92,37 +99,37 @@ int main()
 	int exTwoB[6] = {3,5,5,6,9,10};
 	//int* exTwoMerged = mergeSortedArray(exTwoA, 4, exTwoB, 6);
 
-	cout << "\n";
-	cout << "\n";
-	cout << "Program Console Print Initialised.\n";
-	cout << "\n";
-	cout << "Exercise 01\n";
+	printf("\n");
+	printf("\n");
+	printf("Program Console Print Initialised.\n");
+	printf("\n");
+	printf("Exercise 01\n");
 
-	cout << "Exercise 01 Pre-Reverse Array:\n";
-	cout << "{";
+	printf("Exercise 01 Pre-Reverse Array:\n");
+	printf("{");
 	for (int i = 0; i < 6 ; i++)
 	{
-		cout << exOneAPreReversed[i];
-		cout << ", ";
+		printf("%d", exOneAPreReversed[i]);
+		printf(", ");
 	}
-	cout << "}";
-	cout << "\n";
-	cout << "\n";
+	printf("}");
+	printf("\n");
+	printf("\n");
 
-	cout << "Exercise 01 Post-Reverse Array:\n";
-	cout << "{";
+	printf("Exercise 01 Post-Reverse Array:\n");
+	printf("{");
 	for (int i = 0; i < 6 ; i++)
 	{
-		cout << exOneA[i];
-		cout << ", ";
+		printf("%d", exOneA[i]);
+		printf(", ");
 	}
-	cout << "}";
-	cout << "\n";
-	cout << "\n";
+	printf("}");
+	printf("\n");
+	printf("\n");
 
-	cout << "Program Console Print Ending.\n";
-	cout << "\n";
-	cout << "\n";
+	printf("Program Console Print Ending.\n");
+	printf("\n");
+	printf("\n");
 
 	return 0;
 }
