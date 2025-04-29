@@ -34,6 +34,18 @@ using namespace std;
 void reverse(int* array, int numElements)
 {
 // your code here
+	int* intArr_rvsBuffr = array;
+	
+	int i = 0;
+	int j = numElements - 1;
+	
+	while((i < numElements + 1) && (j > -1))
+	{
+		array[j] = intArr_rvsBuffr[i];
+		i++;
+		j--;
+	}
+	
 }
 
 /*
@@ -67,8 +79,10 @@ int* mergeSortedArray(int* array1, int numElements1, int* array2, int numElement
 int main()
 {
 
+	
 	int exOneA[6] = {3,6,8,1,4,6};
-	//int exOneReversed = reverse(exOneA, 6);
+	int exOnePreReversed[] = exOneA;
+	reverse(exOneA, 6);
 
 	int exTwoA[4] = {1,4,6,8};
 	int exTwoB[6] = {3,5,5,6,9,10};
@@ -77,6 +91,16 @@ int main()
 	cout << "\n";
 	cout << "\n";
 	cout << "Program Console Print Initialised.\n";
+	cout << "\n";
+	cout << "Exercise 01\n";
+	cout << "Exercise 01 Pre-Reverse Array:\n";
+	cout << "{";
+	for (int i = 0; i < 6 ; i++)
+	{
+		cout << exOnePreReversed[i];
+		cout << ", ";
+	}
+	cout << "}";
 	cout << "\n";
 	cout << "Program Console Print Ending.\n";
 	cout << "\n";
