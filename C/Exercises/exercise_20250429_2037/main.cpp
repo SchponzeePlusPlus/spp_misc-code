@@ -1,6 +1,8 @@
 /*
- * exercise_20250429_2037
+ * exercise_20250429_2037 / main.cpp
  * Simple Coding Test for Job Application Screening Process
+ * 
+ * SPP GitHub Link: https://github.com/SchponzeePlusPlus/spp_misc-code/tree/main/C/Exercises/exercise_20250429_2037
  * 
  * Many thanks for your application to our position of Senior Embedded Software Engineer.
  * 
@@ -20,11 +22,17 @@
  *
  */
 
+// For console printing to work
+#include <iostream>
+
+using namespace std;
+
 // Exercise #1.
 
 // In your text file write a function that reverses an array of ints:
 
-void reverse(int* array, int numElements){
+void reverse(int* array, int numElements)
+{
 // your code here
 }
 
@@ -40,8 +48,10 @@ void reverse(int* array, int numElements){
 
 // Write a function that efficiently merges two already sorted arrays (allows duplicates) into a new sorted array
 
-int* mergeSortedArray(int* array1, int numElements1, int* array2, int numElements2){
+int* mergeSortedArray(int* array1, int numElements1, int* array2, int numElements2)
+{
 // your code here
+	return 0;
 }
 
 /*
@@ -52,15 +62,25 @@ int* mergeSortedArray(int* array1, int numElements1, int* array2, int numElement
  */
 // merged should contain {1,3,4,5,5,6,6,8,9,10}
 
+// Exercise Result:
+
 int main()
 {
 
 	int exOneA[6] = {3,6,8,1,4,6};
-	int exOneReversed = reverse(exOneA, 6);
+	//int exOneReversed = reverse(exOneA, 6);
 
 	int exTwoA[4] = {1,4,6,8};
 	int exTwoB[6] = {3,5,5,6,9,10};
-	int* exTwoMerged = mergeSortedArray(exTwoA, 4, exTwoB, 6);
+	//int* exTwoMerged = mergeSortedArray(exTwoA, 4, exTwoB, 6);
+
+	cout << "\n";
+	cout << "\n";
+	cout << "Program Console Print Initialised.\n";
+	cout << "\n";
+	cout << "Program Console Print Ending.\n";
+	cout << "\n";
+	cout << "\n";
 
 	return 0;
 }
