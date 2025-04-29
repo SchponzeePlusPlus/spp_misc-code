@@ -2,6 +2,8 @@
  * exercise_20250429_2037 / main.cpp
  * Simple Coding Test for Job Application Screening Process
  * 
+ * Author: SchponzeePlusPlus
+ * 
  * SPP GitHub Link: https://github.com/SchponzeePlusPlus/spp_misc-code/tree/main/C/Exercises/exercise_20250429_2037
  * 
  * Many thanks for your application to our position of Senior Embedded Software Engineer.
@@ -80,54 +82,79 @@ int* mergeSortedArray(int* array1, int numElements1, int* array2, int numElement
 
 void calcExOne(int* arr, int numElements)
 {
-	
+	printf("\n");
+	printf("Exercise 01 Calculation Procedure:\n");
+	printf("\n");
+
+	int exOneAPreReversed[numElements];
+	for (int i = 0; i < numElements ; i++)
+	{
+		exOneAPreReversed[i] = arr[i];
+	}
+
+	reverse(arr, numElements);
+
+	printf("Exercise 01 Pre-Reverse Array:\n");
+	printf("{");
+	for (int i = 0; i < numElements ; i++)
+	{
+		printf("%d", exOneAPreReversed[i]);
+		printf(", ");
+	}
+	printf("}\n");
+	printf("\n");
+
+	printf("Exercise 01 Post-Reverse Array:\n");
+	printf("{");
+	for (int i = 0; i < numElements ; i++)
+	{
+		printf("%d", arr[i]);
+		printf(", ");
+	}
+	printf("}\n");
+	printf("\n");
 }
 
 int main()
 {
+	printf("\n");
+	printf("\n");
+	printf("Program Initialised.\n");
 
+	printf("\n");
+	printf("Exercise 01:\n");
+	printf("\n");
 	
 	int exOneA[6] = {3,6,8,1,4,6};
-	int exOneAPreReversed[6];
-	for (int i = 0; i < 6 ; i++)
-	{
-		exOneAPreReversed[i] = exOneA[i];
-	}
-	reverse(exOneA, 6);
+	calcExOne(exOneA, 6);
+
+	// extra test cases
+	exOneA[0] = 1;
+	exOneA[1] = 2;
+	exOneA[2] = 3;
+	exOneA[3] = 4;
+	exOneA[4] = 5;
+	exOneA[5] = 6;
+	calcExOne(exOneA, 6);
+
+	exOneA[0] = 5;
+	exOneA[1] = 4;
+	exOneA[2] = 3;
+	exOneA[3] = 2;
+	exOneA[4] = 1;
+	exOneA[5] = 0;
+	calcExOne(exOneA, 6);
+	
+
+	printf("\n");
+	printf("Exercise 02:\n");
+	printf("\n");
 
 	int exTwoA[4] = {1,4,6,8};
 	int exTwoB[6] = {3,5,5,6,9,10};
 	//int* exTwoMerged = mergeSortedArray(exTwoA, 4, exTwoB, 6);
 
-	printf("\n");
-	printf("\n");
-	printf("Program Console Print Initialised.\n");
-	printf("\n");
-	printf("Exercise 01\n");
-
-	printf("Exercise 01 Pre-Reverse Array:\n");
-	printf("{");
-	for (int i = 0; i < 6 ; i++)
-	{
-		printf("%d", exOneAPreReversed[i]);
-		printf(", ");
-	}
-	printf("}");
-	printf("\n");
-	printf("\n");
-
-	printf("Exercise 01 Post-Reverse Array:\n");
-	printf("{");
-	for (int i = 0; i < 6 ; i++)
-	{
-		printf("%d", exOneA[i]);
-		printf(", ");
-	}
-	printf("}");
-	printf("\n");
-	printf("\n");
-
-	printf("Program Console Print Ending.\n");
+	printf("Program Complete.\n");
 	printf("\n");
 	printf("\n");
 
