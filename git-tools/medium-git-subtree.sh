@@ -1,4 +1,10 @@
 #!/bin/bash
+
+# File origin
+# https://medium.com/@icheko/use-a-subfolder-from-a-remote-repo-in-another-repo-using-git-subtree-98046f33ca40
+# https://gist.github.com/icheko/9ff2a0a90ef2b676a5fc8d76f69db1d3
+# Author: icheko
+
 SOURCE_BRANCH="helmcharts-source"
 STAGING_BRANCH="helmcharts-staging"
 
