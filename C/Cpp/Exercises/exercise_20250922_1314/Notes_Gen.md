@@ -4,10 +4,13 @@
 
 ### 2025
 
-#### 2025 09
+#### 2025/09
 
-##### 2025092x
+##### 2025/09/22
 
-###### :
+###### 16:58
 
-...
+Approach:
+
+- Maybe start out with something quick and easy, like an array of all possible combinations, then filter as needed
+- Follow up with a linked-list attempt or some other advanced data structure and algorithm
