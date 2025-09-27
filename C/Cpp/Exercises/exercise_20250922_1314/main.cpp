@@ -1,6 +1,6 @@
 /*
  * C/Cpp/Exercises/exercise_20250922_1314/main.cpp
- * KEYBRD Knights Coding Challenge
+ * Keyboard Knights Coding Challenge
  * 
  * Author: SchponzeePlusPlus
  * 
@@ -8,6 +8,7 @@
  *
  */
 
+#include <stddef.h>
 // For console printing to work
 #include <iostream>
 #include <fstream>
@@ -15,11 +16,49 @@
 #include <cmath>
 
 //	TODO: enforce casting to unsigned
-#define KEYBRD_LAYOUT_ROW_CNT 4
-#define KEYBRD_LAYOUT_COLUMN_CNT 5
+#define KEYBRD_LAYOUT_ROW_CNT ((uint8_t) 4U)
+#define KEYBRD_LAYOUT_COLUMN_CNT ((uint8_t) 5U)
 
 
-#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH 10
+//#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((unsigned long long int) 10)
+#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 3U)
+#define INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((int) KEY_PRESSNG_CORRECT_SEQUENC_LENGTH)
+
+enum arrElemsOneDimSelctdShiftValidityState
+{
+	AEODSSVState_UNASSIGNED,
+	AEODSSVState_ALLOWED,
+	AEODSSVState_DISALLOWED_PRECEDNG_INIT_ELEM,
+	AEODSSVState_DISALLOWED_PRECEDS_INIT_ELEM,
+	AEODSSVState_DISALLOWED_SUCCEEDNG_FINAL_ELEM,
+	AEODSSVState_DISALLOWED_SUCCEEDS_FINAL_ELEM,
+	AEODSSVState_DISALLOWED_MISC
+};
+
+struct arrElemsTwoDim
+{
+	size_t elemDimOne;
+	size_t elemDimTwo;
+};
+
+struct arrTwoDimLength
+{
+	size_t dimOneLength;
+	size_t dimTwoLength;
+};
+
+struct arrTwoDimSelctdShiftValidityStates
+{
+	enum arrElemsOneDimSelctdShiftValidityState dimOneShiftAllowedState;
+	enum arrElemsOneDimSelctdShiftValidityState dimTwoShiftAllowedState;
+};
+
+struct keyPressngCombinatnsTotalRawCalcElem
+{
+	struct arrElemsTwoDim keybrdLayoutPositn;
+	bool ChkOvrflwIn;
+	bool ChkOvrflwOut;
+};
 
 const char CHARARR_KEYBRD_LAYOUT[KEYBRD_LAYOUT_ROW_CNT][KEYBRD_LAYOUT_COLUMN_CNT] =
 {
@@ -44,6 +83,275 @@ const char CHARARR_KEYBRD_LAYOUT[KEYBRD_LAYOUT_ROW_CNT][KEYBRD_LAYOUT_COLUMN_CNT
 
 using namespace std;
 
+struct arrElemsTwoDim returnArrElemsTwoDimFromElems(size_t elemDimOne, size_t elemDimTwo)
+{
+	struct arrElemsTwoDim result;
+	result.elemDimOne = elemDimOne;
+	result.elemDimTwo = elemDimTwo;
+	return result;
+}
+
+bool chkCharIsVowel(char char_In)
+{
+	bool result = false;
+
+	return result;
+}
+
+enum arrElemsOneDimSelctdShiftValidityState chkShiftArrOneDimElemsSelectd(size_t u8_arrOneDimElemInPositn, size_t u8_arrOneDimLengthIn, int elemDimOneShift)
+{
+	enum arrElemsOneDimSelctdShiftValidityState result;
+
+	result = AEODSSVState_UNASSIGNED;
+
+	int int_proposdElemPositn = (u8_arrOneDimElemInPositn + elemDimOneShift);
+
+	//cout << "Proposed element posiion: " << int_proposdElemPositn << "\n";
+
+	if ((int_proposdElemPositn >= 0) && (int_proposdElemPositn <= u8_arrOneDimLengthIn))
+	{
+		//cout << "allowed 123\n";
+		result = AEODSSVState_ALLOWED;
+		
+	}
+	else if ((int_proposdElemPositn == -1))
+	{
+		cout << "disallowed 1\n";
+		result = AEODSSVState_DISALLOWED_PRECEDNG_INIT_ELEM;
+	}
+	else if ((int_proposdElemPositn == (u8_arrOneDimLengthIn + 1)))
+	{
+		cout << "disallowed 2\n";
+		result = AEODSSVState_DISALLOWED_SUCCEEDNG_FINAL_ELEM;
+	}
+	else
+	{
+		cout << "disallowed 3\n";
+		result = AEODSSVState_DISALLOWED_MISC;
+	}
+
+	return result;
+}
+
+struct arrTwoDimSelctdShiftValidityStates chkShiftArrElemsTwoDimSelectd(struct arrElemsTwoDim strArrTwoDimElems_InPositn, struct arrTwoDimLength strArrTwoDimLength_In, int elemDimOneShift, int elemDimTwoShift)
+{
+	struct arrTwoDimSelctdShiftValidityStates result;
+
+	result.dimOneShiftAllowedState = chkShiftArrOneDimElemsSelectd(strArrTwoDimElems_InPositn.elemDimOne, strArrTwoDimLength_In.dimOneLength, elemDimOneShift);
+	
+	result.dimTwoShiftAllowedState = chkShiftArrOneDimElemsSelectd(strArrTwoDimElems_InPositn.elemDimTwo, strArrTwoDimLength_In.dimTwoLength, elemDimTwoShift);
+
+	return result;
+}
+
+char returnCharFromKeybrdLayout(struct arrElemsTwoDim keybrdPosition)
+{
+	return CHARARR_KEYBRD_LAYOUT[keybrdPosition.elemDimOne][keybrdPosition.elemDimTwo];
+}
+
+struct keyPressngCombinatnsTotalRawCalcElem shiftKeyPosition(struct keyPressngCombinatnsTotalRawCalcElem arrIn)
+{
+	struct keyPressngCombinatnsTotalRawCalcElem result;
+
+	struct arrElemsTwoDim keybrdPositnTry;
+	struct arrTwoDimLength keybrdLayoutLengths;
+	struct arrTwoDimSelctdShiftValidityStates shiftValidityStates;
+
+	result.keybrdLayoutPositn.elemDimOne = 0;
+	result.keybrdLayoutPositn.elemDimTwo = 0;
+	result.ChkOvrflwIn = false;
+	result.ChkOvrflwOut = false;
+
+	// the 1st dimension (array[1st][2nd]) is more easiliy intepreted as the 'row number' in C++
+	keybrdLayoutLengths.dimOneLength = KEYBRD_LAYOUT_ROW_CNT;
+	keybrdLayoutLengths.dimTwoLength = KEYBRD_LAYOUT_COLUMN_CNT;
+
+	shiftValidityStates.dimOneShiftAllowedState = AEODSSVState_UNASSIGNED;
+	shiftValidityStates.dimTwoShiftAllowedState = AEODSSVState_UNASSIGNED;
+
+	if (arrIn.ChkOvrflwIn)
+	{
+		//cout << "check overflow returns true\n";
+		shiftValidityStates = chkShiftArrElemsTwoDimSelectd(arrIn.keybrdLayoutPositn, keybrdLayoutLengths, 0, 1);
+
+		if (shiftValidityStates.dimTwoShiftAllowedState == AEODSSVState_ALLOWED)
+		{
+			// next character to the right
+			//cout << "allowed shift\n";
+			result.keybrdLayoutPositn.elemDimOne = (arrIn.keybrdLayoutPositn.elemDimOne + 0);
+			result.keybrdLayoutPositn.elemDimTwo = (arrIn.keybrdLayoutPositn.elemDimTwo + 1);
+			result.ChkOvrflwIn = false;
+			result.ChkOvrflwOut = false;
+			
+		}
+		else
+		{
+			shiftValidityStates = chkShiftArrElemsTwoDimSelectd(arrIn.keybrdLayoutPositn, keybrdLayoutLengths, 1, 0);
+			if (shiftValidityStates.dimOneShiftAllowedState == AEODSSVState_ALLOWED)
+			{
+				// first character next row down
+				result.keybrdLayoutPositn.elemDimOne = (arrIn.keybrdLayoutPositn.elemDimOne + 1);
+				result.keybrdLayoutPositn.elemDimTwo = 0;
+				result.ChkOvrflwIn = false;
+				result.ChkOvrflwOut = false;
+			}
+			else if (shiftValidityStates.dimTwoShiftAllowedState == AEODSSVState_DISALLOWED_SUCCEEDNG_FINAL_ELEM)
+			{
+				// overflow increment to next key sequence
+				result.keybrdLayoutPositn.elemDimOne = arrIn.keybrdLayoutPositn.elemDimOne;
+				result.keybrdLayoutPositn.elemDimTwo = arrIn.keybrdLayoutPositn.elemDimTwo;
+				result.ChkOvrflwIn = false;
+				result.ChkOvrflwOut = true;
+			}
+			else
+			{
+				// error state
+				result.keybrdLayoutPositn.elemDimOne = 0;
+				result.keybrdLayoutPositn.elemDimTwo = 0;
+				result.ChkOvrflwIn = false;
+				result.ChkOvrflwOut = false;
+			}
+		}
+	}
+	else
+	{
+		// a skip state?
+		//cout << "Overflow false\n";
+		result.keybrdLayoutPositn.elemDimOne = arrIn.keybrdLayoutPositn.elemDimOne;
+		result.keybrdLayoutPositn.elemDimTwo = arrIn.keybrdLayoutPositn.elemDimTwo;
+		result.ChkOvrflwIn = false;
+		result.ChkOvrflwOut = false;
+	}
+	
+	return result;
+}
+
+struct keyPressngCombinatnsTotalRawCalcElem* incrementKeyCombinatn
+(
+	struct keyPressngCombinatnsTotalRawCalcElem* currentKeyCombinatn
+)
+{
+	struct keyPressngCombinatnsTotalRawCalcElem* result;
+	bool chkIncrementOccurred = false;
+	bool combinatnOvrflow = false;
+	int j = 0;
+	size_t keyPressngCombinatnElem = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1);
+
+	/* // manual copy 
+	for (j = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); j >= 0; j--)
+	{
+		currentKeyCombinatn[j].keybrdLayoutPositn.elemDimOne
+			= result[j].keybrdLayoutPositn.elemDimOne;
+		currentKeyCombinatn[j].keybrdLayoutPositn.elemDimTwo
+			= result[j].keybrdLayoutPositn.elemDimTwo;
+		currentKeyCombinatn[j].ChkOvrflwIn = result[j].ChkOvrflwIn;
+		currentKeyCombinatn[j].ChkOvrflwOut = result[j].ChkOvrflwOut;
+	} */
+
+	/* cout << "Current Key Combination: ";
+
+	for (j = 0; j < KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; j++)
+	{
+		cout << CHARARR_KEYBRD_LAYOUT[currentKeyCombinatn[j].keybrdLayoutPositn.elemDimOne][currentKeyCombinatn[j].keybrdLayoutPositn.elemDimTwo];
+	}
+	cout << "\n"; */
+
+	result[keyPressngCombinatnElem].ChkOvrflwIn = true;
+
+	do
+	{
+		//cout << "shift\n";
+		result[keyPressngCombinatnElem] = shiftKeyPosition(result[keyPressngCombinatnElem]);
+
+		if ((result[keyPressngCombinatnElem].keybrdLayoutPositn.elemDimOne != currentKeyCombinatn[keyPressngCombinatnElem].keybrdLayoutPositn.elemDimOne) || (result[keyPressngCombinatnElem].keybrdLayoutPositn.elemDimTwo != currentKeyCombinatn[keyPressngCombinatnElem].keybrdLayoutPositn.elemDimTwo))
+		{
+			//cout << "shift increment occurred successfully\n";
+			result[keyPressngCombinatnElem].ChkOvrflwIn = false;
+			chkIncrementOccurred = true;
+		}
+		else if ((result[keyPressngCombinatnElem].keybrdLayoutPositn.elemDimOne == currentKeyCombinatn[keyPressngCombinatnElem].keybrdLayoutPositn.elemDimOne) && (result[keyPressngCombinatnElem].keybrdLayoutPositn.elemDimTwo == currentKeyCombinatn[keyPressngCombinatnElem].keybrdLayoutPositn.elemDimTwo) && ((keyPressngCombinatnElem - 1) <= 0) && result[keyPressngCombinatnElem].ChkOvrflwOut)
+		{
+			cout << "moving character\n";
+			chkIncrementOccurred = false;
+			keyPressngCombinatnElem--;
+			result[keyPressngCombinatnElem].ChkOvrflwIn = true;
+			result[keyPressngCombinatnElem + 1].ChkOvrflwOut = false;
+		}
+		else if ((result[keyPressngCombinatnElem].keybrdLayoutPositn.elemDimOne == currentKeyCombinatn[keyPressngCombinatnElem].keybrdLayoutPositn.elemDimOne) && (result[keyPressngCombinatnElem].keybrdLayoutPositn.elemDimTwo == currentKeyCombinatn[keyPressngCombinatnElem].keybrdLayoutPositn.elemDimTwo) && ((keyPressngCombinatnElem - 1) < 0) && result[keyPressngCombinatnElem].ChkOvrflwOut)
+		{
+			cout << "hit the end of the sequence\n";
+			chkIncrementOccurred = false;
+			combinatnOvrflow = true;
+		}
+		else
+		{
+			//cout << "something else\n";
+		}
+		for (j = 0; j < KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; j++)
+		{
+			cout << CHARARR_KEYBRD_LAYOUT[result[j].keybrdLayoutPositn.elemDimOne][result[j].keybrdLayoutPositn.elemDimTwo];
+		}
+		cout << "\n";
+	}
+	while (!chkIncrementOccurred && !combinatnOvrflow);
+
+	//cout << "break\n";
+
+	return result;
+}
+
+void printCombination(struct arrElemsTwoDim* strArrTwoDimElems_InPositn)
+{
+	for (int j = 0; j < KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; j++)
+	{
+		cout << CHARARR_KEYBRD_LAYOUT[strArrTwoDimElems_InPositn[j].elemDimOne][strArrTwoDimElems_InPositn[j].elemDimTwo];
+	}
+	cout << "\n";
+}
+
+struct keyPressngCombinatnsTotalRawCalcElem* unassignKeyPressngCombinatnBuffer()
+{
+	struct keyPressngCombinatnsTotalRawCalcElem* result = new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+
+	for (int j = 0; j < INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; j++)
+	{
+		cout << "KEY_PRESSNG_CORRECT_SEQUENC_LENGTH: " << INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH << "\n";
+		cout << "j: " << j << "\n";
+		result[j].keybrdLayoutPositn.elemDimOne = 0;
+		result[j].keybrdLayoutPositn.elemDimTwo = 0;
+		result[j].ChkOvrflwIn = false;
+		result[j].ChkOvrflwOut = false;
+		cout << "jj: " << j << "\n";
+	}
+	return result;
+	delete[] result;
+}
+
+struct keyPressngCombinatnsTotalRawCalcElem* unassignKeyPressngCombinatnBuffer()
+{
+	struct keyPressngCombinatnsTotalRawCalcElem* result = new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+
+	for (j = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); j >= 0; j--)
+		{
+			cout << "j: " << j << "\n";
+			
+			cout << "val: " << strArrOneDim_keyPressngCombinatnBuffer[j].keybrdLayoutPositn.elemDimOne << "\n";
+
+			cout << "here\n";
+			strArrTwoDim_keyPressngCombinatns[i][j].elemDimOne
+				= strArrOneDim_keyPressngCombinatnBuffer[j].keybrdLayoutPositn.elemDimOne;
+
+			cout << "val2: " << strArrTwoDim_keyPressngCombinatns[i][j].elemDimOne << "\n";
+			
+			cout << "here1.5\n";
+			strArrTwoDim_keyPressngCombinatns[i][j].elemDimTwo
+				= strArrOneDim_keyPressngCombinatnBuffer[j].keybrdLayoutPositn.elemDimTwo;
+		}
+
+	return result;
+	delete[] result;
+}
+
 int main()
 {
 	cout << "\n";
@@ -54,12 +362,14 @@ int main()
 	cout << "Exercise\n";
 	cout << "\n";
 
-	int
+	size_t
 		i = 0,
 		j = 0,
 		selctdKeybrdRowElem = 0,
 		selctdKeybrdColumnElem = 0
 	;
+
+	size_t keyPressngCorrectCombinatnLength = KEY_PRESSNG_CORRECT_SEQUENC_LENGTH;
 
 	/* // https://www.w3schools.com/cpp/ref_iostream_clog.asp
 	// Set "info.log" as the output file for the log messages
@@ -67,7 +377,7 @@ int main()
 	clog.rdbuf(log.rdbuf()); */
 	
 	//unsigned long int keyPressngCombinatnsTotalRaw = pow(((KEYBRD_LAYOUT_COLUMN_CNT * KEYBRD_LAYOUT_ROW_CNT) - 2), KEY_PRESSNG_CORRECT_SEQUENC_LENGTH);
-	unsigned long int keyPressngCombinatnsTotalRaw = pow(((KEYBRD_LAYOUT_COLUMN_CNT * KEYBRD_LAYOUT_ROW_CNT) - 0), KEY_PRESSNG_CORRECT_SEQUENC_LENGTH);
+	size_t keyPressngCombinatnsTotalRaw = pow(((KEYBRD_LAYOUT_COLUMN_CNT * KEYBRD_LAYOUT_ROW_CNT) - 0), INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH);
 
 	// Write to the log file
 	//clog << "The number " << 1234 << " was given\n";
@@ -76,86 +386,48 @@ int main()
 	cout << keyPressngCombinatnsTotalRaw << "\n";
 	cout << "\n";
 
-	char* charArrOneDim_keyPressngCombinatnBuffer[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	cout << "Declaring Buffer...\n";
+
+	struct keyPressngCombinatnsTotalRawCalcElem* strArrOneDim_keyPressngCombinatnBuffer
+		= new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+
+	cout << "Declaring raw combinations list...\n";
 
 	// a very long list 1-D array of 10 element arrays 
-	char* charArrTwoDim_keyPressngCombinatns[keyPressngCombinatnsTotalRaw][KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	struct arrElemsTwoDim**
+		strArrTwoDim_keyPressngCombinatns = new struct arrElemsTwoDim*
+			[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
 
-	...
-	AAAA
-	AAAB
-	AAAC
-	AAAD
-	AAAE
-	AAAF
-	AAAH
-	AAAI
-	AAAJ
-	AAAK
-	AAAL
-	AAAM
-	AAAN
-	AAAO
-	AAA1
-	AAA2
-	AAA3
-	AABA
-
-	kind of like a base 17 numbering system
-
-	i = 0;
-	j = 0;
-
-	// assign buffer null values
-	for (j = 0; j < KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; j++)
-	{
-		*charArrOneDim_keyPressngCombinatnBuffer[j] = CHARARR_KEYBRD_LAYOUT[0][0];
-	}
-
-	i = 0;
-	j = 0;
-	selctdKeybrdRowElem = 0;
-	selctdKeybrdColumnElem = 0;
+	cout << "made it here\n";
 	
-	while(i < keyPressngCombinatnsTotalRaw)
+	for(i = 0; i < keyPressngCombinatnsTotalRaw; i++)
 	{
-		*charArrOneDim_keyPressngCombinatnBuffer[0] =
-			CHARARR_KEYBRD_LAYOUT[selctdKeybrdRowElem][selctdKeybrdColumnElem];
+		// build rows
+		strArrTwoDim_keyPressngCombinatns[i] = new arrElemsTwoDim[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	}
+	i = 0;
+
+	// initialise buffer to "AAAAAAAAAA"
+	cout << "(Un)assigning Buffer Values...\n";
+	j = 0;
+	
+	strArrOneDim_keyPressngCombinatnBuffer = unassignKeyPressngCombinatnBuffer();
+
+	cout << "(Un)assigned Buffer Values.\n";
+
+	i = 0;
+	while (i < keyPressngCombinatnsTotalRaw)
+	{
+		cout << "keyPressngCombinatnsTotalRaw i: " << i << "\n";
+		j = 0;
 		
-		// save buffer to list
-		for (j = 0; j < KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; j++)
-		{	
-			charArrTwoDim_keyPressngCombinatns[i][j] =
-				*charArrOneDim_keyPressngCombinatnBuffer[j];
-		}
+		cout << "here2\n";
+		printCombination(strArrTwoDim_keyPressngCombinatns[i]);
 
-		if (selctdKeybrdRowElem < KEYBRD_LAYOUT_ROW_CNT) && (selctdKeybrdColumnElem < KEYBRD_LAYOUT_COLUMN_CNT)
-		{
-			selctdKeybrdRowElem++;
-		}
-		else if (selctdKeybrdRowElem >= KEYBRD_LAYOUT_ROW_CNT) && (selctdKeybrdColumnElem < KEYBRD_LAYOUT_COLUMN_CNT)
-		{
-			selctdKeybrdRowElem = 0;
-			selctdKeybrdColumnElem++;
-		}
-		else if (selctdKeybrdRowElem >= KEYBRD_LAYOUT_ROW_CNT) && (selctdKeybrdColumnElem >= KEYBRD_LAYOUT_COLUMN_CNT)
-		{
-			selctdKeybrdRowElem = 0;
-			selctdKeybrdColumnElem = 0;
-			selctdKeybrdRowElem = 0;
-			selctdKeybrdColumnElem++;....
-		}
-
+		cout << "Incrementing Combination...\n";
+		strArrOneDim_keyPressngCombinatnBuffer = incrementKeyCombinatn(strArrOneDim_keyPressngCombinatnBuffer);
 		i++;
-	}
-	
-
-	for (selctdKeybrdRowElem = 0; selctdKeybrdRowElem < KEYBRD_LAYOUT_ROW_CNT; selctdKeybrdRowElem++)
-	{
-		for (selctdKeybrdColumnElem = 0; selctdKeybrdColumnElem < KEYBRD_LAYOUT_COLUMN_CNT; selctdKeybrdColumnElem++)
-		{
-					
-		}
+		cout << "Incremented Combination, repeating loop...\n";
 	}
 
 	cout << "Program Complete.\n";

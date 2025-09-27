@@ -6,6 +6,32 @@
 
 #### 2025/09
 
+##### 2025/09/27
+
+###### 18:17
+
+...
+	AAAA
+	AAAB
+	AAAC
+	AAAD
+	AAAE
+	AAAF
+	AAAH
+	AAAI
+	AAAJ
+	AAAK
+	AAAL
+	AAAM
+	AAAN
+	AAAO
+	AAA1
+	AAA2
+	AAA3
+	AABA
+
+	kind of like a base 17 numbering system
+
 ##### 2025/09/22
 
 ###### 16:58
