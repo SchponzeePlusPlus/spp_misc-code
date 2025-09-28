@@ -6,6 +6,13 @@
  * 
  * SPP GitHub Link: https://github.com/SchponzeePlusPlus/spp_misc-code/tree/main/C/Cpp/Exercises/exercise_20250922_1314
  *
+ * Compilation Command (as per build.sh file in directory):
+ * "
+ * g++ -o ./build/Program_Main main.cpp -Wpedantic -std='c++23'
+ * "
+ * 
+ * Note: DEVELOPED and COMPILED in a VM with DEBIAN (GNU / LINUX) (XFCE) 12 OS
+ * 
  */
 
 #include <stddef.h>
@@ -365,7 +372,7 @@ int main()
 	// a very long list 1-D array of 10 element arrays 
 	struct arrElemsTwoDim**
 		strArrTwoDim_keyPressngCombinatns = new struct arrElemsTwoDim*
-			[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+			[keyPressngCombinatnsTotalRaw];
 
 	cout << "made it here\n";
 	
