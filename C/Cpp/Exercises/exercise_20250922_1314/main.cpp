@@ -67,6 +67,14 @@ struct keyPressngCombinatnsTotalRawCalcElem
 	bool ChkOvrflwOut;
 };
 
+struct combinationCriteria
+{
+	struct arrElemsTwoDim arr_keybrdLayoutPositnSequence[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	bool validKey[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	bool validKnightMove[(KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1)];
+	bool vowelCriteriaPass;
+};
+
 // I'm replacing '\0' with '0' and '4'
 //	there aren't supposed to be anything in
 //	those positions
@@ -213,7 +221,7 @@ struct keyPressngCombinatnsTotalRawCalcElem shiftKeyPosition(struct keyPressngCo
 			else if (shiftValidityStates.dimOneShiftAllowedState == AEODSSVState_DISALLOWED_SUCCEEDNG_FINAL_ELEM)
 			{
 				// overflow increment to next key sequence
-				cout << "end of keyboard\n";
+				//cout << "end of keyboard\n";
 				result.keybrdLayoutPositn.elemDimOne = arrIn.keybrdLayoutPositn.elemDimOne;
 				result.keybrdLayoutPositn.elemDimTwo = arrIn.keybrdLayoutPositn.elemDimTwo;
 				result.ChkOvrflwIn = false;
@@ -345,6 +353,25 @@ void printCombination(struct arrElemsTwoDim* strArrTwoDimElems_InPositn)
 	cout << "\n";
 }
 
+void printCombinationCriteriaArr(struct combinationCriteria* arr_ComboCrit, int critListLength)
+{
+	cout << "Print Criteria List: \n";
+	for (int i = 0; i < critListLength; i++)
+	{
+		printCombination(arr_ComboCrit[i].arr_keybrdLayoutPositnSequence);
+		/* cout << "Print Combination: ";
+		for (int j = 0; j < KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; j++)
+		{
+			cout <<
+				CHARARR_KEYBRD_LAYOUT
+				[arr_ComboCrit[i].arr_keybrdLayoutPositnSequence[j].elemDimOne]
+				[arr_ComboCrit[i].arr_keybrdLayoutPositnSequence[j].elemDimTwo];
+		}
+		cout << "\n"; */
+	}
+	cout << "\n";
+}
+
 struct keyPressngCombinatnsTotalRawCalcElem* unassignKeyPressngCombinatnBuffer()
 {
 	struct keyPressngCombinatnsTotalRawCalcElem* result = new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
@@ -436,7 +463,7 @@ int main()
 			strArrTwoDim_keyPressngCombinatns[cntr_loopCombinationsList][j].elemDimTwo
 				= strArrOneDim_keyPressngCombinatnBuffer[j].keybrdLayoutPositn.elemDimTwo;
 		}
-		printCombination(strArrTwoDim_keyPressngCombinatns[cntr_loopCombinationsList]);
+		//printCombination(strArrTwoDim_keyPressngCombinatns[cntr_loopCombinationsList]);
 
 		//cout << "Incrementing Combination...\n";
 		strArrOneDim_keyPressngCombinatnBuffer = incrementKeyCombinatn(strArrOneDim_keyPressngCombinatnBuffer);
@@ -444,15 +471,59 @@ int main()
 		//cout << "Incremented Combination, repeating loop...\n";
 	}
 
+	delete[] strArrOneDim_keyPressngCombinatnBuffer;
+
+	struct combinationCriteria* arr_CombinatnCriteria
+		= new struct combinationCriteria[keyPressngCombinatnsTotalRaw];
+
+	for
+	(
+		int cntrCreateComboCrit = 0;
+		cntrCreateComboCrit < keyPressngCombinatnsTotalRaw;
+		cntrCreateComboCrit++
+	)
+	{
+		for
+		(
+			int cntrCreateComboCritKeybrdDig = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); cntrCreateComboCritKeybrdDig >= 0;
+			cntrCreateComboCritKeybrdDig--
+		)
+		{
+			arr_CombinatnCriteria[cntrCreateComboCrit]
+				.arr_keybrdLayoutPositnSequence[cntrCreateComboCritKeybrdDig].elemDimOne
+				= strArrTwoDim_keyPressngCombinatns[cntrCreateComboCrit][cntrCreateComboCritKeybrdDig].elemDimOne;
+			
+			arr_CombinatnCriteria[cntrCreateComboCrit]
+				.arr_keybrdLayoutPositnSequence[cntrCreateComboCritKeybrdDig].elemDimTwo
+				= strArrTwoDim_keyPressngCombinatns[cntrCreateComboCrit][cntrCreateComboCritKeybrdDig].elemDimTwo;
+
+			arr_CombinatnCriteria[cntrCreateComboCrit].validKey[cntrCreateComboCritKeybrdDig]
+				= false;
+		}
+		for
+		(
+			int cntrCreateComboCritKnightMov = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 2); cntrCreateComboCritKnightMov >= 0;
+			cntrCreateComboCritKnightMov--
+		)
+		{
+			arr_CombinatnCriteria[cntrCreateComboCrit]
+				.validKnightMove[cntrCreateComboCritKnightMov] = false;
+		}
+		arr_CombinatnCriteria[cntrCreateComboCrit].vowelCriteriaPass = false;
+	}
+
+	delete[] strArrTwoDim_keyPressngCombinatns;
+
+	printCombinationCriteriaArr(arr_CombinatnCriteria, keyPressngCombinatnsTotalRaw);
+
+	delete[] arr_CombinatnCriteria;		
+
 	cout << "Program Complete.\n";
 	cout << "\n";
 	cout << "\n";
 
 	/* // Close the file
 	log.close(); */
-	
-	delete[] strArrOneDim_keyPressngCombinatnBuffer;
-	delete[] strArrTwoDim_keyPressngCombinatns;
 
 	return 0;
 }
