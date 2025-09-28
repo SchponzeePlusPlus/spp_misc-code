@@ -231,21 +231,24 @@ struct keyPressngCombinatnsTotalRawCalcElem* incrementKeyCombinatn
 	struct keyPressngCombinatnsTotalRawCalcElem* currentKeyCombinatn
 )
 {
-	struct keyPressngCombinatnsTotalRawCalcElem* result;
+	struct keyPressngCombinatnsTotalRawCalcElem* result
+		= new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
 	bool chkIncrementOccurred = false;
 	bool combinatnOvrflow = false;
 	size_t keyPressngCombinatnElem = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1);
 
-	/* // manual copy 
-	for (j = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); j >= 0; j--)
+	// manual copy 
+	for (int cntr_create = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); cntr_create >= 0; cntr_create--)
 	{
-		currentKeyCombinatn[j].keybrdLayoutPositn.elemDimOne
-			= result[j].keybrdLayoutPositn.elemDimOne;
-		currentKeyCombinatn[j].keybrdLayoutPositn.elemDimTwo
-			= result[j].keybrdLayoutPositn.elemDimTwo;
-		currentKeyCombinatn[j].ChkOvrflwIn = result[j].ChkOvrflwIn;
-		currentKeyCombinatn[j].ChkOvrflwOut = result[j].ChkOvrflwOut;
-	} */
+		result[cntr_create].keybrdLayoutPositn.elemDimOne
+			= currentKeyCombinatn[cntr_create].keybrdLayoutPositn.elemDimOne;
+		result[cntr_create].keybrdLayoutPositn.elemDimTwo
+			= currentKeyCombinatn[cntr_create].keybrdLayoutPositn.elemDimTwo;
+		result[cntr_create].ChkOvrflwIn
+			= currentKeyCombinatn[cntr_create].ChkOvrflwIn;
+		result[cntr_create].ChkOvrflwOut
+			= currentKeyCombinatn[cntr_create].ChkOvrflwOut;
+	}
 
 	/* cout << "Current Key Combination: ";
 
@@ -314,13 +317,10 @@ struct keyPressngCombinatnsTotalRawCalcElem* unassignKeyPressngCombinatnBuffer()
 
 	for (int j = 0; j < INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; j++)
 	{
-		cout << "KEY_PRESSNG_CORRECT_SEQUENC_LENGTH: " << INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH << "\n";
-		cout << "j: " << j << "\n";
 		result[j].keybrdLayoutPositn.elemDimOne = 0;
 		result[j].keybrdLayoutPositn.elemDimTwo = 0;
 		result[j].ChkOvrflwIn = false;
 		result[j].ChkOvrflwOut = false;
-		cout << "jj: " << j << "\n";
 	}
 	return result;
 	delete[] result;
@@ -397,7 +397,7 @@ int main()
 			
 			cout << "val: " << strArrOneDim_keyPressngCombinatnBuffer[j].keybrdLayoutPositn.elemDimOne << "\n";
 
-			cout << "here\n";
+			cout << "here 546376\n";
 			strArrTwoDim_keyPressngCombinatns[cntr_loopCombinationsList][j].elemDimOne
 				= strArrOneDim_keyPressngCombinatnBuffer[j].keybrdLayoutPositn.elemDimOne;
 
@@ -423,5 +423,8 @@ int main()
 	/* // Close the file
 	log.close(); */
 	
+	delete[] strArrOneDim_keyPressngCombinatnBuffer;
+	delete[] strArrTwoDim_keyPressngCombinatns;
+
 	return 0;
 }
