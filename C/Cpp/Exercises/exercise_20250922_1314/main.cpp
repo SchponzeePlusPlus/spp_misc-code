@@ -12,6 +12,7 @@
  * "
  * 
  * Note: DEVELOPED and COMPILED in a VM with DEBIAN (GNU / LINUX) (XFCE) 12 OS
+ * 	(8 GB RAM) (4 cores from MS Surface Book 2)
  * 
  */
 
@@ -449,6 +450,11 @@ int main()
 	uint8_t u8_chkKeybrdDigitColShft = 0;
 	uint8_t u8_chkKeybrdDigitRowShft = 0;
 
+	struct arrElemsTwoDim checkKnightMove01Up;
+	struct arrElemsTwoDim checkKnightMove01Down;
+	struct arrElemsTwoDim checkKnightMove01Left;
+	struct arrElemsTwoDim checkKnightMove01Right;
+
 	size_t keyPressngCorrectCombinatnLength = KEY_PRESSNG_CORRECT_SEQUENC_LENGTH;
 
 	uint64_t u64_cntValidCombinations = 0;
@@ -623,6 +629,18 @@ int main()
 			u8_chkKeybrdDigitRowShft = 0;
 			u8_chkKeybrdDigitColShft = 0;
 
+			checkKnightMove01Up.elemDimOne = 0;
+			checkKnightMove01Up.elemDimTwo = 0;
+
+			checkKnightMove01Down.elemDimOne = 0;
+			checkKnightMove01Down.elemDimTwo = 0;
+
+			checkKnightMove01Left.elemDimOne = 0;
+			checkKnightMove01Left.elemDimTwo = 0;
+
+			checkKnightMove01Right.elemDimOne = 0;
+			checkKnightMove01Right.elemDimTwo = 0;
+
 			u8_chkKeybrdDigitRowShft
 				= abs
 				(
@@ -646,11 +664,52 @@ int main()
 						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1]
 						.elemDimTwo
 				);
+
+			checkKnightMove01Up.elemDimOne
+				=
+				(
+					(int) arr_CombinatnCriteria[cntrCheckEachComboCrit]
+						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1]
+						.elemDimOne
+				);
+			checkKnightMove01Up.elemDimTwo
+				=
+				(
+					(int) arr_CombinatnCriteria[cntrCheckEachComboCrit]
+						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1]
+						.elemDimTwo
+					- (int) KNIGHT_MOVE_01_SHIFT_ELEMS
+				);
+			
+			checkKnightMove01Down.elemDimOne
+				=
+				(
+					(int) arr_CombinatnCriteria[cntrCheckEachComboCrit]
+						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1]
+						.elemDimOne
+				);
+			checkKnightMove01Down....elemDimTwo
+				=
+				(
+					(int) arr_CombinatnCriteria[cntrCheckEachComboCrit]
+						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1]
+						.elemDimTwo
+					- (int) KNIGHT_MOVE_01_SHIFT_ELEMS
+				);
 			if
 			(
 				(
 					(
 						u8_chkKeybrdDigitRowShft == KNIGHT_MOVE_01_SHIFT_ELEMS
+						&&
+						chkKeySelctnValidty
+						(
+							returnCharFromKeybrdLayout
+							(
+								arr_CombinatnCriteria[cntrCheckEachComboCrit]
+									.arr_keybrdLayoutPositnSequence[cntrChkComboCritKeybrdDig]
+							)
+						)
 					)
 					&&
 					(
