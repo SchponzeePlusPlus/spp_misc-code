@@ -70,9 +70,9 @@ struct keyPressngCombinatnsTotalRawCalcElem
 struct combinationCriteria
 {
 	struct arrElemsTwoDim arr_keybrdLayoutPositnSequence[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
-	bool validKey[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
-	bool validKnightMove[(KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1)];
+	bool validKeyCombinationPass;
 	bool vowelCriteriaPass;
+	bool validKnightMovesPass;
 };
 
 // I'm replacing '\0' with '0' and '4'
@@ -113,7 +113,41 @@ bool chkCharIsVowel(char char_In)
 {
 	bool result = false;
 
+	switch (char_In)
+	{
+		case 'A':
+			result = true;
+			break;
+		case 'E':
+			result = true;
+			break;
+		case 'I':
+			result = true;
+			break;
+		case 'O':
+			result = true;
+			break;
+		default:
+			break;
+	}
+
 	return result;
+}
+
+bool chkKeySelctnValidty(char char_In)
+{
+	return
+	(
+		(
+			((int) char_In >= (int) 'A') &&
+				((int) char_In <= (int) 'O')
+		)
+		||
+		(
+			((int) char_In >= (int) '1') &&
+				((int) char_In <= (int) '3')
+		)
+	);
 }
 
 enum arrElemsOneDimSelctdShiftValidityState chkShiftArrOneDimElemsSelectd(size_t u8_arrOneDimElemInPositn, size_t u8_arrOneDimLengthIn, int elemDimOneShift)
@@ -350,7 +384,7 @@ void printCombination(struct arrElemsTwoDim* strArrTwoDimElems_InPositn)
 	{
 		cout << CHARARR_KEYBRD_LAYOUT[strArrTwoDimElems_InPositn[j].elemDimOne][strArrTwoDimElems_InPositn[j].elemDimTwo];
 	}
-	cout << "\n";
+	//cout << "\n";
 }
 
 void printCombinationCriteriaArr(struct combinationCriteria* arr_ComboCrit, int critListLength)
@@ -368,6 +402,11 @@ void printCombinationCriteriaArr(struct combinationCriteria* arr_ComboCrit, int 
 				[arr_ComboCrit[i].arr_keybrdLayoutPositnSequence[j].elemDimTwo];
 		}
 		cout << "\n"; */
+		cout << "\t";
+		cout << "Valid Characters: " << (int) (arr_ComboCrit[i].validKeyCombinationPass);
+		cout << "\t";
+		cout << "Vowel Pass: " << (int) (arr_ComboCrit[i].vowelCriteriaPass);
+		cout << "\n";
 	}
 	cout << "\n";
 }
@@ -398,6 +437,9 @@ int main()
 	cout << "\n";
 
 	uint64_t cntr_loopCombinationsList = 0;
+
+	uint8_t u8_cntKeybrdCombinatnVowel = 0;
+	uint8_t u8_cntKeybrdCombinatnKeySelctnValid = 0;
 
 	size_t keyPressngCorrectCombinatnLength = KEY_PRESSNG_CORRECT_SEQUENC_LENGTH;
 
@@ -496,9 +538,6 @@ int main()
 			arr_CombinatnCriteria[cntrCreateComboCrit]
 				.arr_keybrdLayoutPositnSequence[cntrCreateComboCritKeybrdDig].elemDimTwo
 				= strArrTwoDim_keyPressngCombinatns[cntrCreateComboCrit][cntrCreateComboCritKeybrdDig].elemDimTwo;
-
-			arr_CombinatnCriteria[cntrCreateComboCrit].validKey[cntrCreateComboCritKeybrdDig]
-				= false;
 		}
 		for
 		(
@@ -506,17 +545,79 @@ int main()
 			cntrCreateComboCritKnightMov--
 		)
 		{
-			arr_CombinatnCriteria[cntrCreateComboCrit]
-				.validKnightMove[cntrCreateComboCritKnightMov] = false;
+			//
 		}
+		arr_CombinatnCriteria[cntrCreateComboCrit]
+			.validKeyCombinationPass = false;
 		arr_CombinatnCriteria[cntrCreateComboCrit].vowelCriteriaPass = false;
+		arr_CombinatnCriteria[cntrCreateComboCrit].validKnightMovesPass = false;
 	}
 
 	delete[] strArrTwoDim_keyPressngCombinatns;
 
+	for
+	(
+		int cntrCheckEachComboCrit = 0;
+		cntrCheckEachComboCrit < keyPressngCombinatnsTotalRaw;
+		cntrCheckEachComboCrit++
+	)
+	{
+		u8_cntKeybrdCombinatnKeySelctnValid = 0;
+		u8_cntKeybrdCombinatnVowel = 0;
+		for
+		(
+			int cntrChkComboCritKeybrdDig = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); cntrChkComboCritKeybrdDig >= 0;
+			cntrChkComboCritKeybrdDig--
+		)
+		{
+			if
+			(
+				chkKeySelctnValidty
+				(
+					returnCharFromKeybrdLayout
+					(
+						arr_CombinatnCriteria[cntrCheckEachComboCrit]
+							.arr_keybrdLayoutPositnSequence[cntrChkComboCritKeybrdDig]
+					)
+				)
+			)
+			{
+				u8_cntKeybrdCombinatnKeySelctnValid++;
+			}
+			if
+			(
+				chkCharIsVowel
+				(
+					returnCharFromKeybrdLayout
+					(
+						arr_CombinatnCriteria[cntrCheckEachComboCrit]
+							.arr_keybrdLayoutPositnSequence[cntrChkComboCritKeybrdDig]
+					)
+				)
+			)
+			{
+				u8_cntKeybrdCombinatnVowel++;
+			}
+		}
+		for
+		(
+			int cntrChkComboCritKnightMov = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 2); cntrChkComboCritKnightMov >= 0;
+			cntrChkComboCritKnightMov--
+		)
+		{
+			///
+		}
+		arr_CombinatnCriteria[cntrCheckEachComboCrit].validKeyCombinationPass
+			= (u8_cntKeybrdCombinatnKeySelctnValid == KEY_PRESSNG_CORRECT_SEQUENC_LENGTH);
+		arr_CombinatnCriteria[cntrCheckEachComboCrit].vowelCriteriaPass
+			= (u8_cntKeybrdCombinatnVowel <= 2);
+		arr_CombinatnCriteria[cntrCheckEachComboCrit]
+				.validKnightMovesPass = false;
+	}
+
 	printCombinationCriteriaArr(arr_CombinatnCriteria, keyPressngCombinatnsTotalRaw);
 
-	delete[] arr_CombinatnCriteria;		
+	delete[] arr_CombinatnCriteria;
 
 	cout << "Program Complete.\n";
 	cout << "\n";
