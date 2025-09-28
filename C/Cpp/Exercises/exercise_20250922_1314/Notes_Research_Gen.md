@@ -4,6 +4,57 @@
 
 ### 2025 09
 
+#### 2025/09/28
+
+##### 22:41
+
+###### Open Links:
+
+Switch Statement in C++ - GeeksforGeeks
+https://www.geeksforgeeks.org/cpp/switch-statement-in-cpp/
+
+char int values - Google Search
+https://www.google.com/search?q=char+int+values&oq=char+int+value&gs_lcrp=EgZjaHJvbWUqBwgAEAAYgAQyBwgAEAAYgAQyBggBEEUYOTIICAIQABgWGB4yCAgDEAAYFhgeMggIBBAAGBYYHjIICAUQABgWGB4yCAgGEAAYFhgeMggIBxAAGBYYHjIICAgQABgWGB4yCAgJEAAYFhge0gEIMzIzNmowajeoAgCwAgA&sourceid=chrome&ie=UTF-8
+
+Convert char to int in C and C++ - Stack Overflow
+https://stackoverflow.com/questions/5029840/convert-char-to-int-in-c-and-c
+
+char ascii value c++ - Google Search
+https://www.google.com/search?q=char+ascii+value+c%2B%2B&oq=char+ascii+&gs_lcrp=EgZjaHJvbWUqDAgGEAAYFBiHAhiABDIKCAAQRRgWGB4YOTINCAEQABiRAhiABBiKBTINCAIQABiRAhiABBiKBTIHCAMQABiABDIHCAQQABiABDIHCAUQABiABDIMCAYQABgUGIcCGIAEMgcIBxAAGIAEMggICBAAGBYYHjIICAkQABgWGB7SAQg1NjA4ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8
+
+c++ - How to convert an ASCII char to its ASCII int value? - Stack Overflow
+https://stackoverflow.com/questions/15999272/how-to-convert-an-ascii-char-to-its-ascii-int-value
+
+Program to print ASCII Value of a character - GeeksforGeeks
+https://www.geeksforgeeks.org/competitive-programming/program-print-ascii-value-character/
+
+this%20problem%20has%20existing%20solution%20please%20refer%20sums%20of%20ascii%20values%20of%20each%20word%20in%20a%20sentence%20link.%20we%20will%20solve%20this%20problem%20quickly%20in%20python%20using%20map()%20function%20and%20dictionary%20data%20structures.%20approach%20is%20simple,
+https://this%20problem%20has%20existing%20solution%20please%20refer%20sums%20of%20ascii%20values%20of%20each%20word%20in%20a%20sentence%20link.%20we%20will%20solve%20this%20problem%20quickly%20in%20python%20using%20map()%20function%20and%20dictionary%20data%20structures.%20approach%20is%20simple,/
+
+ASCII Chart - cppreference.com
+https://en.cppreference.com/w/cpp/language/ascii.html
+
+horizontal tab char c++ - Google Search
+https://www.google.com/search?q=horizontal+tab+char+c%2B%2B&oq=horizontal+tab+char+c%2B%2B&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQIRgKGKABMgkIAhAhGAoYoAEyCQgDECEYChigAdIBCTE5OTE1ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8
+
+xor c++ - Google Search
+https://www.google.com/search?q=xor+c%2B%2B&oq=xor+c%2B%2B&gs_lcrp=EgZjaHJvbWUyDggAEEUYFBg5GIcCGIAEMgcIARAAGIAEMgcIAhAAGIAEMgwIAxAAGBQYhwIYgAQyCAgEEAAYFhgeMggIBRAAGBYYHjIICAYQABgWGB4yCAgHEAAYFhgeMggICBAAGBYYHjIICAkQABgWGB7SAQgyMTY0ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8
+
+Bitwise Operators in C - GeeksforGeeks
+https://www.geeksforgeeks.org/c/bitwise-operators-in-c-cpp/
+
+C++ keyword: xor - cppreference.com
+https://en.cppreference.com/w/cpp/keyword/xor.html
+
+The ^ (bitwise XOR) in C++ with Boolean - Stack Overflow
+https://stackoverflow.com/questions/60689442/the-bitwise-xor-in-c-with-boolean
+
+C++ Math abs() Function
+https://www.w3schools.com/cpp/ref_math_abs.asp
+
+modularise code into functions paradigm - Google Search
+https://www.google.com/search?q=modularise+code+into+functions+paradigm&sca_esv=0e726780e9f89ba1&sxsrf=AE3TifNLpl9viA7bT6MtvXzJQVZNXKSHzQ%3A1759063128992&ei=WCzZaMesPMTF1e8P5JmL2Qw&ved=0ahUKEwjHuMPnvPuPAxXEYvUHHeTMIssQ4dUDCBA&uact=5&oq=modularise+code+into+functions+paradigm&gs_lp=Egxnd3Mtd2l6LXNlcnAiJ21vZHVsYXJpc2UgY29kZSBpbnRvIGZ1bmN0aW9ucyBwYXJhZGlnbTIFECEYoAEyBRAhGKABSJYeUKAGWLMacAF4AZABAJgBwQKgAaUSqgEFMi03LjK4AQPIAQD4AQGYAgqgAp8TwgIKEAAYsAMY1gQYR8ICBRAhGJ8FwgIHECEYoAEYCpgDAIgGAZAGA5IHBzEuMC41LjSgB-YhsgcFMi01LjS4B5sTwgcHMC4yLjQuNMgHPw&sclient=gws-wiz-serp
+
 #### 2025/09/27
 
 ##### 23:17

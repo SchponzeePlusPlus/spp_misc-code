@@ -26,10 +26,12 @@
 #define KEYBRD_LAYOUT_ROW_CNT ((uint8_t) 4U)
 #define KEYBRD_LAYOUT_COLUMN_CNT ((uint8_t) 5U)
 
-
 //#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((unsigned long long int) 10)
 #define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 3U)
 #define INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((int) KEY_PRESSNG_CORRECT_SEQUENC_LENGTH)
+
+#define KNIGHT_MOVE_01_SHIFT_ELEMS ((uint8_t) 2U)
+#define KNIGHT_MOVE_02_SHIFT_ELEMS ((uint8_t) 1U)
 
 enum arrElemsOneDimSelctdShiftValidityState
 {
@@ -406,6 +408,8 @@ void printCombinationCriteriaArr(struct combinationCriteria* arr_ComboCrit, int 
 		cout << "Valid Characters: " << (int) (arr_ComboCrit[i].validKeyCombinationPass);
 		cout << "\t";
 		cout << "Vowel Pass: " << (int) (arr_ComboCrit[i].vowelCriteriaPass);
+		cout << "\t";
+		cout << "Knight Moves Pass: " << (int) (arr_ComboCrit[i].validKnightMovesPass);
 		cout << "\n";
 	}
 	cout << "\n";
@@ -440,8 +444,14 @@ int main()
 
 	uint8_t u8_cntKeybrdCombinatnVowel = 0;
 	uint8_t u8_cntKeybrdCombinatnKeySelctnValid = 0;
+	uint8_t u8_cntKeybrdCombinatnKnightMoves = 0;
+
+	uint8_t u8_chkKeybrdDigitColShft = 0;
+	uint8_t u8_chkKeybrdDigitRowShft = 0;
 
 	size_t keyPressngCorrectCombinatnLength = KEY_PRESSNG_CORRECT_SEQUENC_LENGTH;
+
+	uint64_t u64_cntValidCombinations = 0;
 
 	/* // https://www.w3schools.com/cpp/ref_iostream_clog.asp
 	// Set "info.log" as the output file for the log messages
@@ -555,6 +565,7 @@ int main()
 
 	delete[] strArrTwoDim_keyPressngCombinatns;
 
+	u64_cntValidCombinations = 0;
 	for
 	(
 		int cntrCheckEachComboCrit = 0;
@@ -564,6 +575,10 @@ int main()
 	{
 		u8_cntKeybrdCombinatnKeySelctnValid = 0;
 		u8_cntKeybrdCombinatnVowel = 0;
+		u8_cntKeybrdCombinatnKnightMoves = 0;
+		
+		u8_chkKeybrdDigitColShft = 0;
+		u8_chkKeybrdDigitRowShft = 0;
 		for
 		(
 			int cntrChkComboCritKeybrdDig = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); cntrChkComboCritKeybrdDig >= 0;
@@ -605,17 +620,80 @@ int main()
 			cntrChkComboCritKnightMov--
 		)
 		{
-			///
+			u8_chkKeybrdDigitRowShft = 0;
+			u8_chkKeybrdDigitColShft = 0;
+
+			u8_chkKeybrdDigitRowShft
+				= abs
+				(
+					(int) arr_CombinatnCriteria[cntrCheckEachComboCrit]
+						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov]
+						.elemDimOne
+					-
+					(int) arr_CombinatnCriteria[cntrCheckEachComboCrit]
+						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1]
+						.elemDimOne
+				);
+
+			u8_chkKeybrdDigitColShft 
+				= abs
+				(
+					(int) arr_CombinatnCriteria[cntrCheckEachComboCrit]
+						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov]
+						.elemDimTwo
+					-
+					(int) arr_CombinatnCriteria[cntrCheckEachComboCrit]
+						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1]
+						.elemDimTwo
+				);
+			if
+			(
+				(
+					(
+						u8_chkKeybrdDigitRowShft == KNIGHT_MOVE_01_SHIFT_ELEMS
+					)
+					&&
+					(
+						u8_chkKeybrdDigitColShft == KNIGHT_MOVE_02_SHIFT_ELEMS
+					)
+				)
+				^
+				(
+					(
+						u8_chkKeybrdDigitRowShft == KNIGHT_MOVE_02_SHIFT_ELEMS
+					)
+					&&
+					(
+						u8_chkKeybrdDigitColShft == KNIGHT_MOVE_01_SHIFT_ELEMS
+					)
+				)
+			)
+			{
+				u8_cntKeybrdCombinatnKnightMoves++;
+			}
+					
 		}
 		arr_CombinatnCriteria[cntrCheckEachComboCrit].validKeyCombinationPass
 			= (u8_cntKeybrdCombinatnKeySelctnValid == KEY_PRESSNG_CORRECT_SEQUENC_LENGTH);
 		arr_CombinatnCriteria[cntrCheckEachComboCrit].vowelCriteriaPass
 			= (u8_cntKeybrdCombinatnVowel <= 2);
-		arr_CombinatnCriteria[cntrCheckEachComboCrit]
-				.validKnightMovesPass = false;
+		arr_CombinatnCriteria[cntrCheckEachComboCrit].validKnightMovesPass
+			= (u8_cntKeybrdCombinatnKnightMoves == (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1));
+		if
+		(
+			arr_CombinatnCriteria[cntrCheckEachComboCrit].validKeyCombinationPass &&
+			arr_CombinatnCriteria[cntrCheckEachComboCrit].vowelCriteriaPass &&
+			arr_CombinatnCriteria[cntrCheckEachComboCrit].validKnightMovesPass
+		)
+		{
+			u64_cntValidCombinations++;
+		}
+		
 	}
 
 	printCombinationCriteriaArr(arr_CombinatnCriteria, keyPressngCombinatnsTotalRaw);
+
+	cout << "Valid Combinations: " << u64_cntValidCombinations << "\n";
 
 	delete[] arr_CombinatnCriteria;
 
