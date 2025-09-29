@@ -6,6 +6,19 @@
 
 #### 2025/09
 
+##### 2025/09/29
+
+###### 15:10
+
+- Things I can do going forward with attempt no. 2:
+	- check memory available, especially in functions (stack) and heap usage
+	- reduce reliance on large arrays that consume so much memory, rely more on a "real-time" buffer
+	- advanced data structures and algorthms, would using them be more efficient (e.g. linked lists)?
+	- conform sw dev conventions to make code readable and peer-reviewable, this includes modularity and naming conventions
+	- maybe output results to a .csv and/or log file, reduce noise in the console and save results better!
+	- Other C++ things I could do for improved quality code?
+		- Better memory management? (garbage collection?)
+
 ##### 2025/09/27
 
 ###### 18:17

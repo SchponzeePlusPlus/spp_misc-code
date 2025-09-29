@@ -4,6 +4,10 @@
  * 
  * Author: SchponzeePlusPlus
  * 
+ * Version: V0.0.0.0
+ * 
+ * Solution Attempt: No. 1
+ * 
  * SPP GitHub Link: https://github.com/SchponzeePlusPlus/spp_misc-code/tree/main/C/Cpp/Exercises/exercise_20250922_1314
  *
  * Compilation Command (as per build.sh file in directory):
