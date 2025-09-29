@@ -58,14 +58,14 @@ enum dirTwoDimState
 
 struct arrElemsTwoDim
 {
-	size_t elemDimOne;
-	size_t elemDimTwo;
+	uint8_t elemDimOne;
+	uint8_t elemDimTwo;
 };
 
 struct arrTwoDimLength
 {
-	size_t dimOneLength;
-	size_t dimTwoLength;
+	uint8_t dimOneLength;
+	uint8_t dimTwoLength;
 };
 
 struct arrTwoDimSelctdShiftValidityStates
@@ -116,7 +116,7 @@ const char CHARARR_KEYBRD_LAYOUT[KEYBRD_LAYOUT_ROW_CNT][KEYBRD_LAYOUT_COLUMN_CNT
 
 using namespace std;
 
-struct arrElemsTwoDim returnArrElemsTwoDimFromElems(size_t elemDimOne, size_t elemDimTwo)
+struct arrElemsTwoDim returnArrElemsTwoDimFromElems(uint8_t elemDimOne, uint8_t elemDimTwo)
 {
 	struct arrElemsTwoDim result;
 	result.elemDimOne = elemDimOne;
@@ -165,7 +165,7 @@ bool chkKeySelctnValidty(char char_In)
 	);
 }
 
-enum arrElemsOneDimSelctdShiftValidityState chkShiftArrOneDimElemsSelectd(size_t u8_arrOneDimElemInPositn, size_t u8_arrOneDimLengthIn, int elemDimOneShift)
+enum arrElemsOneDimSelctdShiftValidityState chkShiftArrOneDimElemsSelectd(uint8_t u8_arrOneDimElemInPositn, uint8_t u8_arrOneDimLengthIn, int elemDimOneShift)
 {
 	enum arrElemsOneDimSelctdShiftValidityState result;
 
@@ -467,7 +467,7 @@ int main()
 
 	enum dirTwoDimState knightMove01DirState = DTDState_UNASSIGNED;
 
-	size_t keyPressngCorrectCombinatnLength = KEY_PRESSNG_CORRECT_SEQUENC_LENGTH;
+	uint8_t keyPressngCorrectCombinatnLength = KEY_PRESSNG_CORRECT_SEQUENC_LENGTH;
 
 	uint64_t u64_cntValidCombinations = 0;
 
