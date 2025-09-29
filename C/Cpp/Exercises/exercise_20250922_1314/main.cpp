@@ -45,6 +45,17 @@ enum arrElemsOneDimSelctdShiftValidityState
 	AEODSSVState_DISALLOWED_MISC
 };
 
+enum dirTwoDimState
+{
+	DTDState_UNASSIGNED,
+	DTDState_NULL,
+	DTDState_ERROR,
+	DTDState_UP,
+	DTDState_DOWN,
+	DTDState_LEFT,
+	DTDState_RIGHT
+};
+
 struct arrElemsTwoDim
 {
 	size_t elemDimOne;
@@ -75,7 +86,8 @@ struct combinationCriteria
 	struct arrElemsTwoDim arr_keybrdLayoutPositnSequence[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
 	bool validKeyCombinationPass;
 	bool vowelCriteriaPass;
-	bool validKnightMovesPass;
+	bool validKnightMovesMove01Pass;
+	bool validKnightMovesMove02Pass;
 };
 
 // I'm replacing '\0' with '0' and '4'
@@ -410,7 +422,9 @@ void printCombinationCriteriaArr(struct combinationCriteria* arr_ComboCrit, int 
 		cout << "\t";
 		cout << "Vowel Pass: " << (int) (arr_ComboCrit[i].vowelCriteriaPass);
 		cout << "\t";
-		cout << "Knight Moves Pass: " << (int) (arr_ComboCrit[i].validKnightMovesPass);
+		cout << "Knight Moves (M01) Pass: " << (int) (arr_ComboCrit[i].validKnightMovesMove01Pass);
+		cout << "\t";
+		cout << "Knight Moves (M02) Pass: " << (int) (arr_ComboCrit[i].validKnightMovesMove02Pass);
 		cout << "\n";
 	}
 	cout << "\n";
@@ -445,15 +459,13 @@ int main()
 
 	uint8_t u8_cntKeybrdCombinatnVowel = 0;
 	uint8_t u8_cntKeybrdCombinatnKeySelctnValid = 0;
-	uint8_t u8_cntKeybrdCombinatnKnightMoves = 0;
+	uint8_t u8_cntKeybrdCombinatnKnightMovesM01 = 0;
+	uint8_t u8_cntKeybrdCombinatnKnightMovesM02 = 0;
 
-	uint8_t u8_chkKeybrdDigitColShft = 0;
-	uint8_t u8_chkKeybrdDigitRowShft = 0;
+	int8_t i8_chkKeybrdDigitColShft = 0;
+	int8_t i8_chkKeybrdDigitRowShft = 0;
 
-	struct arrElemsTwoDim checkKnightMove01Up;
-	struct arrElemsTwoDim checkKnightMove01Down;
-	struct arrElemsTwoDim checkKnightMove01Left;
-	struct arrElemsTwoDim checkKnightMove01Right;
+	enum dirTwoDimState knightMove01DirState = DTDState_UNASSIGNED;
 
 	size_t keyPressngCorrectCombinatnLength = KEY_PRESSNG_CORRECT_SEQUENC_LENGTH;
 
@@ -566,7 +578,8 @@ int main()
 		arr_CombinatnCriteria[cntrCreateComboCrit]
 			.validKeyCombinationPass = false;
 		arr_CombinatnCriteria[cntrCreateComboCrit].vowelCriteriaPass = false;
-		arr_CombinatnCriteria[cntrCreateComboCrit].validKnightMovesPass = false;
+		arr_CombinatnCriteria[cntrCreateComboCrit].validKnightMovesMove01Pass = false;
+		arr_CombinatnCriteria[cntrCreateComboCrit].validKnightMovesMove02Pass = false;
 	}
 
 	delete[] strArrTwoDim_keyPressngCombinatns;
@@ -581,10 +594,11 @@ int main()
 	{
 		u8_cntKeybrdCombinatnKeySelctnValid = 0;
 		u8_cntKeybrdCombinatnVowel = 0;
-		u8_cntKeybrdCombinatnKnightMoves = 0;
+		u8_cntKeybrdCombinatnKnightMovesM01 = 0;
+		u8_cntKeybrdCombinatnKnightMovesM02 = 0;
 		
-		u8_chkKeybrdDigitColShft = 0;
-		u8_chkKeybrdDigitRowShft = 0;
+		i8_chkKeybrdDigitColShft = 0;
+		i8_chkKeybrdDigitRowShft = 0;
 		for
 		(
 			int cntrChkComboCritKeybrdDig = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); cntrChkComboCritKeybrdDig >= 0;
@@ -626,23 +640,13 @@ int main()
 			cntrChkComboCritKnightMov--
 		)
 		{
-			u8_chkKeybrdDigitRowShft = 0;
-			u8_chkKeybrdDigitColShft = 0;
+			i8_chkKeybrdDigitRowShft = 0;
+			i8_chkKeybrdDigitColShft = 0;
 
-			checkKnightMove01Up.elemDimOne = 0;
-			checkKnightMove01Up.elemDimTwo = 0;
+			knightMove01DirState = DTDState_UNASSIGNED;
 
-			checkKnightMove01Down.elemDimOne = 0;
-			checkKnightMove01Down.elemDimTwo = 0;
-
-			checkKnightMove01Left.elemDimOne = 0;
-			checkKnightMove01Left.elemDimTwo = 0;
-
-			checkKnightMove01Right.elemDimOne = 0;
-			checkKnightMove01Right.elemDimTwo = 0;
-
-			u8_chkKeybrdDigitRowShft
-				= abs
+			i8_chkKeybrdDigitRowShft
+				=
 				(
 					(int) arr_CombinatnCriteria[cntrCheckEachComboCrit]
 						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov]
@@ -653,8 +657,8 @@ int main()
 						.elemDimOne
 				);
 
-			u8_chkKeybrdDigitColShft 
-				= abs
+			i8_chkKeybrdDigitColShft 
+				=
 				(
 					(int) arr_CombinatnCriteria[cntrCheckEachComboCrit]
 						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov]
@@ -665,70 +669,137 @@ int main()
 						.elemDimTwo
 				);
 
-			checkKnightMove01Up.elemDimOne
-				=
-				(
-					(int) arr_CombinatnCriteria[cntrCheckEachComboCrit]
-						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1]
-						.elemDimOne
-				);
-			checkKnightMove01Up.elemDimTwo
-				=
-				(
-					(int) arr_CombinatnCriteria[cntrCheckEachComboCrit]
-						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1]
-						.elemDimTwo
-					- (int) KNIGHT_MOVE_01_SHIFT_ELEMS
-				);
 			
-			checkKnightMove01Down.elemDimOne
-				=
-				(
-					(int) arr_CombinatnCriteria[cntrCheckEachComboCrit]
-						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1]
-						.elemDimOne
-				);
-			checkKnightMove01Down....elemDimTwo
-				=
-				(
-					(int) arr_CombinatnCriteria[cntrCheckEachComboCrit]
-						.arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1]
-						.elemDimTwo
-					- (int) KNIGHT_MOVE_01_SHIFT_ELEMS
-				);
 			if
 			(
 				(
 					(
-						u8_chkKeybrdDigitRowShft == KNIGHT_MOVE_01_SHIFT_ELEMS
-						&&
-						chkKeySelctnValidty
-						(
-							returnCharFromKeybrdLayout
-							(
-								arr_CombinatnCriteria[cntrCheckEachComboCrit]
-									.arr_keybrdLayoutPositnSequence[cntrChkComboCritKeybrdDig]
-							)
-						)
+						abs(i8_chkKeybrdDigitRowShft) == KNIGHT_MOVE_01_SHIFT_ELEMS
 					)
 					&&
 					(
-						u8_chkKeybrdDigitColShft == KNIGHT_MOVE_02_SHIFT_ELEMS
+						abs(i8_chkKeybrdDigitColShft) == KNIGHT_MOVE_02_SHIFT_ELEMS
 					)
 				)
 				^
 				(
 					(
-						u8_chkKeybrdDigitRowShft == KNIGHT_MOVE_02_SHIFT_ELEMS
+						abs(i8_chkKeybrdDigitRowShft) == KNIGHT_MOVE_02_SHIFT_ELEMS
 					)
 					&&
 					(
-						u8_chkKeybrdDigitColShft == KNIGHT_MOVE_01_SHIFT_ELEMS
+						abs(i8_chkKeybrdDigitColShft) == KNIGHT_MOVE_01_SHIFT_ELEMS
 					)
 				)
 			)
 			{
-				u8_cntKeybrdCombinatnKnightMoves++;
+				u8_cntKeybrdCombinatnKnightMovesM02++;
+			}
+			if
+			(
+				(i8_chkKeybrdDigitRowShft == -(KNIGHT_MOVE_01_SHIFT_ELEMS))
+				&&
+				(abs(i8_chkKeybrdDigitColShft) == (KNIGHT_MOVE_02_SHIFT_ELEMS))
+				
+			)
+			{
+				knightMove01DirState = DTDState_UP;
+			}
+			else if
+			(
+				(i8_chkKeybrdDigitRowShft == (KNIGHT_MOVE_01_SHIFT_ELEMS))
+				&&
+				(abs(i8_chkKeybrdDigitColShft) == (KNIGHT_MOVE_02_SHIFT_ELEMS))
+				
+			)
+			{
+				knightMove01DirState = DTDState_DOWN;
+			}
+			else if
+			(
+				(abs(i8_chkKeybrdDigitRowShft) == (KNIGHT_MOVE_02_SHIFT_ELEMS))
+				&&
+				((i8_chkKeybrdDigitColShft) == -(KNIGHT_MOVE_01_SHIFT_ELEMS))
+				
+			)
+			{
+				knightMove01DirState = DTDState_LEFT;
+			}
+			else if
+			(
+				(abs(i8_chkKeybrdDigitRowShft) == (KNIGHT_MOVE_02_SHIFT_ELEMS))
+				&&
+				((i8_chkKeybrdDigitColShft) == (KNIGHT_MOVE_01_SHIFT_ELEMS))
+				
+			)
+			{
+				knightMove01DirState = DTDState_RIGHT;
+			}
+			else
+			{
+				knightMove01DirState = DTDState_ERROR;
+			}
+
+			switch (knightMove01DirState)
+			{
+				case DTDState_UP:
+					if
+					(
+						chkKeySelctnValidty
+						(
+							CHARARR_KEYBRD_LAYOUT
+								[abs(((int) arr_CombinatnCriteria[cntrCheckEachComboCrit].arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1].elemDimOne) - ((int) KNIGHT_MOVE_01_SHIFT_ELEMS))]
+								[(arr_CombinatnCriteria[cntrCheckEachComboCrit].arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1].elemDimTwo)]
+						)
+					)
+					{
+						u8_cntKeybrdCombinatnKnightMovesM01++;
+					}
+					break;
+				case DTDState_DOWN:
+					if
+					(
+						chkKeySelctnValidty
+						(
+							CHARARR_KEYBRD_LAYOUT
+								[abs(((int) arr_CombinatnCriteria[cntrCheckEachComboCrit].arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1].elemDimOne) + ((int) KNIGHT_MOVE_01_SHIFT_ELEMS))]
+								[(arr_CombinatnCriteria[cntrCheckEachComboCrit].arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1].elemDimTwo)]
+						)
+					)
+					{
+						u8_cntKeybrdCombinatnKnightMovesM01++;
+					}
+					break;
+				case DTDState_LEFT:
+					if
+					(
+						chkKeySelctnValidty
+						(
+							CHARARR_KEYBRD_LAYOUT
+								[(arr_CombinatnCriteria[cntrCheckEachComboCrit].arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1].elemDimOne)]
+								[abs(((int) arr_CombinatnCriteria[cntrCheckEachComboCrit].arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1].elemDimTwo) - ((int) KNIGHT_MOVE_01_SHIFT_ELEMS))]
+						)
+					)
+					{
+						u8_cntKeybrdCombinatnKnightMovesM01++;
+					}
+					break;
+				case DTDState_RIGHT:
+					if
+					(
+						chkKeySelctnValidty
+						(
+							CHARARR_KEYBRD_LAYOUT
+								[(arr_CombinatnCriteria[cntrCheckEachComboCrit].arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1].elemDimOne)]
+								[abs(((int) arr_CombinatnCriteria[cntrCheckEachComboCrit].arr_keybrdLayoutPositnSequence[cntrChkComboCritKnightMov + 1].elemDimTwo) + ((int) KNIGHT_MOVE_01_SHIFT_ELEMS))]
+						)
+					)
+					{
+						u8_cntKeybrdCombinatnKnightMovesM01++;
+					}
+					break;
+				default:
+					break;
 			}
 					
 		}
@@ -736,13 +807,16 @@ int main()
 			= (u8_cntKeybrdCombinatnKeySelctnValid == KEY_PRESSNG_CORRECT_SEQUENC_LENGTH);
 		arr_CombinatnCriteria[cntrCheckEachComboCrit].vowelCriteriaPass
 			= (u8_cntKeybrdCombinatnVowel <= 2);
-		arr_CombinatnCriteria[cntrCheckEachComboCrit].validKnightMovesPass
-			= (u8_cntKeybrdCombinatnKnightMoves == (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1));
+		arr_CombinatnCriteria[cntrCheckEachComboCrit].validKnightMovesMove01Pass
+			= (u8_cntKeybrdCombinatnKnightMovesM01 == (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1));
+		arr_CombinatnCriteria[cntrCheckEachComboCrit].validKnightMovesMove02Pass
+			= (u8_cntKeybrdCombinatnKnightMovesM02 == (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1));
 		if
 		(
 			arr_CombinatnCriteria[cntrCheckEachComboCrit].validKeyCombinationPass &&
 			arr_CombinatnCriteria[cntrCheckEachComboCrit].vowelCriteriaPass &&
-			arr_CombinatnCriteria[cntrCheckEachComboCrit].validKnightMovesPass
+			arr_CombinatnCriteria[cntrCheckEachComboCrit].validKnightMovesMove01Pass &&
+			arr_CombinatnCriteria[cntrCheckEachComboCrit].validKnightMovesMove02Pass
 		)
 		{
 			u64_cntValidCombinations++;
