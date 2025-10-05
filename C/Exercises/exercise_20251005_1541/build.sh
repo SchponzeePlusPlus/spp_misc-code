@@ -25,8 +25,10 @@ printf "\n"
 printf "Build shell script: Building program...\n"
 printf "\n"
 
+# Don't know how I worked with modules in uni, I don't remember having to include them in the build command
+# This is why CMake or Makefile would be good to implement
 #gcc main.c -v -Wpedantic -std=c23 -o ./build/Program_Main
-gcc main.c -Wpedantic -std=c23 -o ./build/Program_Main
+gcc main.c dgac_c_lib_data-types/mod_binary-bitwise-ops_gen/dgac_c_lib_data-types_mod_binary-bitwise-ops_gen_gen.c -Wpedantic -std=c23 -o ./build/Program_Main
 
 printf "\n"
 printf "Build shell script: If the last message was:\n"
