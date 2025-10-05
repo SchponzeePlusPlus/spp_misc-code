@@ -29,40 +29,67 @@ int main()
 	printf("valTwo = %lu\n", valTwo);
 	printf("Set Bit Shifting valOne...\n");
 	printf("Clear Bit Shifting valTwo...\n");
-	valOne = setShiftLeftIntoValUint32(valOne, 1, 0);
-	valTwo = clearShiftLeftIntoValUint32(valTwo, 1, 0);
+	valOne = setShiftLeftIntoValUint32(valOne, 1U, 0U);
+	valTwo = clearShiftLeftIntoValUint32(valTwo, 1U, 0U);
 	printf("valOne = %lu\n", valOne);
 	printf("valTwo = %lu\n", valTwo);
-	valOne = setShiftLeftIntoValUint32(valOne, 1, 1);
-	valTwo = clearShiftLeftIntoValUint32(valTwo, 1, 1);
+	valOne = setShiftLeftIntoValUint32(valOne, 1U, 1U);
+	valTwo = clearShiftLeftIntoValUint32(valTwo, 1U, 1U);
 	printf("valOne = %lu\n", valOne);
 	printf("valTwo = %lu\n", valTwo);
-	valOne = setShiftLeftIntoValUint32(valOne, 1, 2);
-	valTwo = clearShiftLeftIntoValUint32(valTwo, 1, 2);
+	valOne = setShiftLeftIntoValUint32(valOne, 1U, 2U);
+	valTwo = clearShiftLeftIntoValUint32(valTwo, 1U, 2U);
 	printf("valOne = %lu\n", valOne);
 	printf("valTwo = %lu\n", valTwo);
-	valOne = setShiftLeftIntoValUint32(valOne, 2, 3);
-	valTwo = clearShiftLeftIntoValUint32(valTwo, 2, 3);
+	valOne = setShiftLeftIntoValUint32(valOne, 2U, 3U);
+	valTwo = clearShiftLeftIntoValUint32(valTwo, 2U, 3U);
 	printf("valOne = %lu\n", valOne);
 	printf("valTwo = %lu\n", valTwo);
-	valOne = setShiftLeftIntoValUint32(valOne, 0b1111111111111111111111111111, 5);
-	valTwo = clearShiftLeftIntoValUint32(valTwo, 0b1111111111111111111111111111, 5);
+	valOne = setShiftLeftIntoValUint32(valOne, 0b1111111111111111111111111111U, 5U);
+	valTwo = clearShiftLeftIntoValUint32(valTwo, 0b1111111111111111111111111111U, 5U);
 	printf("valOne = %lu\n", valOne);
 	printf("valTwo = %lu\n", valTwo);
 
 	valOne = 0x00000000U;
+	printf("Set Bit Shifting For loop no save\n");
+	for (int16_t i = 0; i < 32; i++)
+	{
+		printf("valOne = %lu\n", setShiftLeftIntoValUint32(valOne, 1U, (uint8_t) i));
+	}
+	printf("\n");
+	valOne = 0x00000000U;
 	printf("Set Bit Shifting For loop\n");
 	for (int16_t i = 0; i < 32; i++)
 	{
-		printf("valOne = %lu\n", setShiftLeftIntoValUint32(valOne, 1, (uint8_t) i));
+		valOne = setShiftLeftIntoValUint32(valOne, 1U, (uint8_t) i);
+		printf("valOne = %lu\n", valOne);
+	}
+	printf("\n");
+	valOne = 0x00000000U;
+	printf("Test Repetitive Set Bit Shifting 0th digit For loop\n");
+	for (int16_t i = 0; i < 32; i++)
+	{
+		valOne = setShiftLeftIntoValUint32(valOne, 1U, 0U);
+		printf("valOne = %lu\n", valOne);
+	}
+	printf("\n");
+	valTwo = 0xFFFFFFFFU;
+	printf("Clear Bit Shifting For loop but no save\n");
+	printf("valTwo = %lu\n", valTwo);
+	for (int16_t i = 31; i > -1 ; i--)
+	{
+		//printf("i = %d\n", i);
+		printf("valTwo = %lu\n", clearShiftLeftIntoValUint32(valTwo, 1U, (uint8_t) i));
 	}
 	printf("\n");
 	valTwo = 0xFFFFFFFFU;
 	printf("Clear Bit Shifting For loop\n");
+	printf("valTwo = %lu\n", valTwo);
 	for (int16_t i = 31; i > -1 ; i--)
 	{
 		//printf("i = %d\n", i);
-		printf("valTwo = %lu\n", clearShiftLeftIntoValUint32(valTwo, 1, (uint8_t) i));
+		valTwo = clearShiftLeftIntoValUint32(valTwo, 1U, (uint8_t) i);
+		printf("valTwo = %lu\n", valTwo);
 	}
 
 	printf("Program Complete.\n");
