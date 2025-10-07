@@ -32,7 +32,7 @@
 #define KEYBRD_LAYOUT_COLUMN_CNT ((uint8_t) 5U)
 
 //#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((unsigned long long int) 10)
-#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 10U)
+#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 5U)
 #define INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((int) KEY_PRESSNG_CORRECT_SEQUENC_LENGTH)
 
 #define KNIGHT_MOVE_01_SHIFT_ELEMS ((uint8_t) 2U)
@@ -206,16 +206,19 @@ struct keyPressngCombinatnsTotalRawCalcElem unassignKeyPressForIncrementCalc()
 	return result;
 }
 
-struct keyPressngCombinatnsTotalRawCalcElem* unassignKeyPressngCombinatnBuffer()
+//int (&foo( int (&a)[5] ))[5] { return a; }
+//struct keyPressngCombinatnsTotalRawCalcElem* unassignKeyPressngCombinatnBuffer()
+struct keyPressngCombinatnsTotalRawCalcElem (&unassignKeyPressngCombinatnBuffer(struct keyPressngCombinatnsTotalRawCalcElem (&result)[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH]))[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH]
 {
-	struct keyPressngCombinatnsTotalRawCalcElem* result = new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	//struct keyPressngCombinatnsTotalRawCalcElem* result = new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	//static struct keyPressngCombinatnsTotalRawCalcElem result[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
 
 	for (int j = 0; j < INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; j++)
 	{
 		result[j] = unassignKeyPressForIncrementCalc();
 	}
 	return result;
-	delete[] result;
+	//delete[] result;
 }
 
 struct keyPressngCombinatnsTotalRawCalcElem copyKeyPressForIncrement(struct keyPressngCombinatnsTotalRawCalcElem currentKeyPress)
@@ -228,17 +231,25 @@ struct keyPressngCombinatnsTotalRawCalcElem copyKeyPressForIncrement(struct keyP
 	return result;
 }
 
-struct keyPressngCombinatnsTotalRawCalcElem* copyKeyCombinatnForIncrement(struct keyPressngCombinatnsTotalRawCalcElem* currentKeyCombinatn)
+//int (&foo( int (&a)[5] ))[5] { return a; }
+//struct keyPressngCombinatnsTotalRawCalcElem* copyKeyCombinatnForIncrement(struct keyPressngCombinatnsTotalRawCalcElem* currentKeyCombinatn)
+struct keyPressngCombinatnsTotalRawCalcElem (&copyKeyCombinatnForIncrement(struct keyPressngCombinatnsTotalRawCalcElem (&result)[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH], struct keyPressngCombinatnsTotalRawCalcElem (&currentKeyCombinatn)[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH]))[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH]
 {
-	struct keyPressngCombinatnsTotalRawCalcElem* result = new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
-	result = unassignKeyPressngCombinatnBuffer();
+	//struct keyPressngCombinatnsTotalRawCalcElem* result = new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	//static struct keyPressngCombinatnsTotalRawCalcElem result[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	//result = unassignKeyPressngCombinatnBuffer();
+	//unassignKeyPressngCombinatnBuffer() function content:
+	for (int j = 0; j < INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; j++)
+	{
+		result[j] = unassignKeyPressForIncrementCalc();
+	}
 	// manual copy 
 	for (int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); k >= 0; k--)
 	{
 		result[k] = copyKeyPressForIncrement(currentKeyCombinatn[k]);
 	}
 	return result;
-	delete[] result;
+	//delete[] result;
 }
 
 struct keyPressdPositnCalcs unassignStrKeyPressdPositnCalcs()
@@ -256,15 +267,18 @@ struct keyPressdPositnCalcs unassignStrKeyPressdPositnCalcs()
 	return result;
 }
 
-struct keyPressdPositnCalcs* unassignStrArrKeyPressdPositnCalcs()
+//int (&foo( int (&a)[5] ))[5] { return a; }
+//struct keyPressdPositnCalcs* unassignStrArrKeyPressdPositnCalcs()
+struct keyPressdPositnCalcs (&unassignStrArrKeyPressdPositnCalcs(struct keyPressdPositnCalcs (&result)[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH]))[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH]
 {
-	struct keyPressdPositnCalcs* result = new struct keyPressdPositnCalcs[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	//struct keyPressdPositnCalcs* result = new struct keyPressdPositnCalcs[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	//static struct keyPressdPositnCalcs result[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
 	for (int k = 0; k < INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; k++)
 	{
 		result[k] = unassignStrKeyPressdPositnCalcs();
 	}
 	return result;
-	delete[] result;
+	//delete[] result;
 }
 
 struct keyPressdPositnCalcs initNextStrKeyPressdPositnCalcs(struct keyPressdPositnCalcs inVal)
@@ -521,15 +535,23 @@ struct keyPressngCombinatnsTotalRawCalcElem shiftKeyPosition(struct keyPressngCo
 	return result;
 }
 
+//int (&foo( int (&a)[5] ))[5] { return a; }
 // more like increment key press array position ? no more like increment value in buffer ?
-struct keyPressngCombinatnsTotalRawCalcElem* incrementKeyCombinatn
+//struct keyPressngCombinatnsTotalRawCalcElem* incrementKeyCombinatn(struct keyPressngCombinatnsTotalRawCalcElem* currentKeyCombinatn)
+struct keyPressngCombinatnsTotalRawCalcElem (&incrementKeyCombinatn
 (
-	struct keyPressngCombinatnsTotalRawCalcElem* currentKeyCombinatn
-)
+	struct keyPressngCombinatnsTotalRawCalcElem (&result)[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH],
+	struct keyPressngCombinatnsTotalRawCalcElem (&currentKeyCombinatn)[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH]
+))[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH]
 {
-	struct keyPressngCombinatnsTotalRawCalcElem* result
-		= new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
-	result = unassignKeyPressngCombinatnBuffer();
+	//struct keyPressngCombinatnsTotalRawCalcElem* result = new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	//static struct keyPressngCombinatnsTotalRawCalcElem result[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	//result = unassignKeyPressngCombinatnBuffer();
+	//unassignKeyPressngCombinatnBuffer() function content:
+	for (int j = 0; j < INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; j++)
+	{
+		result[j] = unassignKeyPressForIncrementCalc();
+	}
 	bool chkIncrementOccurred = false;
 	bool combinatnOvrflow = false;
 
@@ -606,10 +628,10 @@ struct keyPressngCombinatnsTotalRawCalcElem* incrementKeyCombinatn
 
 	return result;
 
-	delete[] result;
+	//delete[] result;
 }
 
-/* void printKeyPressChar(struct arrElemsTwoDim strArrTwoDimElems_InPositn)
+void printKeyPressChar(struct arrElemsTwoDim strArrTwoDimElems_InPositn)
 {
 	cout << returnCharFromKeybrdLayout(strArrTwoDimElems_InPositn);
 }
@@ -642,7 +664,7 @@ void printCombinationCriteriaBuffr(struct keyPressCombinatnBuffr critBuffr)
 	cout << "\t";
 	cout << "Knight Moves (M02) Pass: " << (int) (critBuffr.str_criteriaPasses.validKnightMovesMove02Pass);
 	cout << "\n";
-} */
+}
 
 struct i8TwoVals calcStrCntKeyPressTransitndTwoDimShft(struct arrElemsTwoDim keyPressdArrayPositn, struct arrElemsTwoDim keyPressdPrevArrayPositn)
 {
@@ -821,8 +843,9 @@ int main()
 
 	struct arrElemsTwoDim keyPressdArrPositnCombinatnBuffr[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
 
-	struct keyPressngCombinatnsTotalRawCalcElem* strArrOneDim_keyPressngCombinatnBuffer
-		= new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	//struct keyPressngCombinatnsTotalRawCalcElem* strArrOneDim_keyPressngCombinatnBuffer = new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	struct keyPressngCombinatnsTotalRawCalcElem strArrOneDim_keyPressngCombinatnBuffer[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	struct keyPressngCombinatnsTotalRawCalcElem strArrOneDim_keyPressngCombinatnBufferOld[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
 
 	struct keyPressCombinatnBuffr str_buffr = unassignStrKeyPressCombinatnBuffr();
 
@@ -852,15 +875,17 @@ int main()
 		keyPressdArrPositnCombinatnBuffr[k] = unassignStrArrElemsTwoDim();
 	}
 
-	strArrOneDim_keyPressngCombinatnBuffer = unassignKeyPressngCombinatnBuffer();
+	unassignKeyPressngCombinatnBuffer(strArrOneDim_keyPressngCombinatnBuffer);
+	unassignKeyPressngCombinatnBuffer(strArrOneDim_keyPressngCombinatnBufferOld);
 
-	cout << "loop begin\n";
+	//cout << "loop begin\n";
 	l = 0;
 	while (l < keyPressngCombinatnsTotalRaw)
 	{
-		cout << "l: " << l << "\n";
+		//cout << "l: " << l << "\n";
 		str_buffr = unassignStrKeyPressCombinatnBuffr();
-		strArrOneDim_keyPressngCombinatnBuffer = unassignKeyPressngCombinatnBuffer();
+		unassignKeyPressngCombinatnBuffer(strArrOneDim_keyPressngCombinatnBuffer);
+		unassignKeyPressngCombinatnBuffer(strArrOneDim_keyPressngCombinatnBufferOld);
 		for (int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); k >= 0; k--)
 		{
 			str_buffr.strArr_keyPressdPositnCalc[k].keyPressdArrayPositn = keyPressdArrPositnCombinatnBuffr[k];
@@ -910,9 +935,13 @@ int main()
 			strArrOneDim_keyPressngCombinatnBuffer[k].ChkOvrflwIn = false;
 			strArrOneDim_keyPressngCombinatnBuffer[k].ChkOvrflwOut = false;
 		}
-		
+
+		for (int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); k >= 0; k--)
+		{
+			strArrOneDim_keyPressngCombinatnBufferOld[k] = strArrOneDim_keyPressngCombinatnBuffer[k];
+		}
 		//cout << "Incrementing Combination...\n";
-		strArrOneDim_keyPressngCombinatnBuffer = incrementKeyCombinatn(strArrOneDim_keyPressngCombinatnBuffer);
+		incrementKeyCombinatn(strArrOneDim_keyPressngCombinatnBuffer, strArrOneDim_keyPressngCombinatnBufferOld);
 		for (int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); k >= 0; k--)
 		{
 			keyPressdArrPositnCombinatnBuffr[k] = strArrOneDim_keyPressngCombinatnBuffer[k].keybrdLayoutPositn;
@@ -923,7 +952,7 @@ int main()
 
 	cout << "Valid Combinations: " << u64_cntValidCombinations << "\n";
 
-	delete[] strArrOneDim_keyPressngCombinatnBuffer;
+	//delete[] strArrOneDim_keyPressngCombinatnBuffer;
 
 	cout << "Program Complete.\n";
 	cout << "\n";
