@@ -4,9 +4,9 @@
  * 
  * Author: SchponzeePlusPlus
  * 
- * Version: V0.0.0.0
+ * Version: V0.0.0.1 (WIP)
  * 
- * Solution Attempt: No. 1
+ * Solution Attempt: No. 2
  * 
  * SPP GitHub Link: https://github.com/SchponzeePlusPlus/spp_misc-code/tree/main/C/Cpp/Exercises/exercise_20250922_1314
  *
@@ -15,8 +15,7 @@
  * g++ -o ./build/Program_Main main.cpp -Wpedantic -std='c++23'
  * "
  * 
- * Note: DEVELOPED and COMPILED in a VM with DEBIAN (GNU / LINUX) (XFCE) 12 OS
- * 	(8 GB RAM) (4 cores from MS Surface Book 2)
+ * Note: DEVELOPED and COMPILED via Git Bash in a Windows 11 x64 Bare-Metal OS, 16 GB RAM, Intel i7-7700K CPU
  * 
  */
 
@@ -32,7 +31,7 @@
 #define KEYBRD_LAYOUT_COLUMN_CNT ((uint8_t) 5U)
 
 //#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((unsigned long long int) 10)
-#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 3U)
+#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 5U)
 #define INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((int) KEY_PRESSNG_CORRECT_SEQUENC_LENGTH)
 
 #define KNIGHT_MOVE_01_SHIFT_ELEMS ((uint8_t) 2U)
