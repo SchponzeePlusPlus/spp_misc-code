@@ -76,7 +76,7 @@ struct i8TwoVals
 {
 	int8_t i8_valOne;
 	int8_t i8_valTwo;
-}
+};
 
 struct arrTwoDimSelctdShiftValidityStates
 {
@@ -196,19 +196,48 @@ struct i8TwoVals unassignStri8TwoVals()
 	return result;
 }
 
+struct keyPressngCombinatnsTotalRawCalcElem unassignKeyPressForIncrementCalc()
+{
+	struct keyPressngCombinatnsTotalRawCalcElem result;
+	result.keybrdLayoutPositn = unassignStrArrElemsTwoDim();
+	result.ChkOvrflwIn = false;
+	result.ChkOvrflwOut = false;
+	
+	return result;
+}
+
 struct keyPressngCombinatnsTotalRawCalcElem* unassignKeyPressngCombinatnBuffer()
 {
 	struct keyPressngCombinatnsTotalRawCalcElem* result = new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
 
 	for (int j = 0; j < INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; j++)
 	{
-		result[j].keybrdLayoutPositn.elemDimOne = 0;
-		result[j].keybrdLayoutPositn.elemDimTwo = 0;
-		result[j].ChkOvrflwIn = false;
-		result[j].ChkOvrflwOut = false;
+		result[j] = unassignKeyPressForIncrementCalc();
 	}
 	return result;
 	delete[] result;
+}
+
+struct keyPressngCombinatnsTotalRawCalcElem copyKeyPressForIncrement(struct keyPressngCombinatnsTotalRawCalcElem currentKeyPress)
+{
+	struct keyPressngCombinatnsTotalRawCalcElem result = unassignKeyPressForIncrementCalc();
+	result.keybrdLayoutPositn.elemDimOne = currentKeyPress.keybrdLayoutPositn.elemDimOne;
+	result.keybrdLayoutPositn.elemDimTwo = currentKeyPress.keybrdLayoutPositn.elemDimTwo;
+	result.ChkOvrflwIn = currentKeyPress.ChkOvrflwIn;
+	result.ChkOvrflwOut = currentKeyPress.ChkOvrflwOut;
+	return result;
+}
+
+struct keyPressngCombinatnsTotalRawCalcElem* copyKeyCombinatnForIncrement(struct keyPressngCombinatnsTotalRawCalcElem* currentKeyCombinatn)
+{
+	struct keyPressngCombinatnsTotalRawCalcElem* result = new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	result = unassignKeyPressngCombinatnBuffer();
+	// manual copy 
+	for (int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); k >= 0; k--)
+	{
+		result[k] = copyKeyPressForIncrement(currentKeyCombinatn[k]);
+	}
+	return result;
 }
 
 struct keyPressdPositnCalcs unassignStrKeyPressdPositnCalcs()
@@ -224,6 +253,17 @@ struct keyPressdPositnCalcs unassignStrKeyPressdPositnCalcs()
 	result.str_cntKeyPressTransitndTwoDimShft = unassignStri8TwoVals();
 	result.knightMove01DirState = unassignEnumDirTwoDimState();
 	return result;
+}
+
+struct keyPressdPositnCalcs* unassignStrArrKeyPressdPositnCalcs()
+{
+	struct keyPressdPositnCalcs* result = new struct keyPressdPositnCalcs[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	for (int k = 0; k < INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; k++)
+	{
+		result[k] = unassignStrKeyPressdPositnCalcs();
+	}
+	return result;
+	delete[] result;
 }
 
 struct keyPressdPositnCalcs initNextStrKeyPressdPositnCalcs(struct keyPressdPositnCalcs inVal)
@@ -264,8 +304,9 @@ struct keyPressCombinatnCriteriaPasses unassignStrKeyPressCombinatnCriteriaPasse
 struct keyPressCombinatnBuffr unassignStrKeyPressCombinatnBuffr()
 {
 	struct keyPressCombinatnBuffr result;
+	//result.strArr_keyPressdPositnCalc = unassignStrArrKeyPressdPositnCalcs();
 	for (int k = 0; k < INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; k++)
-	{ // easier to implement array loop here than it's own function for now
+	{ //easier for now
 		result.strArr_keyPressdPositnCalc[k] = unassignStrKeyPressdPositnCalcs();
 	}
 	result.str_criteriaPassCnts = unassignStrKeyPressCombinatnCriteriaPassCnts();
@@ -479,6 +520,7 @@ struct keyPressngCombinatnsTotalRawCalcElem shiftKeyPosition(struct keyPressngCo
 	return result;
 }
 
+// more like increment key press array position ? no more like increment value in buffer ?
 struct keyPressngCombinatnsTotalRawCalcElem* incrementKeyCombinatn
 (
 	struct keyPressngCombinatnsTotalRawCalcElem* currentKeyCombinatn
@@ -486,6 +528,7 @@ struct keyPressngCombinatnsTotalRawCalcElem* incrementKeyCombinatn
 {
 	struct keyPressngCombinatnsTotalRawCalcElem* result
 		= new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+	result = unassignKeyPressngCombinatnBuffer();
 	bool chkIncrementOccurred = false;
 	bool combinatnOvrflow = false;
 
@@ -495,17 +538,9 @@ struct keyPressngCombinatnsTotalRawCalcElem* incrementKeyCombinatn
 
 	int keyPressngCombinatnElem = (INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1);
 
-	// manual copy 
-	for (int cntr_create = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); cntr_create >= 0; cntr_create--)
+	for (int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); k >= 0; k--)
 	{
-		result[cntr_create].keybrdLayoutPositn.elemDimOne
-			= currentKeyCombinatn[cntr_create].keybrdLayoutPositn.elemDimOne;
-		result[cntr_create].keybrdLayoutPositn.elemDimTwo
-			= currentKeyCombinatn[cntr_create].keybrdLayoutPositn.elemDimTwo;
-		result[cntr_create].ChkOvrflwIn
-			= currentKeyCombinatn[cntr_create].ChkOvrflwIn;
-		result[cntr_create].ChkOvrflwOut
-			= currentKeyCombinatn[cntr_create].ChkOvrflwOut;
+		result[k] = copyKeyPressForIncrement(currentKeyCombinatn[k]);
 	}
 
 	/* cout << "Current Key Combination: ";
@@ -571,41 +606,38 @@ struct keyPressngCombinatnsTotalRawCalcElem* incrementKeyCombinatn
 	return result;
 }
 
+void printKeyPressChar(struct arrElemsTwoDim strArrTwoDimElems_InPositn)
+{
+	cout << returnCharFromKeybrdLayout(strArrTwoDimElems_InPositn);
+}
+
 void printCombination(struct arrElemsTwoDim* strArrTwoDimElems_InPositn)
 {
 	cout << "Print Combination: ";
-	for (int j = 0; j < KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; j++)
+	for (int k = 0; k < KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; k++)
 	{
-		cout << CHARARR_KEYBRD_LAYOUT[strArrTwoDimElems_InPositn[j].elemDimOne][strArrTwoDimElems_InPositn[j].elemDimTwo];
+		printKeyPressChar(strArrTwoDimElems_InPositn[k]);
 	}
 	//cout << "\n";
 }
 
-void printCombinationCriteriaArr(struct combinationCriteria* arr_ComboCrit, int critListLength)
+void printCombinationCriteriaBuffr(struct keyPressCombinatnBuffr critBuffr)
 {
-	cout << "Print Criteria List: \n";
-	for (int i = 0; i < critListLength; i++)
+	
+	//printCombination(critBuffr.strArr_keyPressdPositnCalc);
+	cout << "Print Combination: ";
+	for (int k = 0; k < KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; k++)
 	{
-		printCombination(arr_ComboCrit[i].arr_keybrdLayoutPositnSequence);
-		/* cout << "Print Combination: ";
-		for (int j = 0; j < KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; j++)
-		{
-			cout <<
-				CHARARR_KEYBRD_LAYOUT
-				[arr_ComboCrit[i].arr_keybrdLayoutPositnSequence[j].elemDimOne]
-				[arr_ComboCrit[i].arr_keybrdLayoutPositnSequence[j].elemDimTwo];
-		}
-		cout << "\n"; */
-		cout << "\t";
-		cout << "Valid Characters: " << (int) (arr_ComboCrit[i].validKeyCombinationPass);
-		cout << "\t";
-		cout << "Vowel Pass: " << (int) (arr_ComboCrit[i].vowelCriteriaPass);
-		cout << "\t";
-		cout << "Knight Moves (M01) Pass: " << (int) (arr_ComboCrit[i].validKnightMovesMove01Pass);
-		cout << "\t";
-		cout << "Knight Moves (M02) Pass: " << (int) (arr_ComboCrit[i].validKnightMovesMove02Pass);
-		cout << "\n";
+		printKeyPressChar(critBuffr.strArr_keyPressdPositnCalc[k].keyPressdArrayPositn);
 	}
+	cout << "\t";
+	cout << "Valid Characters: " << (int) (critBuffr.str_criteriaPasses.validKeyCombinationPass);
+	cout << "\t";
+	cout << "Vowel Pass: " << (int) (critBuffr.str_criteriaPasses.vowelCriteriaPass);
+	cout << "\t";
+	cout << "Knight Moves (M01) Pass: " << (int) (critBuffr.str_criteriaPasses.validKnightMovesMove01Pass);
+	cout << "\t";
+	cout << "Knight Moves (M02) Pass: " << (int) (critBuffr.str_criteriaPasses.validKnightMovesMove02Pass);
 	cout << "\n";
 }
 
@@ -619,40 +651,40 @@ struct i8TwoVals calcStrCntKeyPressTransitndTwoDimShft(struct arrElemsTwoDim key
 	return result;
 }
 
-bool chkKeyPressTransitndKnightMoveM02ShiftValid(int8_t i8_chkKeybrdDigitRowShft, int8_t i8_chkKeybrdDigitColShft)
+bool chkKeyPressTransitndKnightMoveM02ShiftValid(struct i8TwoVals str_cntKeyPressTransitndTwoDimShft)
 {
 	return
 	(
 		(
 			(
-				abs(i8_chkKeybrdDigitRowShft) == KNIGHT_MOVE_01_SHIFT_ELEMS
+				abs(str_cntKeyPressTransitndTwoDimShft.i8_valOne) == KNIGHT_MOVE_01_SHIFT_ELEMS
 			)
 			&&
 			(
-				abs(i8_chkKeybrdDigitColShft) == KNIGHT_MOVE_02_SHIFT_ELEMS
+				abs(str_cntKeyPressTransitndTwoDimShft.i8_valTwo) == KNIGHT_MOVE_02_SHIFT_ELEMS
 			)
 		)
 		^
 		(
 			(
-				abs(i8_chkKeybrdDigitRowShft) == KNIGHT_MOVE_02_SHIFT_ELEMS
+				abs(str_cntKeyPressTransitndTwoDimShft.i8_valOne) == KNIGHT_MOVE_02_SHIFT_ELEMS
 			)
 			&&
 			(
-				abs(i8_chkKeybrdDigitColShft) == KNIGHT_MOVE_01_SHIFT_ELEMS
+				abs(str_cntKeyPressTransitndTwoDimShft.i8_valTwo) == KNIGHT_MOVE_01_SHIFT_ELEMS
 			)
 		)
 	);
 }
 
-enum dirTwoDimState getTransitningKnightMoveDirTwoDimStateFromShiftVals(int8_t i8_chkKeybrdDigitRowShft, int8_t i8_chkKeybrdDigitColShft)
+enum dirTwoDimState getTransitningKnightMoveDirTwoDimStateFromShiftVals(struct i8TwoVals str_cntKeyPressTransitndTwoDimShft)
 {
 	enum dirTwoDimState result = unassignEnumDirTwoDimState();
 	if
 	(
-		(i8_chkKeybrdDigitRowShft == -(KNIGHT_MOVE_01_SHIFT_ELEMS))
+		(str_cntKeyPressTransitndTwoDimShft.i8_valOne == -(KNIGHT_MOVE_01_SHIFT_ELEMS))
 		&&
-		(abs(i8_chkKeybrdDigitColShft) == (KNIGHT_MOVE_02_SHIFT_ELEMS))
+		(abs(str_cntKeyPressTransitndTwoDimShft.i8_valTwo) == (KNIGHT_MOVE_02_SHIFT_ELEMS))
 		
 	)
 	{
@@ -660,9 +692,9 @@ enum dirTwoDimState getTransitningKnightMoveDirTwoDimStateFromShiftVals(int8_t i
 	}
 	else if
 	(
-		(i8_chkKeybrdDigitRowShft == (KNIGHT_MOVE_01_SHIFT_ELEMS))
+		(str_cntKeyPressTransitndTwoDimShft.i8_valOne == (KNIGHT_MOVE_01_SHIFT_ELEMS))
 		&&
-		(abs(i8_chkKeybrdDigitColShft) == (KNIGHT_MOVE_02_SHIFT_ELEMS))
+		(abs(str_cntKeyPressTransitndTwoDimShft.i8_valTwo) == (KNIGHT_MOVE_02_SHIFT_ELEMS))
 		
 	)
 	{
@@ -670,9 +702,9 @@ enum dirTwoDimState getTransitningKnightMoveDirTwoDimStateFromShiftVals(int8_t i
 	}
 	else if
 	(
-		(abs(i8_chkKeybrdDigitRowShft) == (KNIGHT_MOVE_02_SHIFT_ELEMS))
+		(abs(str_cntKeyPressTransitndTwoDimShft.i8_valOne) == (KNIGHT_MOVE_02_SHIFT_ELEMS))
 		&&
-		((i8_chkKeybrdDigitColShft) == -(KNIGHT_MOVE_01_SHIFT_ELEMS))
+		((str_cntKeyPressTransitndTwoDimShft.i8_valTwo) == -(KNIGHT_MOVE_01_SHIFT_ELEMS))
 		
 	)
 	{
@@ -680,9 +712,9 @@ enum dirTwoDimState getTransitningKnightMoveDirTwoDimStateFromShiftVals(int8_t i
 	}
 	else if
 	(
-		(abs(i8_chkKeybrdDigitRowShft) == (KNIGHT_MOVE_02_SHIFT_ELEMS))
+		(abs(str_cntKeyPressTransitndTwoDimShft.i8_valOne) == (KNIGHT_MOVE_02_SHIFT_ELEMS))
 		&&
-		((i8_chkKeybrdDigitColShft) == (KNIGHT_MOVE_01_SHIFT_ELEMS))
+		((str_cntKeyPressTransitndTwoDimShft.i8_valTwo) == (KNIGHT_MOVE_01_SHIFT_ELEMS))
 		
 	)
 	{
@@ -739,10 +771,6 @@ bool chkKeyPressTransitningKnightMoveM01ArrayPositnValid(struct arrElemsTwoDim k
 		(returnCharFromKeybrdLayout(keyPressTransitningKnightMoveM01ArrayPositn)));
 }
 
-
-
-
-
 struct keyPressCombinatnCriteriaPasses chkKeyPressCombinatnCriteriaPasses(struct keyPressCombinatnCriteriaPassCnts str_passCnts)
 {
 	struct keyPressCombinatnCriteriaPasses result = unassignStrKeyPressCombinatnCriteriaPasses();
@@ -783,10 +811,16 @@ int main()
 	cout << "\n";
 	
 	// attempt to use static? keep in data memory?
-	uint64_t cntr_loopCombinationsList = 0;
+	uint64_t l = 0;
 
 	cout << "Declaring Buffer & (Un)assigning Buffer Values...\n";
 	// initialise buffer to "AAAAAAAAAA"
+
+	struct arrElemsTwoDim keyPressdArrPositnCombinatnBuffr[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+
+	struct keyPressngCombinatnsTotalRawCalcElem* strArrOneDim_keyPressngCombinatnBuffer
+		= new struct keyPressngCombinatnsTotalRawCalcElem[KEY_PRESSNG_CORRECT_SEQUENC_LENGTH];
+
 	struct keyPressCombinatnBuffr str_buffr = unassignStrKeyPressCombinatnBuffr();
 
 	cout << "(Un)assigned Buffer Values.\n";
@@ -810,141 +844,81 @@ int main()
 
 	cout << "made it here\n";
 
-	cntr_loopCombinationsList = 0;
-	while (cntr_loopCombinationsList < keyPressngCombinatnsTotalRaw)
+	for (int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); k >= 0; k--)
 	{
-		
+		keyPressdArrPositnCombinatnBuffr[k] = unassignStrArrElemsTwoDim();
+	}
 
+	strArrOneDim_keyPressngCombinatnBuffer = unassignKeyPressngCombinatnBuffer();
+
+	l = 0;
+	while (l < keyPressngCombinatnsTotalRaw)
+	{
+		str_buffr = unassignStrKeyPressCombinatnBuffr();
+		strArrOneDim_keyPressngCombinatnBuffer = unassignKeyPressngCombinatnBuffer();
+		for (int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); k >= 0; k--)
+		{
+			str_buffr.strArr_keyPressdPositnCalc[k].keyPressdArrayPositn = keyPressdArrPositnCombinatnBuffr[k];
+		}
+		for (int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); k >= 0; k--)
+		{
+			str_buffr.strArr_keyPressdPositnCalc[k].bo_chkKeyPressdValid =
+				chkKeySelctnValidty(returnCharFromKeybrdLayout(str_buffr.strArr_keyPressdPositnCalc
+					[k].keyPressdArrayPositn));
+			str_buffr.strArr_keyPressdPositnCalc[k].bo_chkKeyPressdVowel =
+				chkCharIsVowel(returnCharFromKeybrdLayout(str_buffr.strArr_keyPressdPositnCalc
+					[k].keyPressdArrayPositn));
+		}
+		for
+		(int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 2); k >= 0; k--)
+		{
+			str_buffr.strArr_keyPressdPositnCalc[k].str_cntKeyPressTransitndTwoDimShft =
+				calcStrCntKeyPressTransitndTwoDimShft(str_buffr.strArr_keyPressdPositnCalc[k].keyPressdArrayPositn, str_buffr.strArr_keyPressdPositnCalc[k + 1U].keyPressdArrayPositn);
+			
+			str_buffr.strArr_keyPressdPositnCalc[k].bo_chkKeyPressTransitndKnightMovesM02 = chkKeyPressTransitndKnightMoveM02ShiftValid(str_buffr.strArr_keyPressdPositnCalc[k].str_cntKeyPressTransitndTwoDimShft);
+			
+			str_buffr.strArr_keyPressdPositnCalc[k].knightMove01DirState = getTransitningKnightMoveDirTwoDimStateFromShiftVals(str_buffr.strArr_keyPressdPositnCalc[k].str_cntKeyPressTransitndTwoDimShft);
+			
+			str_buffr.strArr_keyPressdPositnCalc[k].bo_chkKeyPressTransitndKnightMovesM01 =
+			chkKeyPressTransitningKnightMoveM01ArrayPositnValid(calcKeyPressTransitningKnightMoveM01ArrayPositn(str_buffr.strArr_keyPressdPositnCalc[k + 1].keyPressdArrayPositn, str_buffr.strArr_keyPressdPositnCalc[k].knightMove01DirState));
+		}
+		for (int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); k >= 0; k--)
+		{
+			str_buffr.str_criteriaPassCnts.u8_cntKeybrdCombinatnKeySelctnValid = conditionalIncrementU8Val(str_buffr.strArr_keyPressdPositnCalc[k].bo_chkKeyPressdValid, str_buffr.str_criteriaPassCnts.u8_cntKeybrdCombinatnKeySelctnValid);
+
+			str_buffr.str_criteriaPassCnts.u8_cntKeybrdCombinatnVowel = conditionalIncrementU8Val(str_buffr.strArr_keyPressdPositnCalc[k].bo_chkKeyPressdVowel, str_buffr.str_criteriaPassCnts.u8_cntKeybrdCombinatnVowel);
+
+			str_buffr.str_criteriaPassCnts.u8_cntKeybrdCombinatnKnightMovesM01 = conditionalIncrementU8Val(str_buffr.strArr_keyPressdPositnCalc[k].bo_chkKeyPressTransitndKnightMovesM01, str_buffr.str_criteriaPassCnts.u8_cntKeybrdCombinatnKnightMovesM01);
+
+			str_buffr.str_criteriaPassCnts.u8_cntKeybrdCombinatnKnightMovesM02 = conditionalIncrementU8Val(str_buffr.strArr_keyPressdPositnCalc[k].bo_chkKeyPressTransitndKnightMovesM02, str_buffr.str_criteriaPassCnts.u8_cntKeybrdCombinatnKnightMovesM02);
+		}
+
+		str_buffr.str_criteriaPasses = chkKeyPressCombinatnCriteriaPasses(str_buffr.str_criteriaPassCnts);
+
+		u64_cntValidCombinations = incrementCntValidCombinations(str_buffr.str_criteriaPasses, u64_cntValidCombinations);
+
+		printCombinationCriteriaBuffr(str_buffr);
+
+		for (int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); k >= 0; k--)
+		{
+			strArrOneDim_keyPressngCombinatnBuffer[k].keybrdLayoutPositn = keyPressdArrPositnCombinatnBuffr[k];
+			strArrOneDim_keyPressngCombinatnBuffer[k].ChkOvrflwIn = false;
+			strArrOneDim_keyPressngCombinatnBuffer[k].ChkOvrflwOut = false;
+		}
+		
 		//cout << "Incrementing Combination...\n";
 		strArrOneDim_keyPressngCombinatnBuffer = incrementKeyCombinatn(strArrOneDim_keyPressngCombinatnBuffer);
-		cntr_loopCombinationsList++;
+		for (int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); k >= 0; k--)
+		{
+			keyPressdArrPositnCombinatnBuffr[k] = strArrOneDim_keyPressngCombinatnBuffer[k].keybrdLayoutPositn;
+		}
+		l++;
 		//cout << "Incremented Combination, repeating loop...\n";
 	}
 
-	delete[] strArrOneDim_keyPressngCombinatnBuffer;
-
-	struct combinationCriteria* arr_CombinatnCriteria
-		= new struct combinationCriteria[keyPressngCombinatnsTotalRaw];
-
-	for
-	(
-		int cntrCreateComboCrit = 0;
-		cntrCreateComboCrit < keyPressngCombinatnsTotalRaw;
-		cntrCreateComboCrit++
-	)
-	{
-		for
-		(
-			int cntrCreateComboCritKeybrdDig = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); cntrCreateComboCritKeybrdDig >= 0;
-			cntrCreateComboCritKeybrdDig--
-		)
-		{
-			arr_CombinatnCriteria[cntrCreateComboCrit]
-				.arr_keybrdLayoutPositnSequence[cntrCreateComboCritKeybrdDig].elemDimOne
-				= strArrTwoDim_keyPressngCombinatns[cntrCreateComboCrit][cntrCreateComboCritKeybrdDig].elemDimOne;
-			
-			arr_CombinatnCriteria[cntrCreateComboCrit]
-				.arr_keybrdLayoutPositnSequence[cntrCreateComboCritKeybrdDig].elemDimTwo
-				= strArrTwoDim_keyPressngCombinatns[cntrCreateComboCrit][cntrCreateComboCritKeybrdDig].elemDimTwo;
-		}
-		for
-		(
-			int cntrCreateComboCritKnightMov = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 2); cntrCreateComboCritKnightMov >= 0;
-			cntrCreateComboCritKnightMov--
-		)
-		{
-			//
-		}
-		arr_CombinatnCriteria[cntrCreateComboCrit]
-			.validKeyCombinationPass = false;
-		arr_CombinatnCriteria[cntrCreateComboCrit].vowelCriteriaPass = false;
-		arr_CombinatnCriteria[cntrCreateComboCrit].validKnightMovesMove01Pass = false;
-		arr_CombinatnCriteria[cntrCreateComboCrit].validKnightMovesMove02Pass = false;
-	}
-
-	delete[] strArrTwoDim_keyPressngCombinatns;
-
-	u64_cntValidCombinations = 0;
-	for
-	(
-		int cntrCheckEachComboCrit = 0;
-		cntrCheckEachComboCrit < keyPressngCombinatnsTotalRaw;
-		cntrCheckEachComboCrit++
-	)
-	{
-		u8_cntKeybrdCombinatnKeySelctnValid = 0;
-		u8_cntKeybrdCombinatnVowel = 0;
-		u8_cntKeybrdCombinatnKnightMovesM01 = 0;
-		u8_cntKeybrdCombinatnKnightMovesM02 = 0;
-		
-		i8_chkKeybrdDigitColShft = 0;
-		i8_chkKeybrdDigitRowShft = 0;
-		for
-		(
-			int cntrChkComboCritKeybrdDig = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); cntrChkComboCritKeybrdDig >= 0;
-			cntrChkComboCritKeybrdDig--
-		)
-		{
-			if
-			(
-				chkKeySelctnValidty
-				(
-					returnCharFromKeybrdLayout
-					(
-						arr_CombinatnCriteria[cntrCheckEachComboCrit]
-							.arr_keybrdLayoutPositnSequence[cntrChkComboCritKeybrdDig]
-					)
-				)
-			)
-			{
-				u8_cntKeybrdCombinatnKeySelctnValid++;
-			}
-			if
-			(
-				chkCharIsVowel
-				(
-					returnCharFromKeybrdLayout
-					(
-						arr_CombinatnCriteria[cntrCheckEachComboCrit]
-							.arr_keybrdLayoutPositnSequence[cntrChkComboCritKeybrdDig]
-					)
-				)
-			)
-			{
-				u8_cntKeybrdCombinatnVowel++;
-			}
-		}
-		for
-		(
-			int cntrChkComboCritKnightMov = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 2); cntrChkComboCritKnightMov >= 0;
-			cntrChkComboCritKnightMov--
-		)
-		{
-			i8_chkKeybrdDigitRowShft = 0;
-			i8_chkKeybrdDigitColShft = 0;
-
-			knightMove01DirState = DTDState_UNASSIGNED;
-
-			
-			calcStrCntKeyPressTransitndTwoDimShft()
-			
-			u8_cntKeybrdCombinatnKnightMovesM02 = conditionalIncrementU8Val(chkKeyPressTransitndKnightMoveM02ShiftValid())
-			...calcKeyPressTransitningKnightMoveM01ArrayPositn()
-
-			chkKeyPressTransitningKnightMoveM01ArrayPositnValid()
-
-			conditionalIncrement()
-			
-		chkKeyPressCombinatnCriteriaPasses()
-		
-		incrementCntValidCombinations()
-	}
-
-	printCombinationCriteriaArr(arr_CombinatnCriteria, keyPressngCombinatnsTotalRaw);
-
 	cout << "Valid Combinations: " << u64_cntValidCombinations << "\n";
 
-	delete[] arr_CombinatnCriteria;
+	delete[] strArrOneDim_keyPressngCombinatnBuffer;
 
 	cout << "Program Complete.\n";
 	cout << "\n";
