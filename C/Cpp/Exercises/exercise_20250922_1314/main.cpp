@@ -32,7 +32,7 @@
 #define KEYBRD_LAYOUT_COLUMN_CNT ((uint8_t) 5U)
 
 //#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((unsigned long long int) 10)
-#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 5U)
+#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 10U)
 #define INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((int) KEY_PRESSNG_CORRECT_SEQUENC_LENGTH)
 
 #define KNIGHT_MOVE_01_SHIFT_ELEMS ((uint8_t) 2U)
@@ -238,6 +238,7 @@ struct keyPressngCombinatnsTotalRawCalcElem* copyKeyCombinatnForIncrement(struct
 		result[k] = copyKeyPressForIncrement(currentKeyCombinatn[k]);
 	}
 	return result;
+	delete[] result;
 }
 
 struct keyPressdPositnCalcs unassignStrKeyPressdPositnCalcs()
@@ -604,9 +605,11 @@ struct keyPressngCombinatnsTotalRawCalcElem* incrementKeyCombinatn
 	//cout << "break\n";
 
 	return result;
+
+	delete[] result;
 }
 
-void printKeyPressChar(struct arrElemsTwoDim strArrTwoDimElems_InPositn)
+/* void printKeyPressChar(struct arrElemsTwoDim strArrTwoDimElems_InPositn)
 {
 	cout << returnCharFromKeybrdLayout(strArrTwoDimElems_InPositn);
 }
@@ -639,7 +642,7 @@ void printCombinationCriteriaBuffr(struct keyPressCombinatnBuffr critBuffr)
 	cout << "\t";
 	cout << "Knight Moves (M02) Pass: " << (int) (critBuffr.str_criteriaPasses.validKnightMovesMove02Pass);
 	cout << "\n";
-}
+} */
 
 struct i8TwoVals calcStrCntKeyPressTransitndTwoDimShft(struct arrElemsTwoDim keyPressdArrayPositn, struct arrElemsTwoDim keyPressdPrevArrayPositn)
 {
@@ -851,9 +854,11 @@ int main()
 
 	strArrOneDim_keyPressngCombinatnBuffer = unassignKeyPressngCombinatnBuffer();
 
+	cout << "loop begin\n";
 	l = 0;
 	while (l < keyPressngCombinatnsTotalRaw)
 	{
+		cout << "l: " << l << "\n";
 		str_buffr = unassignStrKeyPressCombinatnBuffr();
 		strArrOneDim_keyPressngCombinatnBuffer = unassignKeyPressngCombinatnBuffer();
 		for (int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); k >= 0; k--)
@@ -897,7 +902,7 @@ int main()
 
 		u64_cntValidCombinations = incrementCntValidCombinations(str_buffr.str_criteriaPasses, u64_cntValidCombinations);
 
-		printCombinationCriteriaBuffr(str_buffr);
+		//printCombinationCriteriaBuffr(str_buffr);
 
 		for (int k = (KEY_PRESSNG_CORRECT_SEQUENC_LENGTH - 1); k >= 0; k--)
 		{
