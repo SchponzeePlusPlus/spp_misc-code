@@ -66,15 +66,15 @@ enum arrElemsOneDimSelctdShiftValidityState
 	AEODSSVState_DISALLOWED_MISC
 };
 
-enum dirTwoDimState
+enum dirTwoDimState : int8_t
 {
-	DTDState_UNASSIGNED,
-	DTDState_NULL,
-	DTDState_ERROR,
-	DTDState_UP,
-	DTDState_DOWN,
-	DTDState_LEFT,
-	DTDState_RIGHT
+	DTDState_ERROR = -2,
+	DTDState_NULL = -1,
+	DTDState_UNASSIGNED = 0,
+	DTDState_UP = 1,
+	DTDState_DOWN = 2,
+	DTDState_LEFT = 3,
+	DTDState_RIGHT = 4
 };
 
 // first label direction is 2 position shift, second label direction is 1 position shift
@@ -223,6 +223,13 @@ const std::array<uint8_t, D_LEN>
 	KEYBRD_LAYOUT_COLUMN_CNT
 }};
 
+const std::array<uint8_t, M_LEN>
+	U8_STD_ARR_ONE_DIM_CHESS_MOV_KNIGHT_SHIFTS 
+{{
+	KNIGHT_MOVE_01_SHIFT_ELEMS,
+	KNIGHT_MOVE_02_SHIFT_ELEMS
+}};
+
 // TODO: make power calculation formula
 /* int calcIntPwrExponentOfBase(int base, int exponent)
 {
@@ -322,12 +329,22 @@ struct i8ArrTwoDim unassignStrI8ArrTwoDim()
 	return result;
 }
 
-std::array<int8_t, 2> unassignI8ArrTwoDim()
+std::array<int8_t, 2> unassignI8ArrOf02Elems()
 {
 	std::array<int8_t, 2> result;
 	for (uint8_t e = 0U; e < 2; e++)
 	{
 		result[e] = 0;
+	}
+	return result;
+}
+
+std::array<std::array<int8_t, 2U>, 2U> unassignI8ArrOf02Of02Elems()
+{
+	std::array<std::array<int8_t, 2U>, 2U> result;
+	for (uint8_t e = 0U; e < 2; e++)
+	{
+		result[e] = unassignI8ArrOf02Elems();
 	}
 	return result;
 }
@@ -587,62 +604,73 @@ std::array<enum arrElemsOneDimSelctdShiftValidityState, 2U> chkArrTwoDimDrrElems
 	return result;
 }
 
-std::array<enum dirTwoDimState, 2U> returnArrStdTwoDimEnumDirTwoDimStateFromChessMovKnightDir(enum chessMovKnightDirState enmCMKDS_transitnDirState, uint8_t u8_dimSelect)
+std::array<std::array<enum arrElemsOneDimSelctdShiftValidityState, 2U>, 2U> chkArrTwoDimDrrElemsOneDimSelctdShiftValidityStateMOVE
+(
+	std::array<uint8_t, 2> u8StdArrOneDim_InArrPositn,
+	std::array<uint8_t, 2> u8StdArrOneDim_InArrLengths,
+	std::array<std::array<int8_t, 2U>, 2U> shifts
+)
+{
+	std::array<std::array<enum arrElemsOneDimSelctdShiftValidityState, 2U>, 2U> result;
+
+	for (uint8_t m = 0; m < M_LEN; m++)
+	{
+		result[m] = chkArrTwoDimDrrElemsOneDimSelctdShiftValidityState(u8StdArrOneDim_InArrPositn, u8StdArrOneDim_InArrLengths, shifts[m]);
+	}
+	return result;
+}
+
+std::array<enum dirTwoDimState, 2U> returnArrStdTwoDimEnumDirTwoDimStateFromChessMovKnightDir(enum chessMovKnightDirState enmCMKDS_transitnDirState)
 {
 	
 	std::array<enum dirTwoDimState, 2U> result = unassignArrStdTwoDimEnumDirTwoDimState();
 
-	for (uint8_t m = 0; m < M_LEN; m++)
+	switch (enmCMKDS_transitnDirState)
 	{
-		switch (enmCMKDS_transitnDirState)
-		{
-			// up right
-			case CMKDState_UP_RGHT:
-			{
-				result[0] = DTDState_UP;
-				result[1] = DTDState_RIGHT;
-				break;
-			// up left
-			case CMKDState_UP_LEFT:
-			{
-				result[0] = DTDState_UP;
-				result[1] = DTDState_LEFT;
-				break;
-			// down right
-			case CMKDState_DOWN_RGHT:
-				result[0] = DTDState_DOWN;
-				result[1] = DTDState_RIGHT;
-				break;
-			// down left
-			case CMKDState_DOWN_LEFT:
-				result[0] = DTDState_DOWN;
-				result[1] = DTDState_LEFT;
-				break;
-			// left up
-			case CMKDState_LEFT_UP:
-				result[0] = DTDState_LEFT;
-				result[1] = DTDState_UP;
-				break;
-			// left down
-			case CMKDState_LEFT_DOWN:
-				result[0] = DTDState_LEFT;
-				result[1] = DTDState_DOWN;
-				break;
-			// right up
-			case CMKDState_RGHT_UP:
-				result[0] = DTDState_RIGHT;
-				result[1] = DTDState_UP;...
-				break;
-			// right down
-			case CMKDState_RGHT_DOWN:
-				result[0] = DTDState_UP;
-				result[1] = DTDState_RIGHT;
-				break;
-			default:
-				result[0] = DTDState_UP;
-				result[1] = DTDState_RIGHT;
-				break;
-		}
+		// up right
+		case CMKDState_UP_RGHT:
+			result[0] = DTDState_UP;
+			result[1] = DTDState_RIGHT;
+			break;
+		// up left
+		case CMKDState_UP_LEFT:
+			result[0] = DTDState_UP;
+			result[1] = DTDState_LEFT;
+			break;
+		// down right
+		case CMKDState_DOWN_RGHT:
+			result[0] = DTDState_DOWN;
+			result[1] = DTDState_RIGHT;
+			break;
+		// down left
+		case CMKDState_DOWN_LEFT:
+			result[0] = DTDState_DOWN;
+			result[1] = DTDState_LEFT;
+			break;
+		// left up
+		case CMKDState_LEFT_UP:
+			result[0] = DTDState_LEFT;
+			result[1] = DTDState_UP;
+			break;
+		// left down
+		case CMKDState_LEFT_DOWN:
+			result[0] = DTDState_LEFT;
+			result[1] = DTDState_DOWN;
+			break;
+		// right up
+		case CMKDState_RGHT_UP:
+			result[0] = DTDState_RIGHT;
+			result[1] = DTDState_UP;
+			break;
+		// right down
+		case CMKDState_RGHT_DOWN:
+			result[0] = DTDState_RIGHT;
+			result[1] = DTDState_DOWN;
+			break;
+		default:
+			result[0] = DTDState_NULL;
+			result[1] = DTDState_NULL;
+			break;
 	}
 
 	return result;
@@ -740,126 +768,94 @@ int8_t returnChessMovKnightTransitnShiftOneDim(enum chessMovKnightDirState enmCM
 	return result;
 }
 
-std::array<int8_t, 2> returnChessMovKnightTransitningShiftOneDim(enum chessMovKnightDirState enmCMKDS_transitnDirState)
+uint8_t returnArrPositnDimFromDirTwoDimState(enum dirTwoDimState dir)
 {
-	std::array<int8_t, 2> result = unassignI8ArrTwoDim();
+	uint8_t result = 0;
 
-	// up right
-	if (u8_dimSelect == 0U && enmCMKDS_transitnDirState == CMKDState_UP_RGHT)
-	{
-		result = returnChessMovKnightTransitnShiftOneDim(enmCMKDS_transitnDirState, 1);
-		result = (int8_t) (- KNIGHT_MOVE_01_SHIFT_ELEMS);
-	}
-	else if (u8_dimSelect == 1U && enmCMKDS_transitnDirState == CMKDState_UP_RGHT)
-	{
-		result = (int8_t) (KNIGHT_MOVE_02_SHIFT_ELEMS);
-	}
-
-	// up left
-	if (u8_dimSelect == 0U && enmCMKDS_transitnDirState == CMKDState_UP_LEFT)
-	{
-		result = (int8_t) (- KNIGHT_MOVE_01_SHIFT_ELEMS);
-	}
-	else if (u8_dimSelect == 1U && enmCMKDS_transitnDirState == CMKDState_UP_LEFT)
-	{
-		result = (int8_t) (- KNIGHT_MOVE_02_SHIFT_ELEMS);
-	}
-
-	// down right
-	if (u8_dimSelect == 0U && enmCMKDS_transitnDirState == CMKDState_DOWN_RGHT)
-	{
-		result = (int8_t) (KNIGHT_MOVE_01_SHIFT_ELEMS);
-	}
-	else if (u8_dimSelect == 1U && enmCMKDS_transitnDirState == CMKDState_DOWN_RGHT)
-	{
-		result = (int8_t) (KNIGHT_MOVE_02_SHIFT_ELEMS);
-	}
-
-	// down left
-	if (u8_dimSelect == 0U && enmCMKDS_transitnDirState == CMKDState_DOWN_LEFT)
-	{
-		result = (int8_t) (KNIGHT_MOVE_01_SHIFT_ELEMS);
-	}
-	else if (u8_dimSelect == 1U && enmCMKDS_transitnDirState == CMKDState_DOWN_LEFT)
-	{
-		result = (int8_t) (- KNIGHT_MOVE_02_SHIFT_ELEMS);
-	}
-
-	// left up
-	if (u8_dimSelect == 0U && enmCMKDS_transitnDirState == CMKDState_LEFT_UP)
-	{
-		result = (int8_t) (- KNIGHT_MOVE_02_SHIFT_ELEMS);
-	}
-	else if (u8_dimSelect == 1U && enmCMKDS_transitnDirState == CMKDState_LEFT_UP)
-	{
-		result = (int8_t) (- KNIGHT_MOVE_01_SHIFT_ELEMS);
-	}
-
-	// left down
-	if (u8_dimSelect == 0U && enmCMKDS_transitnDirState == CMKDState_LEFT_DOWN)
-	{
-		result = (int8_t) (KNIGHT_MOVE_02_SHIFT_ELEMS);
-	}
-	else if (u8_dimSelect == 1U && enmCMKDS_transitnDirState == CMKDState_LEFT_DOWN)
-	{
-		result = (int8_t) (- KNIGHT_MOVE_01_SHIFT_ELEMS);
-	}
-
-	// right up
-	if (u8_dimSelect == 0U && enmCMKDS_transitnDirState == CMKDState_RGHT_UP)
-	{
-		result = (int8_t) (- KNIGHT_MOVE_02_SHIFT_ELEMS);
-	}
-	else if (u8_dimSelect == 1U && enmCMKDS_transitnDirState == CMKDState_RGHT_UP)
-	{
-		result = (int8_t) (KNIGHT_MOVE_01_SHIFT_ELEMS);
-	}
-
-	// right down
-	if (u8_dimSelect == 0U && enmCMKDS_transitnDirState == CMKDState_RGHT_DOWN)
-	{
-		result = (int8_t) (KNIGHT_MOVE_02_SHIFT_ELEMS);
-	}
-	else if (u8_dimSelect == 1U && enmCMKDS_transitnDirState == CMKDState_RGHT_DOWN)
-	{
-		result = (int8_t) (KNIGHT_MOVE_01_SHIFT_ELEMS);
-	}
-
-	else
+	if ((dir == DTDState_UP) || (dir == DTDState_DOWN))
 	{
 		result = 0;
 	}
-
-	return result;
-}
-
-std::array<int8_t, 2> returnChessMovKnightTransitnShift(enum chessMovKnightDirState enmCMKDS_transitnDirState)
-{
-	std::array<int8_t, 2> result = unassignI8ArrTwoDim();
-
-	for (uint8_t d = 0; d < D_LEN; d++)
+	else if ((dir == DTDState_LEFT) || (dir == DTDState_RIGHT))
 	{
-		result[d] = returnChessMovKnightTransitnShiftOneDim(enmCMKDS_transitnDirState, d);
+		result = 1;
 	}
 
 	return result;
 }
 
-enum chessMovKnightTransitnValidtyState chkChessMovKnightTransitnValidtyState(std::array<uint8_t, 2> U8StdArr_positnOld, enum chessMovKnightDirState enmCMKDS_transitnDirState)
+int8_t returnArrTwoDimShftPolartyFromDirTwoDimState(enum dirTwoDimState dir)
 {
-	enum chessMovKnightTransitnValidtyState result = unassignEnumChessMovKnightTransitnValidtyState();
+	int8_t result = 0;
 
-	std::array<std::array<int8_t, 2U>, 2U> shifts;
+	if ((dir == DTDState_UP) || (dir == DTDState_LEFT))
+	{
+		result = -1;
+	}
+	else if ((dir == DTDState_DOWN) || (dir == DTDState_RIGHT))
+	{
+		result = 1;
+	}
 
-	shifts[0][0] = returnChessMovKnightTransitnShiftOneDim(enmCMKDS_transitnDirState, 0);
-	shifts[0][1] = returnChessMovKnightTransitnShiftOneDim(enmCMKDS_transitnDirState, 1);
+	return result;
+}
+
+uint8_t returnArrTwoDimShftMagnitudeFromKnightMove(uint8_t moveSelect)
+{
+	return U8_STD_ARR_ONE_DIM_CHESS_MOV_KNIGHT_SHIFTS[moveSelect];
+}
+
+int8_t returnChessMovKnightTransitnShiftOneDimV2(std::array<enum dirTwoDimState, 2U> movDirArr, uint8_t u8_movSelect)
+{
+	return (returnArrTwoDimShftPolartyFromDirTwoDimState(movDirArr[u8_movSelect]) * ((int8_t) returnArrTwoDimShftMagnitudeFromKnightMove(u8_movSelect)));
+}
+
+// this might be good to check move 01?
+std::array<int8_t, 2> returnChessMovKnightTransitningShiftOneDim(std::array<enum dirTwoDimState, 2U> movDirArr, uint8_t u8_movSelect, uint8_t u8_dimSelect)
+{
+	std::array<int8_t, 2> result = unassignI8ArrOf02Elems();
+
+	result[u8_dimSelect] = returnChessMovKnightTransitnShiftOneDimV2(movDirArr, u8_movSelect);
+
+	return result;
+}
+
+std::array<int8_t, 2> returnChessMovKnightTransitnShiftV2(std::array<enum dirTwoDimState, 2U> movDirArr, uint8_t u8_movSelect)
+{
+	std::array<int8_t, 2> result = unassignI8ArrOf02Elems();
+
+	uint8_t d = 0U;
+
+	d = returnArrPositnDimFromDirTwoDimState(movDirArr[u8_movSelect]);
+	result = returnChessMovKnightTransitningShiftOneDim(movDirArr, u8_movSelect, d);
+
+	return result;
+}
+
+// this might be good to check move 1 and move 2?
+std::array<std::array<int8_t, 2U>, 2U> returnChessMovKnightTransitnShift(std::array<enum dirTwoDimState, 2U> movDirArr)
+{
+	std::array<std::array<int8_t, 2U>, 2U> result = unassignI8ArrOf02Of02Elems();
 
 	for (uint8_t m = 0; m < M_LEN; m++)
 	{
-
+		result[m] = returnChessMovKnightTransitnShiftV2(movDirArr, m);
 	}
 
-	
+	return result;
+}
+
+// i suppose at this stage i've figured out / still figuring out how to produce shift arrays, how i am checking move 01 and move 02, and how i am storing them
+
+enum chessMovKnightTransitnValidtyState chkChessMovKnightTransitnValidtyState(std::array<uint8_t, 2> U8StdArr_positnOld, std::array<enum dirTwoDimState, 2U> movDirArr)
+{
+	enum chessMovKnightTransitnValidtyState result = unassignEnumChessMovKnightTransitnValidtyState();
+
+	std::array<std::array<int8_t, 2U>, 2U> shifts = returnChessMovKnightTransitnShift(movDirArr);
+
+	std::array<std::array<enum arrElemsOneDimSelctdShiftValidityState, 2U>, 2U> validShifts = chkArrTwoDimDrrElemsOneDimSelctdShiftValidityStateMOVE(U8StdArr_positnOld, U8_STD_ARR_ONE_DIM_KEYBRD_LENGTHS, shifts);
+
+	....
 
 
 	std::array<enum arrElemsOneDimSelctdShiftValidityState, 2U> chkShifts = chkArrTwoDimDrrElemsOneDimSelctdShiftValidityState(U8StdArr_positnOld, U8_STD_ARR_ONE_DIM_KEYBRD_LENGTHS, shifts)
@@ -872,7 +868,7 @@ enum chessMovKnightTransitnValidtyState chkChessMovKnightTransitnValidtyState(st
 	return result;
 }
 
-char returnCharFromKeybrdLayout(std::array<uint8_t, 2> keybrdPosition)
+char returnCharFromKeybrdLayout(struct arrElemsTwoDim keybrdPosition)
 {
 	char result = '\0';
 
@@ -893,7 +889,7 @@ char returnCharFromKeybrdLayoutStdArr(std::array<uint8_t, 2> keybrdPosition)
 
 	if (((keybrdPosition[0] >= 0U) && (keybrdPosition[0] < KEYBRD_LAYOUT_ROW_CNT)) && ((keybrdPosition[1] >= 0U) && (keybrdPosition[1] < KEYBRD_LAYOUT_COLUMN_CNT)))
 	{
-		result = CHARARR_KEYBRD_LAYOUT[keybrdPosition[0]][keybrdPosition[1]];
+		result = STD_CHARARR_KEYBRD_LAYOUT[keybrdPosition[0]][keybrdPosition[1]];
 	}
 	else
 	{
