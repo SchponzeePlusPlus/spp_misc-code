@@ -26,17 +26,32 @@
 #include <fstream>
 // TODO: remove cmath eventually, use own functions instead
 #include <cmath>
+#include <array>
+#include <vector>
 
 //	TODO: enforce casting to unsigned
 #define KEYBRD_LAYOUT_ROW_CNT ((uint8_t) 4U)
 #define KEYBRD_LAYOUT_COLUMN_CNT ((uint8_t) 5U)
 
 //#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((unsigned long long int) 10)
-#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 10U)
+#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 3U)
 #define INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((int) KEY_PRESSNG_CORRECT_SEQUENC_LENGTH)
 
 #define KNIGHT_MOVE_01_SHIFT_ELEMS ((uint8_t) 2U)
 #define KNIGHT_MOVE_02_SHIFT_ELEMS ((uint8_t) 1U)
+
+#define CHESS_MOVE_KNIGHT_POSITN_SHFT_POSSIBLTIES ((uint8_t) 8U)
+
+// position in a 2-dim array(i,j), 2 dimensions
+#define D_LEN ((uint8_t) 2U)
+// e is element 
+#define I_LEN KEYBRD_LAYOUT_ROW_CNT
+#define J_LEN KEYBRD_LAYOUT_COLUMN_CNT
+#define K_LEN KEY_PRESSNG_CORRECT_SEQUENC_LENGTH
+// L is reserved for combination list
+// p for chess move possibilities of current position
+#define P_LEN CHESS_MOVE_KNIGHT_POSITN_SHFT_POSSIBLTIES
+
 
 enum arrElemsOneDimSelctdShiftValidityState
 {
@@ -60,6 +75,22 @@ enum dirTwoDimState
 	DTDState_RIGHT
 };
 
+// first label direction is 2 position shift, second label direction is 1 position shift
+enum chessMovKnightDirState
+{
+	CMKDState_UNASSIGNED,
+	CMKDState_NULL,
+	CMKDState_ERROR,
+	CMKDState_UP_RGHT,
+	CMKDState_UP_LEFT,
+	CMKDState_DOWN_RGHT,
+	CMKDState_DOWN_LEFT,
+	CMKDState_LEFT_UP,
+	CMKDState_LEFT_DOWN,
+	CMKDState_RGHT_UP,
+	CMKDState_RGHT_DOWN
+};
+
 struct arrElemsTwoDim
 {
 	uint8_t elemDimOne;
@@ -72,10 +103,20 @@ struct arrTwoDimLength
 	uint8_t dimTwoLength;
 };
 
+struct u8ArrTwoDim
+{
+	uint8_t u8ArrTwoDim[2];
+};
+
 struct i8TwoVals
 {
 	int8_t i8_valOne;
 	int8_t i8_valTwo;
+};
+
+struct i8ArrTwoDim
+{
+	uint8_t i8ArrTwoDim[2];
 };
 
 struct arrTwoDimSelctdShiftValidityStates
@@ -136,6 +177,12 @@ struct keyPressCombinatnBuffr
 	struct keyPressCombinatnCriteriaPasses str_criteriaPasses;
 };
 
+struct ChessMoveKnightPositnNewPossiblty
+{
+	enum chessMovKnightDirState enmCMKDS_positnNewMovState;
+	std::array<uint8_t, 2> U8StdArr_positnNew;
+};
+
 // I'm replacing '\0' with '0' and '4'
 //	there aren't supposed to be anything in
 //	those positions
@@ -146,6 +193,21 @@ const char CHARARR_KEYBRD_LAYOUT[KEYBRD_LAYOUT_ROW_CNT][KEYBRD_LAYOUT_COLUMN_CNT
 	{'K', 'L', 'M', 'N', 'O'},
 	{'0', '1', '2', '3', '4'},
 };
+
+const std::array<std::array<char, KEYBRD_LAYOUT_COLUMN_CNT>, KEYBRD_LAYOUT_ROW_CNT> STD_CHARARR_KEYBRD_LAYOUT 
+{{
+	{'A', 'B', 'C', 'D', 'E'},
+	{'F', 'G', 'H', 'I', 'J'},
+	{'K', 'L', 'M', 'N', 'O'},
+	{'0', '1', '2', '3', '4'},
+}};
+
+const std::array<uint8_t, D_LEN>
+	U8_STD_ARR_ONE_DIM_KEYBRD_LENGTHS 
+{{
+	KEYBRD_LAYOUT_ROW_CNT,
+	KEYBRD_LAYOUT_COLUMN_CNT
+}};
 
 // TODO: make power calculation formula
 /* int calcIntPwrExponentOfBase(int base, int exponent)
@@ -172,6 +234,11 @@ enum dirTwoDimState unassignEnumDirTwoDimState()
 	return DTDState_UNASSIGNED;
 }
 
+enum chessMovKnightDirState unassignEnumChessMovKnightDirState()
+{
+	return CMKDState_UNASSIGNED;
+}
+
 struct arrElemsTwoDim unassignStrArrElemsTwoDim()
 {
 	struct arrElemsTwoDim result;
@@ -188,11 +255,51 @@ struct arrElemsTwoDim returnArrElemsTwoDimFromElems(uint8_t elemDimOne, uint8_t 
 	return result;
 }
 
+struct u8ArrTwoDim unassignStrU8ArrTwoDim()
+{
+	struct u8ArrTwoDim result;
+	for (uint8_t e = 0U; e < 2; e++)
+	{
+		result.u8ArrTwoDim[e] = 0U;
+	}
+	return result;
+}
+
+std::array<uint8_t, 2> unassignU8ArrTwoDim()
+{
+	std::array<uint8_t,2> result;
+	for (uint8_t e = 0U; e < 2; e++)
+	{
+		result[e] = 0U;
+	}
+	return result;
+}
+
 struct i8TwoVals unassignStri8TwoVals()
 {
 	struct i8TwoVals result;
 	result.i8_valOne = 0;
 	result.i8_valTwo = 0;
+	return result;
+}
+
+struct i8ArrTwoDim unassignStrI8ArrTwoDim()
+{
+	struct i8ArrTwoDim result;
+	for (uint8_t e = 0U; e < 2; e++)
+	{
+		result.i8ArrTwoDim[e] = 0;
+	}
+	return result;
+}
+
+std::array<int8_t, 2> unassignI8ArrTwoDim()
+{
+	std::array<int8_t, 2> result;
+	for (uint8_t e = 0U; e < 2; e++)
+	{
+		result[e] = 0;
+	}
 	return result;
 }
 
@@ -436,7 +543,35 @@ struct arrTwoDimSelctdShiftValidityStates chkShiftArrElemsTwoDimSelectd(struct a
 	return result;
 }
 
-char returnCharFromKeybrdLayout(struct arrElemsTwoDim keybrdPosition)
+std::array<enum arrElemsOneDimSelctdShiftValidityState, 2U> chkArrTwoDimDrrElemsOneDimSelctdShiftValidityState(std::array<uint8_t, 2> u8StdArrOneDim_InArrPositn, std::array<uint8_t, 2> u8StdArrOneDim_InArrLengths, std::array<int8_t, 2> i8StdArrOneDim_positnChngs)
+{
+	std::array<enum arrElemsOneDimSelctdShiftValidityState, 2U> result;
+
+	for (uint8_t d = 0; d < 2; d++)
+	{
+		result[d] = chkShiftArrOneDimElemsSelectd(u8StdArrOneDim_InArrPositn[d], u8StdArrOneDim_InArrLengths[d], i8StdArrOneDim_positnChngs[d]);
+	}
+	return result;
+}
+
+tryTrans
+
+char returnCharFromKeybrdLayout(std::array<uint8_t, 2> keybrdPosition)
+{
+	char result = '\0';
+
+	if (((keybrdPosition.elemDimOne >= 0U) && (keybrdPosition.elemDimOne < KEYBRD_LAYOUT_ROW_CNT)) && ((keybrdPosition.elemDimTwo >= 0U) && (keybrdPosition.elemDimTwo < KEYBRD_LAYOUT_COLUMN_CNT)))
+	{
+		result = CHARARR_KEYBRD_LAYOUT[keybrdPosition.elemDimOne][keybrdPosition.elemDimTwo];
+	}
+	else
+	{
+		result = '!'; // not sure what else i could use to return an error
+	}
+	return result;
+}
+
+char returnCharFromKeybrdLayoutStdArr(struct arrElemsTwoDim keybrdPosition)
 {
 	char result = '\0';
 
@@ -823,6 +958,80 @@ uint64_t incrementCntValidCombinations(struct keyPressCombinatnCriteriaPasses st
 		),
 		u64_inVal
 	);
+}
+
+std::array<struct ChessMoveKnightPositnNewPossiblty, P_LEN> returnChessMoveKnightPositnNewPossibltiesArr(const std::array<uint8_t, 2> &keyPressdArrayPositn) //function with return type std::array
+{
+    std::array<struct ChessMoveKnightPositnNewPossiblty, P_LEN> result; //array declared
+    
+	//for(uint8_t p = 0; p < CHESS_MOVE_KNIGHT_POSITN_SHFT_POSSIBLTIES; p++)
+	//{
+		//up right
+		result[0][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) - ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
+		result[0][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) + ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
+		// up left
+		result[1][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) - ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
+		result[1][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) - ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
+		// down right
+		result[2][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) + ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
+		result[2][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) + ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
+		// down left
+		result[3][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) + ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
+		result[3][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) - ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
+		// left up
+		result[4][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) - ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
+		result[4][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) - ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
+		// left down
+		result[5][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) + ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
+		result[5][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) - ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
+		// right up
+		result[6][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) - ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
+		result[6][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) + ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
+		// right down
+		result[7][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) + ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
+		result[7][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) + ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
+	//}
+
+    return result;
+}
+
+std::array<std::array<std::array<std::array<uint8_t, D_LEN>, P_LEN>, J_LEN>, I_LEN>
+unassignAllChessMoveKnightPositnNewPossiblties()
+{
+	std::array<std::array<std::array<std::array<uint8_t, D_LEN>, P_LEN>, J_LEN>, I_LEN> result;
+
+	for (uint8_t i = 0; i < I_LEN; i++)
+	{
+		for (uint8_t j = 0; j < J_LEN; j++)
+		{
+			for (uint8_t p = 0; p < P_LEN; p++)
+			{
+				result[i][j][p] = unassignU8ArrTwoDim();
+			}
+		}
+	}
+
+	return result;
+}
+
+std::array<std::array<std::array<std::array<uint8_t, D_LEN>, P_LEN>, J_LEN>, I_LEN>
+generateAllChessMoveKnightPositnNewPossiblties()
+{
+	std::array<std::array<std::array<std::array<uint8_t, D_LEN>, P_LEN>, J_LEN>, I_LEN> result = unassignAllChessMoveKnightPositnNewPossiblties();
+
+	std::array<uint8_t, 2> keyPressArrayPositnCurr = unassignU8ArrTwoDim();
+
+	for (uint8_t i = 0; i < I_LEN; i++)
+	{
+		for (uint8_t j = 0; j < J_LEN; j++)
+		{
+			keyPressArrayPositnCurr[0] = i;
+			keyPressArrayPositnCurr[1] = j;
+			result[i][j] = returnChessMoveKnightPositnNewPossibltiesArr(keyPressArrayPositnCurr);
+		}
+	}
+
+	return result;
 }
 
 int main()
