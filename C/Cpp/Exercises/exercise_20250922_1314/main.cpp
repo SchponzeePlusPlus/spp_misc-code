@@ -34,7 +34,7 @@
 #define KEYBRD_LAYOUT_COLUMN_CNT ((uint8_t) 5U)
 
 //#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((unsigned long long int) 10)
-#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 3U)
+#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 4U)
 #define INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((int) KEY_PRESSNG_CORRECT_SEQUENC_LENGTH)
 
 #define KNIGHT_MOVE_01_SHIFT_ELEMS ((uint8_t) 2U)
@@ -193,6 +193,7 @@ struct chessMoveKnightPositnNewPossiblty
 {
 	// old -> new position direction
 	enum chessMovKnightDirState enmCMKDS_transitnDirState;
+	std::array<enum dirTwoDimState, 2U> transitnmovsDirArr;
 	enum chessMovKnightTransitnValidtyState enmCMKTVS_transitnValidtyState;
 	std::array<uint8_t, 2> U8StdArr_positnNew;
 };
@@ -486,9 +487,10 @@ struct chessMoveKnightPositnNewPossiblty unassignStrChessMoveKnightPositnNewPoss
 {
 	struct chessMoveKnightPositnNewPossiblty result;
 	result.enmCMKDS_transitnDirState = unassignEnumChessMovKnightDirState();
+	result.transitnmovsDirArr = unassignArrStdTwoDimEnumDirTwoDimState();
 	result.enmCMKTVS_transitnValidtyState = unassignEnumChessMovKnightTransitnValidtyState();
 	result.U8StdArr_positnNew = unassignU8ArrTwoDim();
-	
+	return result;
 }
 
 uint8_t conditionalIncrementU8Val(bool bo_chkConditnTrue, uint8_t u8_cntr)
@@ -618,6 +620,41 @@ std::array<std::array<enum arrElemsOneDimSelctdShiftValidityState, 2U>, 2U> chkA
 		result[m] = chkArrTwoDimDrrElemsOneDimSelctdShiftValidityState(u8StdArrOneDim_InArrPositn, u8StdArrOneDim_InArrLengths, shifts[m]);
 	}
 	return result;
+}
+
+bool chkMoveShiftOneDimTries
+(
+	const enum arrElemsOneDimSelctdShiftValidityState& oneDimShiftTry
+)
+{
+	return (oneDimShiftTry == AEODSSVState_ALLOWED);
+}
+
+bool chkMoveShiftTwoDimTries
+(
+	const std::array<enum arrElemsOneDimSelctdShiftValidityState, 2U>& moveShiftTries
+)
+{
+	uint8_t chkTrueCntr = 0U;
+	for (uint8_t d = 0; d < D_LEN; d++)
+	{
+		chkTrueCntr = ((chkMoveShiftOneDimTries(moveShiftTries[d])) ? chkTrueCntr + 1 : chkTrueCntr);
+	}
+	return (chkTrueCntr == D_LEN);
+}
+
+bool chkAllMoveShiftTries
+(
+	const std::array<std::array<enum arrElemsOneDimSelctdShiftValidityState, 2U>, 2U>& allMovesShiftTries
+)
+{
+	uint8_t chkTrueCntr = 0U;
+
+	for (uint8_t m = 0; m < M_LEN; m++)
+	{
+		chkTrueCntr = ((chkMoveShiftTwoDimTries(allMovesShiftTries[m])) ? chkTrueCntr + 1 : chkTrueCntr);
+	}
+	return (chkTrueCntr == M_LEN);
 }
 
 std::array<enum dirTwoDimState, 2U> returnArrStdTwoDimEnumDirTwoDimStateFromChessMovKnightDir(enum chessMovKnightDirState enmCMKDS_transitnDirState)
@@ -853,19 +890,34 @@ enum chessMovKnightTransitnValidtyState chkChessMovKnightTransitnValidtyState(st
 
 	std::array<std::array<int8_t, 2U>, 2U> shifts = returnChessMovKnightTransitnShift(movDirArr);
 
-	std::array<std::array<enum arrElemsOneDimSelctdShiftValidityState, 2U>, 2U> validShifts = chkArrTwoDimDrrElemsOneDimSelctdShiftValidityStateMOVE(U8StdArr_positnOld, U8_STD_ARR_ONE_DIM_KEYBRD_LENGTHS, shifts);
+	std::array<std::array<enum arrElemsOneDimSelctdShiftValidityState, 2U>, 2U> chkValidShifts = chkArrTwoDimDrrElemsOneDimSelctdShiftValidityStateMOVE(U8StdArr_positnOld, U8_STD_ARR_ONE_DIM_KEYBRD_LENGTHS, shifts);
 
-	....
+	bool bo_chkAllMoveShiftTries = chkAllMoveShiftTries(chkValidShifts);
 
-
-	std::array<enum arrElemsOneDimSelctdShiftValidityState, 2U> chkShifts = chkArrTwoDimDrrElemsOneDimSelctdShiftValidityState(U8StdArr_positnOld, U8_STD_ARR_ONE_DIM_KEYBRD_LENGTHS, shifts)
-
-	for (uint8_t d = 0; d < D_LEN; d++)
+	// want to put case statement here but only boolean selection for now
+	if (bo_chkAllMoveShiftTries)
 	{
-
+		result = CMKTVState_VALID;
+	}
+	else if (!bo_chkAllMoveShiftTries)
+	{
+		result = CMKTVState_INVALID;
+	}
+	else
+	{
+		result = CMKTVState_ERROR;
 	}
 
 	return result;
+}
+
+int8_t calcArrElemPositnNewTry(uint8_t oldPositn, int8_t shift)
+{	return ((int8_t) abs(((int) oldPositn) + ((int) shift)));	}
+
+uint8_t calcArrElemPositnNew(uint8_t oldPositn, uint8_t arrLength, int8_t shift)
+{
+	int8_t tryVal = calcArrElemPositnNewTry(oldPositn, shift);
+	return (((tryVal >= 0U) && (tryVal < arrLength)) ? (uint8_t) tryVal : 0U);
 }
 
 char returnCharFromKeybrdLayout(struct arrElemsTwoDim keybrdPosition)
@@ -1083,6 +1135,11 @@ void printKeyPressChar(struct arrElemsTwoDim strArrTwoDimElems_InPositn)
 	cout << returnCharFromKeybrdLayout(strArrTwoDimElems_InPositn);
 }
 
+void printKeyPressCharFromStdArr(const std::array<uint8_t, 2>& inPositn)
+{
+	cout << returnCharFromKeybrdLayoutStdArr(inPositn);
+}
+
 void printCombination(struct arrElemsTwoDim* strArrTwoDimElems_InPositn)
 {
 	cout << "Print Combination: ";
@@ -1275,42 +1332,86 @@ uint64_t incrementCntValidCombinations(struct keyPressCombinatnCriteriaPasses st
 std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN> returnChessMoveKnightPositnNewPossibltiesArr(const std::array<uint8_t, 2> &keyPressdArrayPositn) //function with return type std::array
 {
     std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN> result; //array declared
-    
-	//for(uint8_t p = 0; p < CHESS_MOVE_KNIGHT_POSITN_SHFT_POSSIBLTIES; p++)
-	//{
-		//up right
-		result[0][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) - ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
-		result[0][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) + ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
-		// up left
-		result[1][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) - ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
-		result[1][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) - ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
-		// down right
-		result[2][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) + ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
-		result[2][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) + ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
-		// down left
-		result[3][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) + ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
-		result[3][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) - ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
-		// left up
-		result[4][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) - ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
-		result[4][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) - ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
-		// left down
-		result[5][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) + ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
-		result[5][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) - ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
-		// right up
-		result[6][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) - ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
-		result[6][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) + ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
-		// right down
-		result[7][0] = ((int8_t) abs(((int) keyPressdArrayPositn[0]) + ((int) KNIGHT_MOVE_02_SHIFT_ELEMS)));
-		result[7][1] = ((int8_t) abs(((int) keyPressdArrayPositn[1]) + ((int) KNIGHT_MOVE_01_SHIFT_ELEMS)));
-	//}
+
+	for(uint8_t p = 0; p < P_LEN; p++)
+	{
+		result[p] = unassignStrChessMoveKnightPositnNewPossiblty();
+	}
+
+	std::array<std::array<int8_t, 2U>, 2U> shiftsTemp = unassignI8ArrOf02Of02Elems();
+
+	char tempKey = '\0';
+
+	bool tempKeyChkValid = false;
+
+	//uint8_t tempKeyTransCntVowel = 0U;
+
+	tempKey = returnCharFromKeybrdLayoutStdArr(keyPressdArrayPositn);
+			
+	tempKeyChkValid = chkKeySelctnValidty(tempKey);
+
+	if (!tempKeyChkValid)
+	{
+		for(uint8_t p = 0; p < P_LEN; p++)
+		{
+			result[p].enmCMKTVS_transitnValidtyState = CMKTVState_INVALID;
+		}
+	}
+	else
+	{
+		for(uint8_t p = 0; p < P_LEN; p++)
+		{
+			shiftsTemp = unassignI8ArrOf02Of02Elems();
+			tempKey = '\0';
+
+			result[p].enmCMKDS_transitnDirState = static_cast<chessMovKnightDirState>(p + 1);
+			result[p].transitnmovsDirArr = returnArrStdTwoDimEnumDirTwoDimStateFromChessMovKnightDir(result[p].enmCMKDS_transitnDirState);
+			result[p].enmCMKTVS_transitnValidtyState = chkChessMovKnightTransitnValidtyState(keyPressdArrayPositn, result[p].transitnmovsDirArr);
+			if (result[p].enmCMKTVS_transitnValidtyState == CMKTVState_VALID)
+			{
+				shiftsTemp = returnChessMovKnightTransitnShift(result[p].transitnmovsDirArr);
+
+				// shift move 1
+				result[p].U8StdArr_positnNew[0] = calcArrElemPositnNew(keyPressdArrayPositn[0], U8_STD_ARR_ONE_DIM_KEYBRD_LENGTHS[0], shiftsTemp[0][0]);
+
+				result[p].U8StdArr_positnNew[1] = calcArrElemPositnNew(keyPressdArrayPositn[1], U8_STD_ARR_ONE_DIM_KEYBRD_LENGTHS[1], shiftsTemp[0][1]);
+
+				tempKey = returnCharFromKeybrdLayoutStdArr(result[p].U8StdArr_positnNew);
+				
+				tempKeyChkValid = chkKeySelctnValidty(tempKey);
+
+				if (!tempKeyChkValid)
+				{
+					result[p].enmCMKTVS_transitnValidtyState = CMKTVState_INVALID;	
+				}
+				else
+				{
+					tempKey = '\0';
+
+					// shift move 2
+					result[p].U8StdArr_positnNew[0] = calcArrElemPositnNew(result[p].U8StdArr_positnNew[0], U8_STD_ARR_ONE_DIM_KEYBRD_LENGTHS[0], shiftsTemp[1][0]);
+
+					result[p].U8StdArr_positnNew[1] = calcArrElemPositnNew(result[p].U8StdArr_positnNew[1], U8_STD_ARR_ONE_DIM_KEYBRD_LENGTHS[1], shiftsTemp[1][1]);
+
+					tempKey = returnCharFromKeybrdLayoutStdArr(result[p].U8StdArr_positnNew);
+				
+					tempKeyChkValid = chkKeySelctnValidty(tempKey);
+					if (!tempKeyChkValid)
+					{
+						result[p].enmCMKTVS_transitnValidtyState = CMKTVState_INVALID;	
+					}
+				}
+			}
+		}
+	}
 
     return result;
 }
 
-std::array<std::array<std::array<std::array<uint8_t, D_LEN>, P_LEN>, J_LEN>, I_LEN>
+std::array<std::array<std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN>, J_LEN>, I_LEN>
 unassignAllChessMoveKnightPositnNewPossiblties()
 {
-	std::array<std::array<std::array<std::array<uint8_t, D_LEN>, P_LEN>, J_LEN>, I_LEN> result;
+	std::array<std::array<std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN>, J_LEN>, I_LEN> result;
 
 	for (uint8_t i = 0; i < I_LEN; i++)
 	{
@@ -1318,7 +1419,7 @@ unassignAllChessMoveKnightPositnNewPossiblties()
 		{
 			for (uint8_t p = 0; p < P_LEN; p++)
 			{
-				result[i][j][p] = unassignU8ArrTwoDim();
+				result[i][j][p] = unassignStrChessMoveKnightPositnNewPossiblty();
 			}
 		}
 	}
@@ -1326,10 +1427,10 @@ unassignAllChessMoveKnightPositnNewPossiblties()
 	return result;
 }
 
-std::array<std::array<std::array<std::array<uint8_t, D_LEN>, P_LEN>, J_LEN>, I_LEN>
+std::array<std::array<std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN>, J_LEN>, I_LEN>
 generateAllChessMoveKnightPositnNewPossiblties()
 {
-	std::array<std::array<std::array<std::array<uint8_t, D_LEN>, P_LEN>, J_LEN>, I_LEN> result = unassignAllChessMoveKnightPositnNewPossiblties();
+	std::array<std::array<std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN>, J_LEN>, I_LEN> result = unassignAllChessMoveKnightPositnNewPossiblties();
 
 	std::array<uint8_t, 2> keyPressArrayPositnCurr = unassignU8ArrTwoDim();
 
@@ -1346,14 +1447,10 @@ generateAllChessMoveKnightPositnNewPossiblties()
 	return result;
 }
 
-int main()
+void runKeybrdKnightsBruteForce()
 {
 	cout << "\n";
-	cout << "\n";
-	cout << "Program Initialised.\n";
-
-	cout << "\n";
-	cout << "Exercise\n";
+	cout << "C++ Exercise: Keyboard Knights\n";
 	cout << "\n";
 	
 	// attempt to use static? keep in data memory?
@@ -1474,6 +1571,49 @@ int main()
 	cout << "Valid Combinations: " << u64_cntValidCombinations << "\n";
 
 	//delete[] strArrOneDim_keyPressngCombinatnBuffer;
+}
+
+void runKeybrdKnightsTopDown()
+{
+	cout << "\n";
+	cout << "C++ Exercise: Keyboard Knights\n";
+	cout << "\n";
+
+	std::array<uint8_t, 2> tempKeyPressPositn = unassignU8ArrTwoDim();
+
+	std::array<std::array<std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN>, J_LEN>, I_LEN> possibilities = generateAllChessMoveKnightPositnNewPossiblties();
+
+	cout << "Possibilities:\n";
+	for (uint8_t i = 0; i < I_LEN; i++)
+	{
+		for (uint8_t j = 0; j < J_LEN; j++)
+		{
+			for (uint8_t p = 0; p < P_LEN; p++)
+			{
+				if (possibilities[i][j][p].enmCMKTVS_transitnValidtyState == CMKTVState_VALID)
+				{
+					tempKeyPressPositn[0] = i;
+					tempKeyPressPositn[1] = j;
+					printKeyPressCharFromStdArr(tempKeyPressPositn);
+					tempKeyPressPositn[0] = possibilities[i][j][p].U8StdArr_positnNew[0];
+					tempKeyPressPositn[1] = possibilities[i][j][p].U8StdArr_positnNew[1];
+					printKeyPressCharFromStdArr(tempKeyPressPositn);
+					cout << "\n";
+				}
+			}
+		}
+	}
+	cout << endl;
+}
+
+int main()
+{
+	cout << "\n";
+	cout << "\n";
+	cout << "Program Initialised.\n";
+
+	//runKeybrdKnightsBruteForce();
+	runKeybrdKnightsTopDown();
 
 	cout << "Program Complete.\n";
 	cout << "\n";
