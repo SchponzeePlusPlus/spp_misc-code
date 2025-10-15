@@ -1685,7 +1685,7 @@ struct keyPressComboBuffrElems findNextKPCombo(const KPComboArr& currKPComboArr,
 			//cout << "i: " << ((int) result.i) << "\n";
 			do
 			{
-				cout << "j: " << ((int) result.j) << "\n";
+				//cout << "j: " << ((int) result.j) << "\n";
 				do
 				{
 					//cout << "k: " << ((int) result.k) << "\n";
@@ -1695,21 +1695,28 @@ struct keyPressComboBuffrElems findNextKPCombo(const KPComboArr& currKPComboArr,
 					do
 					{
 						//cout << "p: " << ((int) result.p) << "\n";
-						chkPossibilityValid = (possibilities[result.i][result.j][result.p].enmCMKTVS_transitnValidtyState == CMKTVState_VALID);
-						if (chkPossibilityValid)
+						//cout << "break here?" << "\n";
+						if ((result.p < (P_LEN)) && !comboIncremented)
 						{
-							comboIncremented = true;
-							//cout << "This possibility good!" << "\n";
-						}
-						else if ((result.p < (P_LEN - 1U)) && !comboIncremented)
-						{
-							result.p++;
-							//cout << "Next possibility" << "\n";
+							chkPossibilityValid = (possibilities[result.i][result.j][result.p].enmCMKTVS_transitnValidtyState == CMKTVState_VALID);
+							//cout << "break there?" << "\n";
+							if (chkPossibilityValid)
+							{
+								comboIncremented = true;
+								//cout << "This possibility good!" << "\n";
+							}
+							else if (result.p < (P_LEN - 1U) && !chkPossibilityValid)
+							{
+								result.p++;
+								//cout << "Next possibility" << "\n";
+							}
 						}
 					}
 					while ((result.p < P_LEN) && !comboIncremented);
+					//cout << "herio" << "\n";
 					if ((result.k > 0U)  && !comboIncremented)
 					{
+						//cout << "reduce key" << "\n";
 						result.p = 0U;
 						result.k--;
 						result.j = currKPComboArr[result.k][1];
@@ -1745,10 +1752,72 @@ struct keyPressComboBuffrElems findNextKPCombo(const KPComboArr& currKPComboArr,
 		while ((result.i < I_LEN)  && !comboIncremented);
 	}
 
-	/* cout << "i: " << ((int) result.i) << "\n";
+	cout << "i: " << ((int) result.i) << "\n";
 	cout << "j: " << ((int) result.j) << "\n";
 	cout << "k: " << ((int) result.k) << "\n";				
-	cout << "p: " << ((int) result.p) << "\n"; */
+	cout << "p: " << ((int) result.p) << "\n";
+
+	return result;
+}
+
+KPComboArr nextKPCombo2(const KPComboArr& currKPComboArr, const PossibilitiesArr& possibilities, struct keyPressComboBuffrElems currKPComboBuffrElems)
+{
+	KPComboArr result = unassignKPComboArr();
+	result = currKPComboArr;
+
+	KPTransArr currKPTransArr = unassignKPTransArr();
+	
+	
+	bool chkPossibilityValid = false;
+	bool chkNextKey = false;
+	bool comboIncremented = false;
+
+	if (result != unassignKPComboArr())
+	{
+		cout << "yes\n";
+		do
+		{
+			do
+			{
+				do
+				{
+					//cout << "k: " << ((int) k) << "\n";
+					//currI = result[currK][0];
+					//currJ = result[currK][1];
+					//currP = 0U;
+					do
+					{
+						chkPossibilityValid = (possibilities[currKPComboBuffrElems.i][currKPComboBuffrElems.j][currKPComboBuffrElems.p].enmCMKTVS_transitnValidtyState == CMKTVState_VALID);
+						if (chkPossibilityValid)
+						{
+							result[currKPComboBuffrElems.k + 1] = possibilities[currKPComboBuffrElems.i][currKPComboBuffrElems.j][currKPComboBuffrElems.p].U8StdArr_positnNew;
+							comboIncremented = true;
+						}
+						else
+						{
+							currKPComboBuffrElems.p++;
+						}
+					}
+					while (!chkPossibilityValid && (currKPComboBuffrElems.p < P_LEN) && !comboIncremented);
+					if ((currKPComboBuffrElems.k < K_LEN)  && !comboIncremented)
+					{
+						currKPComboBuffrElems.k++;
+					}
+				}
+				while ((currKPComboBuffrElems.k >= 0U)  && !comboIncremented);
+				if ((currKPComboBuffrElems.j < J_LEN)  && !comboIncremented)
+				{
+					currKPComboBuffrElems.j++;
+				}
+			}
+			while ((currKPComboBuffrElems.j < J_LEN)  && !comboIncremented);
+			if ((currKPComboBuffrElems.i < I_LEN)  && !comboIncremented)
+			{
+				currKPComboBuffrElems.i++;
+			}
+		}
+		while ((currKPComboBuffrElems.i < I_LEN)  && !comboIncremented);
+	}
 
 	return result;
 }
@@ -1794,9 +1863,9 @@ KPComboArr nextKPCombo(const KPComboArr& currKPComboArr, const PossibilitiesArr&
 						}
 					}
 					while (!chkPossibilityValid && (currP < P_LEN) && !comboIncremented);
-					if ((currK > 0U)  && !comboIncremented)
+					if ((currK < K_LEN)  && !comboIncremented)
 					{
-						currK--;
+						currK++;
 					}
 				}
 				while ((currK >= 0U)  && !comboIncremented);
@@ -1887,7 +1956,8 @@ void runKeybrdKnightsTopDown()
 	}
 	cout << "\n";
 
-	currK = ((K_LEN - 1U) - 1U);
+	currK = 0U;
+	//currK = ((K_LEN - 1U) - 1U);
 	currP++;
 
 	currKPComboBuffrElems.p++;
@@ -1920,23 +1990,37 @@ void runKeybrdKnightsTopDown()
 		printKeyPressCharFromStdArr(kPComboArr_buffr[k]);
 	}
 
-	
 	do
 	{
-		currKPComboBuffrElems = findNextKPCombo(kPComboArr_buffr, possibilitiesRaw, currKPComboBuffrElems);
+		do
+		{
+			do
+			{
+				while (currKPComboBuffrElems.p < (P_LEN))
+				{
+					currKPComboBuffrElems = findNextKPCombo(kPComboArr_buffr, possibilitiesRaw, currKPComboBuffrElems);
 
-		kPComboArr_buffr[currKPComboBuffrElems.k + 1] = possibilitiesRaw[currKPComboBuffrElems.i][currKPComboBuffrElems.j][currKPComboBuffrElems.p].U8StdArr_positnNew;
+					kPComboArr_buffr[currKPComboBuffrElems.k + 1] = possibilitiesRaw[currKPComboBuffrElems.i][currKPComboBuffrElems.j][currKPComboBuffrElems.p].U8StdArr_positnNew;
 
-		//cout << "Current P: " << (int) currKPComboBuffrElems.p << "\n";
+					//cout << "Current P: " << (int) currKPComboBuffrElems.p << "\n";
 
-		//printKeyPressCharFromStdArr(possibilitiesRaw[currKPComboBuffrElems.i][currKPComboBuffrElems.j][currKPComboBuffrElems.p].U8StdArr_positnNew);
-		//cout << "\n";
+					//printKeyPressCharFromStdArr(possibilitiesRaw[currKPComboBuffrElems.i][currKPComboBuffrElems.j][currKPComboBuffrElems.p].U8StdArr_positnNew);
+					//cout << "\n";
 
-		printKPCombination(kPComboArr_buffr);
-		cout << "\n";
-		currKPComboBuffrElems.p++;
+					printKPCombination(kPComboArr_buffr);
+					cout << "\n";
+					currKPComboBuffrElems.p++;
+					
+				}
+				cout << "get here?\n";
+				currKPComboBuffrElems.p = 0U;
+				kPComboArr_buffr = nextKPCombo2(kPComboArr_buffr, possibilitiesRaw, currKPComboBuffrElems);
+			}
+			while(currKPComboBuffrElems.k >= 0U);
+		}
+		while(currKPComboBuffrElems.j < (J_LEN - 1U));
 	}
-	while (currKPComboBuffrElems.p != (P_LEN - 1U) && currKPComboBuffrElems.k != 0U && currKPComboBuffrElems.j != (J_LEN - 1U) && currKPComboBuffrElems.i != (I_LEN - 1U));
+	while(currKPComboBuffrElems.i < (I_LEN - 1U));
 
 	cout << endl;
 }
