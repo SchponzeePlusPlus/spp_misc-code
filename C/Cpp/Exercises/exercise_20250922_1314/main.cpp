@@ -53,6 +53,7 @@
 #define M_LEN ((uint8_t) 2U)
 // p for chess move possibilities of current position
 #define P_LEN CHESS_MOVE_KNIGHT_POSITN_SHFT_POSSIBLTIES
+#define T_LEN ((uint8_t) 2U) // transition betwen old position and new position
 
 
 enum arrElemsOneDimSelctdShiftValidityState
@@ -197,6 +198,22 @@ struct chessMoveKnightPositnNewPossiblty
 	enum chessMovKnightTransitnValidtyState enmCMKTVS_transitnValidtyState;
 	std::array<uint8_t, 2> U8StdArr_positnNew;
 };
+
+struct keyPressComboBuffrElems
+{
+	uint8_t i;
+	uint8_t j;
+	uint8_t p;
+	uint8_t k;
+};
+
+typedef std::array<uint8_t, D_LEN> U8ArrStdOf02;
+typedef std::array<std::array<uint8_t, D_LEN>, K_LEN> U8ArrStdOf10Of02;
+typedef std::array<std::array<uint8_t, D_LEN>, T_LEN> U8ArrStdOf02Of02;
+typedef U8ArrStdOf02 kPPositnArr;
+typedef std::array<std::array<std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN>, J_LEN>, I_LEN> PossibilitiesArr;
+typedef U8ArrStdOf10Of02 KPComboArr;
+typedef U8ArrStdOf02Of02 KPTransArr; //old position and new position
 
 // I'm replacing '\0' with '0' and '4'
 //	there aren't supposed to be anything in
@@ -490,6 +507,26 @@ struct chessMoveKnightPositnNewPossiblty unassignStrChessMoveKnightPositnNewPoss
 	result.transitnmovsDirArr = unassignArrStdTwoDimEnumDirTwoDimState();
 	result.enmCMKTVS_transitnValidtyState = unassignEnumChessMovKnightTransitnValidtyState();
 	result.U8StdArr_positnNew = unassignU8ArrTwoDim();
+	return result;
+}
+
+KPComboArr unassignKPComboArr()
+{
+	KPComboArr result;
+	for (uint8_t k = 0U; k < K_LEN; k++)
+	{
+		result[k] = unassignU8ArrTwoDim();
+	}
+	return result;
+}
+
+KPTransArr unassignKPTransArr()
+{
+	KPTransArr result;
+	for (uint8_t t = 0U; t < T_LEN; t++)
+	{
+		result[t] = unassignU8ArrTwoDim();
+	}
 	return result;
 }
 
@@ -935,7 +972,7 @@ char returnCharFromKeybrdLayout(struct arrElemsTwoDim keybrdPosition)
 	return result;
 }
 
-char returnCharFromKeybrdLayoutStdArr(std::array<uint8_t, 2> keybrdPosition)
+char returnCharFromKeybrdLayoutStdArr(kPPositnArr keybrdPosition)
 {
 	char result = '\0';
 
@@ -1135,7 +1172,7 @@ void printKeyPressChar(struct arrElemsTwoDim strArrTwoDimElems_InPositn)
 	cout << returnCharFromKeybrdLayout(strArrTwoDimElems_InPositn);
 }
 
-void printKeyPressCharFromStdArr(const std::array<uint8_t, 2>& inPositn)
+void printKeyPressCharFromStdArr(const std::array<uint8_t, D_LEN>& inPositn)
 {
 	cout << returnCharFromKeybrdLayoutStdArr(inPositn);
 }
@@ -1146,6 +1183,16 @@ void printCombination(struct arrElemsTwoDim* strArrTwoDimElems_InPositn)
 	for (int k = 0; k < KEY_PRESSNG_CORRECT_SEQUENC_LENGTH; k++)
 	{
 		printKeyPressChar(strArrTwoDimElems_InPositn[k]);
+	}
+	//cout << "\n";
+}
+
+void printKPCombination(const KPComboArr& inKPComboArr)
+{
+	cout << "Print Combination: ";
+	for (uint8_t k = 0U; k < K_LEN; k++)
+	{
+		printKeyPressCharFromStdArr(inKPComboArr[k]);
 	}
 	//cout << "\n";
 }
@@ -1573,6 +1620,203 @@ void runKeybrdKnightsBruteForce()
 	//delete[] strArrOneDim_keyPressngCombinatnBuffer;
 }
 
+KPTransArr calcKPTransArr(const KPTransArr& currKPTransArr)
+{
+	KPTransArr result;
+	return result;
+}
+
+KPComboArr firstKPCombo(const KPComboArr& currKPComboArr, const PossibilitiesArr& possibilities)
+{
+	KPComboArr result = unassignKPComboArr();
+	result = currKPComboArr;
+
+	KPTransArr currKPTransArr = unassignKPTransArr();
+	uint8_t currI = 0U;
+	uint8_t currJ = 0U;
+	uint8_t currP = 0U;
+	bool chkPossibilityValid = false;
+
+	if (result == unassignKPComboArr())
+	{
+		for (uint8_t k = 0U; k < (K_LEN - 1U); k++)
+		{
+			//cout << "k: " << ((int) k) << "\n";
+			currI = result[k][0];
+			currJ = result[k][1];
+			currP = 0U;
+			do
+			{
+				chkPossibilityValid = (possibilities[currI][currJ][currP].enmCMKTVS_transitnValidtyState == CMKTVState_VALID);
+				if (chkPossibilityValid)
+				{
+					result[k + 1] = possibilities[currI][currJ][currP].U8StdArr_positnNew;
+				}
+				else
+				{
+					currP++;
+				}
+			}
+			while (!chkPossibilityValid  && (currP < P_LEN));
+		}
+	}
+
+	return result;
+}
+
+struct keyPressComboBuffrElems findNextKPCombo(const KPComboArr& currKPComboArr, const PossibilitiesArr& possibilities, struct keyPressComboBuffrElems currKPComboBuffrElems)
+{
+	struct keyPressComboBuffrElems result;
+	result = currKPComboBuffrElems;
+
+	KPTransArr currKPTransArr = unassignKPTransArr();
+	
+	kPPositnArr tempPositnArr = unassignU8ArrTwoDim();
+	
+	bool chkPossibilityValid = false;
+	bool chkNextKey = false;
+	bool comboIncremented = false;
+
+	if (currKPComboArr != unassignKPComboArr())
+	{
+		//cout << "yesSir\n";
+		do
+		{
+			//cout << "i: " << ((int) result.i) << "\n";
+			do
+			{
+				cout << "j: " << ((int) result.j) << "\n";
+				do
+				{
+					//cout << "k: " << ((int) result.k) << "\n";
+					//result.i = result[currK][0];
+					//currJ = result[currK][1];
+					//currP = 0U;
+					do
+					{
+						//cout << "p: " << ((int) result.p) << "\n";
+						chkPossibilityValid = (possibilities[result.i][result.j][result.p].enmCMKTVS_transitnValidtyState == CMKTVState_VALID);
+						if (chkPossibilityValid)
+						{
+							comboIncremented = true;
+							//cout << "This possibility good!" << "\n";
+						}
+						else if ((result.p < (P_LEN - 1U)) && !comboIncremented)
+						{
+							result.p++;
+							//cout << "Next possibility" << "\n";
+						}
+					}
+					while ((result.p < P_LEN) && !comboIncremented);
+					if ((result.k > 0U)  && !comboIncremented)
+					{
+						result.p = 0U;
+						result.k--;
+						result.j = currKPComboArr[result.k][1];
+						result.i = currKPComboArr[result.k][0];
+					}
+				}
+				while ((result.k >= 0U)  && !comboIncremented);
+				if ((result.j < (J_LEN - 1U))  && !comboIncremented)
+				{
+					result.p = 0U;
+					result.k = ((K_LEN - 1U) - 1U);
+					result.j++;
+					//result.i = currKPComboArr[result.k][0];
+					if (chkKeySelctnValidty(returnCharFromKeybrdLayoutStdArr({result.i, result.j})))
+					{
+						comboIncremented = true;
+					}
+				}
+			}
+			while ((result.j < J_LEN)  && !comboIncremented);
+			if ((result.i < (I_LEN - 1U))  && !comboIncremented)
+			{
+				result.p = 0U;
+				result.k = ((K_LEN - 1U) - 1U);
+				result.j = 0U;
+				result.i++;
+				if (chkKeySelctnValidty(returnCharFromKeybrdLayoutStdArr({result.i, result.j})))
+				{
+					comboIncremented = true;
+				}
+			}
+		}
+		while ((result.i < I_LEN)  && !comboIncremented);
+	}
+
+	/* cout << "i: " << ((int) result.i) << "\n";
+	cout << "j: " << ((int) result.j) << "\n";
+	cout << "k: " << ((int) result.k) << "\n";				
+	cout << "p: " << ((int) result.p) << "\n"; */
+
+	return result;
+}
+
+KPComboArr nextKPCombo(const KPComboArr& currKPComboArr, const PossibilitiesArr& possibilities, uint8_t currK, uint8_t currP)
+{
+	KPComboArr result = unassignKPComboArr();
+	result = currKPComboArr;
+
+	KPTransArr currKPTransArr = unassignKPTransArr();
+	uint8_t currI = 0U;
+	uint8_t currJ = 0U;
+	
+	
+	bool chkPossibilityValid = false;
+	bool chkNextKey = false;
+	bool comboIncremented = false;
+
+	if (result != unassignKPComboArr())
+	{
+		cout << "yes\n";
+		do
+		{
+			do
+			{
+				do
+				{
+					//cout << "k: " << ((int) k) << "\n";
+					//currI = result[currK][0];
+					//currJ = result[currK][1];
+					//currP = 0U;
+					do
+					{
+						chkPossibilityValid = (possibilities[currI][currJ][currP].enmCMKTVS_transitnValidtyState == CMKTVState_VALID);
+						if (chkPossibilityValid)
+						{
+							result[currK + 1] = possibilities[currI][currJ][currP].U8StdArr_positnNew;
+							comboIncremented = true;
+						}
+						else
+						{
+							currP++;
+						}
+					}
+					while (!chkPossibilityValid && (currP < P_LEN) && !comboIncremented);
+					if ((currK > 0U)  && !comboIncremented)
+					{
+						currK--;
+					}
+				}
+				while ((currK >= 0U)  && !comboIncremented);
+				if ((currJ < J_LEN)  && !comboIncremented)
+				{
+					currJ++;
+				}
+			}
+			while ((currJ < J_LEN)  && !comboIncremented);
+			if ((currI < I_LEN)  && !comboIncremented)
+			{
+				currI++;
+			}
+		}
+		while ((currI < I_LEN)  && !comboIncremented);
+	}
+
+	return result;
+}
+
 void runKeybrdKnightsTopDown()
 {
 	cout << "\n";
@@ -1581,7 +1825,21 @@ void runKeybrdKnightsTopDown()
 
 	std::array<uint8_t, 2> tempKeyPressPositn = unassignU8ArrTwoDim();
 
-	std::array<std::array<std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN>, J_LEN>, I_LEN> possibilities = generateAllChessMoveKnightPositnNewPossiblties();
+	std::array<std::array<std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN>, J_LEN>, I_LEN> possibilitiesRaw = generateAllChessMoveKnightPositnNewPossiblties();
+
+	// std::array<std::array<std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN>, J_LEN>, I_LEN> possibilities; vector maybe too hard to implement?
+
+	uint64_t u64_possibilityCnt = 0;
+
+	uint8_t currK = 0U;
+	uint8_t currP = 0U;
+
+	struct keyPressComboBuffrElems currKPComboBuffrElems;
+
+	currKPComboBuffrElems.i = 0U;
+	currKPComboBuffrElems.j = 0U;
+	currKPComboBuffrElems.p = 0U;
+	currKPComboBuffrElems.k = 0U;
 
 	cout << "Possibilities:\n";
 	for (uint8_t i = 0; i < I_LEN; i++)
@@ -1590,19 +1848,96 @@ void runKeybrdKnightsTopDown()
 		{
 			for (uint8_t p = 0; p < P_LEN; p++)
 			{
-				if (possibilities[i][j][p].enmCMKTVS_transitnValidtyState == CMKTVState_VALID)
+				if (possibilitiesRaw[i][j][p].enmCMKTVS_transitnValidtyState == CMKTVState_VALID)
 				{
+					u64_possibilityCnt++;
 					tempKeyPressPositn[0] = i;
 					tempKeyPressPositn[1] = j;
 					printKeyPressCharFromStdArr(tempKeyPressPositn);
-					tempKeyPressPositn[0] = possibilities[i][j][p].U8StdArr_positnNew[0];
-					tempKeyPressPositn[1] = possibilities[i][j][p].U8StdArr_positnNew[1];
+					tempKeyPressPositn[0] = possibilitiesRaw[i][j][p].U8StdArr_positnNew[0];
+					tempKeyPressPositn[1] = possibilitiesRaw[i][j][p].U8StdArr_positnNew[1];
 					printKeyPressCharFromStdArr(tempKeyPressPositn);
 					cout << "\n";
 				}
 			}
 		}
 	}
+	cout << "\n";
+	cout << "Possibility Count: " << u64_possibilityCnt << "\n";
+
+	uint64_t quickGuesskeyPressngCombinatnsTotal = pow(u64_possibilityCnt, K_LEN);
+
+	cout << "Quick Guess at Combination Possibility Count: " << quickGuesskeyPressngCombinatnsTotal << "\n";
+
+	KPComboArr kPComboArr_buffr = unassignKPComboArr();
+
+	cout << "Combo Buffer: ";
+	for (uint8_t k = 0; k < K_LEN; k++)
+	{
+		printKeyPressCharFromStdArr(kPComboArr_buffr[k]);
+	}
+	cout << "\n";
+
+	kPComboArr_buffr = firstKPCombo(kPComboArr_buffr, possibilitiesRaw);
+
+	cout << "Combo Buffer: ";
+	for (uint8_t k = 0; k < K_LEN; k++)
+	{
+		printKeyPressCharFromStdArr(kPComboArr_buffr[k]);
+	}
+	cout << "\n";
+
+	currK = ((K_LEN - 1U) - 1U);
+	currP++;
+
+	currKPComboBuffrElems.p++;
+	currKPComboBuffrElems.k = ((K_LEN - 1U) - 1U);
+	currKPComboBuffrElems.j = kPComboArr_buffr[currKPComboBuffrElems.k][1];
+	currKPComboBuffrElems.i = kPComboArr_buffr[currKPComboBuffrElems.k][0];
+
+	kPComboArr_buffr = nextKPCombo(kPComboArr_buffr, possibilitiesRaw, currK, currP);
+
+	cout << "Combo Buffer: ";
+	for (uint8_t k = 0; k < K_LEN; k++)
+	{
+		printKeyPressCharFromStdArr(kPComboArr_buffr[k]);
+	}
+	cout << "\n";
+
+	cout << "Current P: " << (int) currKPComboBuffrElems.p << "\n";
+
+	currKPComboBuffrElems = findNextKPCombo(kPComboArr_buffr, possibilitiesRaw, currKPComboBuffrElems);
+
+	kPComboArr_buffr[currKPComboBuffrElems.k + 1] = possibilitiesRaw[currKPComboBuffrElems.i][currKPComboBuffrElems.j][currKPComboBuffrElems.p].U8StdArr_positnNew;
+
+	cout << "Current P: " << (int) currKPComboBuffrElems.p << "\n";
+
+	printKeyPressCharFromStdArr(possibilitiesRaw[currKPComboBuffrElems.i][currKPComboBuffrElems.j][currKPComboBuffrElems.p].U8StdArr_positnNew);
+	cout << "\n";
+
+	for (uint8_t k = 0; k < K_LEN; k++)
+	{
+		printKeyPressCharFromStdArr(kPComboArr_buffr[k]);
+	}
+
+	
+	do
+	{
+		currKPComboBuffrElems = findNextKPCombo(kPComboArr_buffr, possibilitiesRaw, currKPComboBuffrElems);
+
+		kPComboArr_buffr[currKPComboBuffrElems.k + 1] = possibilitiesRaw[currKPComboBuffrElems.i][currKPComboBuffrElems.j][currKPComboBuffrElems.p].U8StdArr_positnNew;
+
+		//cout << "Current P: " << (int) currKPComboBuffrElems.p << "\n";
+
+		//printKeyPressCharFromStdArr(possibilitiesRaw[currKPComboBuffrElems.i][currKPComboBuffrElems.j][currKPComboBuffrElems.p].U8StdArr_positnNew);
+		//cout << "\n";
+
+		printKPCombination(kPComboArr_buffr);
+		cout << "\n";
+		currKPComboBuffrElems.p++;
+	}
+	while (currKPComboBuffrElems.p != (P_LEN - 1U) && currKPComboBuffrElems.k != 0U && currKPComboBuffrElems.j != (J_LEN - 1U) && currKPComboBuffrElems.i != (I_LEN - 1U));
+
 	cout << endl;
 }
 
