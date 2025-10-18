@@ -104,6 +104,15 @@ enum chessMovKnightTransitnValidtyState : int8_t
 	CMKTVState_VALID = 1,
 };
 
+enum yetAnotherEnum : int8_t
+{
+	EState_ERROR = -3,
+	EState_NULL = -2,
+	EState_CEASED = -1,
+	EState_UNASSIGNED = 0,
+	EState_VALID = 1,
+};
+
 struct arrElemsTwoDim
 {
 	uint8_t elemDimOne;
@@ -207,7 +216,11 @@ struct keyPressComboBuffrElems
 	uint8_t k;
 };
 
-
+struct yetAnotherStruct
+{
+	std::array<uint8_t, D_LEN> kPPositnArr;
+	enum yetAnotherEnum Enum;
+};
 
 typedef std::array<uint8_t, D_LEN> U8ArrStdOf02;
 typedef std::array<std::array<uint8_t, D_LEN>, K_LEN> U8ArrStdOf10Of02;
@@ -2107,6 +2120,140 @@ void runKeybrdKnightsTopDown()
 				printKeyPressCharFromStdArr({i, j});
 				printKeyPressCharFromStdArr(possibilities[i][j][p]);
 				cout << "\n";
+			}
+		}
+	}
+
+	cout << "list vector\n";
+	
+	std::vector<std::vector<std::vector<std::array<struct yetAnotherStruct, K_LEN>>>> list;
+
+	//cout << "resize list vector i\n";
+
+	list.resize(I_LEN);
+
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		//cout << "resize list vector j\n";
+		list[i].resize(J_LEN);
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			//cout << "size: " << possibilities[i][j].size() << "\n";
+			list[i][j].resize(possibilities[i][j].size());
+		}
+	}
+
+	for (uint8_t i = 0U; i < list.size(); i++)
+	{
+		for (uint8_t j = 0U; j < list[i].size(); j++)
+		{
+			for (uint8_t l = 0U; l < list[i][j].size(); l++)
+			{
+				for (uint8_t k = 0U; k < K_LEN; k++)
+				{
+					for (uint8_t d = 0U; d < D_LEN; d++)
+					{
+						list[i][j][l][k].kPPositnArr[d] = 0U;
+					}
+					list[i][j][l][k].Enum = EState_UNASSIGNED;
+				}
+			}
+		}
+	}
+
+	for (uint8_t i = 0U; i < list.size(); i++)
+	{
+		for (uint8_t j = 0U; j < list[i].size(); j++)
+		{
+			for (uint8_t l = 0U; l < list[i][j].size(); l++)
+			{
+				for (uint8_t k = 0U; k < 1U; k++)
+				{
+					list[i][j][l][k].kPPositnArr = {i, j};
+				}
+				for (uint8_t k = 1U; k < 2U; k++)
+				{
+					list[i][j][l][k].kPPositnArr = possibilities[i][j][l];
+					list[i][j][l][k].Enum = EState_VALID;
+				}
+			}
+		}
+	}
+
+	cout << "list vector print\n";
+	for (uint8_t i = 0U; i < list.size(); i++)
+	{
+		for (uint8_t j = 0U; j < list[i].size(); j++)
+		{
+			for (uint8_t l = 0U; l < list[i][j].size(); l++)
+			{
+				for (uint8_t k = 0U; k < K_LEN; k++)
+				{
+					//printKeyPressCharFromStdArr({i, j});
+					printKeyPressCharFromStdArr(list[i][j][l][k].kPPositnArr);
+				}
+				cout << "\n";
+			}
+		}
+	}
+
+	std:array<std::array<uint64_t, J_LEN>, I_LEN> listPossibilityCntArr;
+
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			listPossibilityCntArr[i][j] = list[i][j].size();
+		}
+	}
+
+	std::array<std::array<uint64_t, J_LEN>, I_LEN> listPossibilityCntArr2KPs = listPossibilityCntArr;
+
+	cout << "list possibility counts per key\n";
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			printKeyPressCharFromStdArr({i, j});
+			cout << ": " << listPossibilityCntArr[i][j] << "\n";
+		}
+	}
+
+	std::array<uint8_t, D_LEN> tempPos = {0U, 0U};
+
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			for (uint8_t l = 0U; l < list[i][j].size(); l++)
+			{
+				// key press of last checked, how many possibilities? lookup value and return count
+				//listPossibilityCntArr[i][j] += 
+				//list[i][j][l][1].kPPositnArr == tempPos;
+				listPossibilityCntArr[i][j] += listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
+			}
+		}
+	}
+
+	cout << "list possibility counts per key\n";
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			printKeyPressCharFromStdArr({i, j});
+			cout << ": " << listPossibilityCntArr[i][j] << "\n";
+		}
+	}
+
+	// resize list for next key 
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			for (uint8_t l = 0U; l < list[i][j].size(); l++)
+			{
+				list[i][j]//up to here
+				
 			}
 		}
 	}
