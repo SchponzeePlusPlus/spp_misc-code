@@ -15,6 +15,7 @@ DM
 DG
 EN
 EH
+F1
 FC
 FM
 G2
@@ -29,6 +30,7 @@ HO
 I2
 IB
 IL
+J3
 JC
 JM
 KB
@@ -54,8 +56,10 @@ O2
 1N
 2I
 2G
+2K
+2O
 3J
 3H
 3L
 
-Possibility Count: 56
+Possibility Count: 60

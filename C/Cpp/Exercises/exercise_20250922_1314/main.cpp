@@ -207,6 +207,8 @@ struct keyPressComboBuffrElems
 	uint8_t k;
 };
 
+
+
 typedef std::array<uint8_t, D_LEN> U8ArrStdOf02;
 typedef std::array<std::array<uint8_t, D_LEN>, K_LEN> U8ArrStdOf10Of02;
 typedef std::array<std::array<uint8_t, D_LEN>, T_LEN> U8ArrStdOf02Of02;
@@ -214,6 +216,8 @@ typedef U8ArrStdOf02 kPPositnArr;
 typedef std::array<std::array<std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN>, J_LEN>, I_LEN> PossibilitiesArr;
 typedef U8ArrStdOf10Of02 KPComboArr;
 typedef U8ArrStdOf02Of02 KPTransArr; //old position and new position
+
+//typedef std::vector
 
 // I'm replacing '\0' with '0' and '4'
 //	there aren't supposed to be anything in
@@ -577,6 +581,23 @@ bool chkKeySelctnValidty(char char_In)
 		(
 			((int) char_In >= (int) '1') &&
 				((int) char_In <= (int) '3')
+		)
+	);
+}
+
+// while 0 and 4 are not valid key presses, they are valid intermediate positions for knight moves (move 01 / 02), this is a quick fix to validate them
+bool chkKeySelctnOnKeybrd(char char_In)
+{
+	return
+	(
+		(
+			((int) char_In >= (int) 'A') &&
+				((int) char_In <= (int) 'O')
+		)
+		||
+		(
+			((int) char_In >= (int) '0') &&
+				((int) char_In <= (int) '4')
 		)
 	);
 }
@@ -1425,7 +1446,9 @@ std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN> returnChessMoveKnigh
 
 				tempKey = returnCharFromKeybrdLayoutStdArr(result[p].U8StdArr_positnNew);
 				
-				tempKeyChkValid = chkKeySelctnValidty(tempKey);
+				//tempKeyChkValid = chkKeySelctnValidty(tempKey);
+				// this is a quick fix to validate 0 and 4 intermediate positions, but in future, I will have to remove the complexity of checking two shifts and moves for each knight move
+				tempKeyChkValid = chkKeySelctnOnKeybrd(tempKey);
 
 				if (!tempKeyChkValid)
 				{
@@ -1938,7 +1961,7 @@ void runKeybrdKnightsTopDown()
 
 	cout << "Quick Guess at Combination Possibility Count: " << quickGuesskeyPressngCombinatnsTotal << "\n";
 
-	KPComboArr kPComboArr_buffr = unassignKPComboArr();
+	/* KPComboArr kPComboArr_buffr = unassignKPComboArr();
 
 	cout << "Combo Buffer: ";
 	for (uint8_t k = 0; k < K_LEN; k++)
@@ -2020,7 +2043,73 @@ void runKeybrdKnightsTopDown()
 		}
 		while(currKPComboBuffrElems.j < (J_LEN - 1U));
 	}
-	while(currKPComboBuffrElems.i < (I_LEN - 1U));
+	while(currKPComboBuffrElems.i < (I_LEN - 1U)); */
+
+	std::vector<std::vector<std::vector<std::array<uint8_t, 2>>>> possibilities;
+
+	possibilities.resize(I_LEN);
+
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		possibilities[i].resize(J_LEN);
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			possibilities[i][j].resize(P_LEN);
+		}
+	}
+	
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			for (uint8_t p = 0U; p < P_LEN; p++)
+			{
+				for (uint8_t d = 0U; d < D_LEN; d++)
+				{
+					possibilities[i][j][p][d] = 0U;
+				}
+			}
+		}
+	}
+
+	uint8_t pVctr = 0U;
+
+	cout << "vector copy from array\n";
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			pVctr = 0U;
+			for (uint8_t p = 0U; p < P_LEN; p++)
+			{
+				if (possibilitiesRaw[i][j][p].enmCMKTVS_transitnValidtyState == CMKTVState_VALID)
+				{
+					//cout << "copy operation\n";
+					possibilities[i][j][pVctr] = possibilitiesRaw[i][j][p].U8StdArr_positnNew;
+					pVctr++;
+				}
+				else
+				{
+					//cout << "erase operation\n";
+					possibilities[i][j].erase (possibilities[i][j].begin() + pVctr);
+				}
+			}
+		}
+	}
+
+	cout << "vector print\n";
+	for (uint8_t i = 0U; i < possibilities.size(); i++)
+	{
+		for (uint8_t j = 0U; j < possibilities[i].size(); j++)
+		{
+			for (uint8_t p = 0U; p < possibilities[i][j].size(); p++)
+			{
+				printKeyPressCharFromStdArr({i, j});
+				printKeyPressCharFromStdArr(possibilities[i][j][p]);
+				cout << "\n";
+			}
+		}
+	}
 
 	cout << endl;
 }
