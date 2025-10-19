@@ -2028,73 +2028,7 @@ void unassignCombo(std::array<struct keyPressComboCharProc, K_LEN>& unassignedCo
 	}
 }
 
-void resizeListVctrLDim(std::vector<std::array<struct keyPressComboCharProc, K_LEN>>& listVctrLDim, const std::array<std::array<uint64_t, J_LEN>, I_LEN>& listPossibilityCntArr2KPs)
-{
-	std::array<struct keyPressComboCharProc, K_LEN> unassignedCombo;
-
-	unassignCombo(unassignedCombo);
-
-	uint8_t l = 0U;
-	uint8_t tempCntr = 0U;
-	//uint8_t lTempCntr = 0U;
-	auto lPos = listVctrLDim.begin();
-	bool bo_lNoEnd = false;
-	std::size_t oldLSz = listVctrLDim.size();
-	std::array<struct keyPressComboCharProc, K_LEN> tempCombo = unassignedCombo;
-	for (uint8_t lOld = 0U; lOld < (uint8_t) oldLSz; lOld++)
-	{
-		//l += lOld;
-
-		cout << "lOld: " << (int) lOld << "\n";
-		cout << "l: " << (int) l << "\n";
-		
-		//l = 
-		//list[i][j].push_back(unassignedCombo);
-		tempCombo = listVctrLDim[l];
-		for (uint8_t k = 0U; k < K_LEN; k++)
-		{
-			//printKeyPressCharFromStdArr({i, j});
-			printKeyPressCharFromStdArr(tempCombo[k].kPPositnArr);
-		}
-		cout << "\n";
-		tempCntr = (listPossibilityCntArr2KPs[listVctrLDim[l][1].kPPositnArr[0]][listVctrLDim[l][1].kPPositnArr[1]] - 1U);
-		cout << "Temp Counter: " << (int) tempCntr << "\n";
-		
-		
-
-		//list[i][j][l][1]
-		//tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
-
-		//l += tempCntr + lOld;
-		//lPos = std::next(list[i][j].begin(), l);
-
-		l += tempCntr;
-		cout << "l: " << (int) l << "\n";
-
-		cout << "Insert New Elements...\n";
-
-		listVctrLDim.insert(lPos, (tempCntr), unassignedCombo);
-
-		cout << "Next position...\n";
-
-		
-		//l += tempCntr + lOld;
-		// increment 1 as lOld increments
-		l++;
-		lPos = std::next(listVctrLDim.begin(), l);
-	}
-	for (uint8_t l = 0U; l < listVctrLDim.size(); l++)
-	{
-		for (uint8_t k = 0U; k < K_LEN; k++)
-		{
-			//printKeyPressCharFromStdArr({i, j});
-			printKeyPressCharFromStdArr(listVctrLDim[l][k].kPPositnArr);
-		}
-		cout << "\n";
-	}
-}
-
-void printPossibilitiesVector(std::vector<std::vector<std::vector<std::array<uint8_t, 2>>>>& possibilities)
+void printPossibilitiesVector(const std::vector<std::vector<std::vector<std::array<uint8_t, 2>>>>& possibilities)
 {
 	cout << "vector print\n";
 	for (uint8_t i = 0U; i < possibilities.size(); i++)
@@ -2108,6 +2042,76 @@ void printPossibilitiesVector(std::vector<std::vector<std::vector<std::array<uin
 				cout << "\n";
 			}
 		}
+	}
+}
+
+void printComboListVctrLDim(const std::vector<std::array<struct keyPressComboCharProc, K_LEN>>& listVctrLDim)
+{
+	for (uint8_t l = 0U; l < listVctrLDim.size(); l++)
+	{
+		for (uint8_t k = 0U; k < K_LEN; k++)
+		{
+			//printKeyPressCharFromStdArr({i, j});
+			printKeyPressCharFromStdArr(listVctrLDim[l][k].kPPositnArr);
+		}
+		cout << "\n";
+	}
+}
+
+void resizeListVctrLDim(std::vector<std::array<struct keyPressComboCharProc, K_LEN>>& listVctrLDim, const std::array<std::array<uint64_t, J_LEN>, I_LEN>& listPossibilityCntArr2KPs)
+{
+	std::array<struct keyPressComboCharProc, K_LEN> unassignedCombo;
+
+	unassignCombo(unassignedCombo);
+
+	uint8_t l = 0U;
+	uint8_t tempCntr = 0U;
+	//uint8_t lTempCntr = 0U;
+	auto lPos = listVctrLDim.begin();
+	//bool bo_lNoEnd = false;
+	std::size_t oldLSz = listVctrLDim.size();
+	std::array<struct keyPressComboCharProc, K_LEN> tempCombo = unassignedCombo;
+	for (uint8_t lOld = 0U; lOld < (uint8_t) oldLSz; lOld++)
+	{
+		//l += lOld;
+
+		//cout << "lOld: " << (int) lOld << "\n";
+		//cout << "l: " << (int) l << "\n";
+		
+		//l = 
+		//list[i][j].push_back(unassignedCombo);
+		tempCombo = listVctrLDim[l];
+		/* for (uint8_t k = 0U; k < K_LEN; k++)
+		{
+			//printKeyPressCharFromStdArr({i, j});
+			printKeyPressCharFromStdArr(tempCombo[k].kPPositnArr);
+		}
+		cout << "\n";*/
+		tempCntr = (listPossibilityCntArr2KPs[listVctrLDim[l][1].kPPositnArr[0]][listVctrLDim[l][1].kPPositnArr[1]] - 1U);
+		//cout << "Temp Counter: " << (int) tempCntr << "\n";
+		
+		
+
+		//list[i][j][l][1]
+		//tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
+
+		//l += tempCntr + lOld;
+		//lPos = std::next(list[i][j].begin(), l);
+
+		l += tempCntr;
+		//cout << "l: " << (int) l << "\n";
+
+		//cout << "Insert New Elements...\n";
+
+		listVctrLDim.insert(lPos, (tempCntr), tempCombo);
+
+		//cout << "Next position...\n";
+
+		
+		//l += tempCntr + lOld;
+		// increment 1 as lOld increments
+		l++;
+		lPos = std::next(listVctrLDim.begin(), l);
 	}
 }
 
@@ -2413,17 +2417,12 @@ void runKeybrdKnightsTopDown()
 	{
 		for (uint8_t j = 0U; j < list[i].size(); j++)
 		{
-			for (uint8_t l = 0U; l < list[i][j].size(); l++)
-			{
-				for (uint8_t k = 0U; k < K_LEN; k++)
-				{
-					//printKeyPressCharFromStdArr({i, j});
-					printKeyPressCharFromStdArr(list[i][j][l][k].kPPositnArr);
-				}
-				cout << "\n";
-			}
+			printComboListVctrLDim(list[i][j]);
 		}
 	}
+
+	// the next step is to fill 3rd character, using the possibilities vector to lookup k and fill the transitions for k + 1, the vector has already been resized to accomodate
+	// the fill or assign or populate or generate or whatever procedure might be similar to the resize in the way that that the resize l dim looks up the count and resizes accordingly
 
 	cout << endl;
 }
