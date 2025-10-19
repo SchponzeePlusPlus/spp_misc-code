@@ -2308,7 +2308,7 @@ void runKeybrdKnightsTopDown()
 		for (uint8_t j = 0U; j < J_LEN; j++)
 		{
 			cout << "j: " << (int) j << "\n";
-			//uint8_t l = 0U;
+			uint8_t l = 0U;
 			uint8_t tempCntr = 0U;
 			//uint8_t lTempCntr = 0U;
 			auto lPos = list[i][j].begin();
@@ -2316,13 +2316,25 @@ void runKeybrdKnightsTopDown()
 			std::size_t oldLSz = list[i][j].size();
 			for (uint8_t lOld = 0U; lOld < oldLSz; lOld++)
 			{
-				lPos = list[i][j].begin() + lOld;
+				l = tempCntr + lOld;
+				
+				
+				cout << "lOld: " << (int) lOld << "\n";
+				cout << "l: " << (int) l << "\n";
+				
+				//l = 
 				//list[i][j].push_back(unassignedCombo);
-				tempCntr = (listPossibilityCntArr2KPs[list[i][j][lOld][1].kPPositnArr[0]][list[i][j][lOld][1].kPPositnArr[1]] - 1U);
+				tempCntr = (listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]] - 1U);
 				cout << "Temp Counter: " << (int) tempCntr << "\n";
+				
+				
+
 				//list[i][j][l][1]
 				//tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
 				list[i][j].insert(lPos, tempCntr, unassignedCombo);
+				
+				l += tempCntr + lOld;
+				lPos = std::next(list[i][j].begin(), l + 1U);
 			}
 		}
 	}
