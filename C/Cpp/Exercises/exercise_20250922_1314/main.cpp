@@ -2258,13 +2258,8 @@ void runKeybrdKnightsTopDown()
 
 	cout << "HERE\n";
 
-	uint8_t l = 0U;
-	uint8_t tempCntr = 0U;
-	//uint8_t lTempCntr = 0U;
-	auto lPos = list[0][0].begin();
-	bool bo_lNoEnd = false;
-
-	// resize list for next key 
+	
+	/* // resize list for next key using push back
 	for (uint8_t i = 0U; i < I_LEN; i++)
 	{
 		//cout << "i: " << (int) i << "\n";
@@ -2277,6 +2272,57 @@ void runKeybrdKnightsTopDown()
 				list[i][j].push_back(unassignedCombo);
 				//list[i][j][l][1]
 				//tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
+			}
+		}
+	} */
+	
+
+	/*
+	std::array<struct yetAnotherStruct, K_LEN> tempMovComboA;
+	std::array<struct yetAnotherStruct, K_LEN> tempMovComboB;
+
+	// re sort pushed back vector...
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		//cout << "i: " << (int) i << "\n";
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			//cout << "j: " << (int) j << "\n";
+			
+			for (uint8_t l = ((uint8_t) oldLSz); l < list[i][j].size()); l++)
+			{
+				list[i][j].push_back(unassignedCombo);
+				//list[i][j][l][1]
+				//tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
+			}
+		}
+	}
+
+	*/
+
+	// resize vector 
+
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		cout << "i: " << (int) i << "\n";
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			cout << "j: " << (int) j << "\n";
+			//uint8_t l = 0U;
+			uint8_t tempCntr = 0U;
+			//uint8_t lTempCntr = 0U;
+			auto lPos = list[i][j].begin();
+			bool bo_lNoEnd = false;
+			std::size_t oldLSz = list[i][j].size();
+			for (uint8_t lOld = 0U; lOld < oldLSz; lOld++)
+			{
+				lPos = list[i][j].begin() + lOld;
+				//list[i][j].push_back(unassignedCombo);
+				tempCntr = (listPossibilityCntArr2KPs[list[i][j][lOld][1].kPPositnArr[0]][list[i][j][lOld][1].kPPositnArr[1]] - 1U);
+				cout << "Temp Counter: " << (int) tempCntr << "\n";
+				//list[i][j][l][1]
+				//tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
+				list[i][j].insert(lPos, tempCntr, unassignedCombo);
 			}
 		}
 	}
