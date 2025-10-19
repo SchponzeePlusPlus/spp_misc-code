@@ -2245,15 +2245,61 @@ void runKeybrdKnightsTopDown()
 		}
 	}
 
+	std::array<struct yetAnotherStruct, K_LEN> unassignedCombo;
+
+	for (uint8_t k = 0U; k < K_LEN; k++)
+	{
+		for (uint8_t d = 0U; d < D_LEN; d++)
+		{
+			unassignedCombo[k].kPPositnArr[d] = 0U;
+		}
+		unassignedCombo[k].Enum = EState_UNASSIGNED;
+	}
+
+	uint64_t tempCntr = 0U;
+
 	// resize list for next key 
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			for (uint8_t l = (list[i][j].size() - 1); l < (uint8_t) listPossibilityCntArr[i][j]; l++)
+			{
+				list[i][j].push_back(unassignedCombo);
+				list[i][j][l][1]
+				tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
+			}
+		}
+	}
+
+	// remove, this is just for reference
 	for (uint8_t i = 0U; i < I_LEN; i++)
 	{
 		for (uint8_t j = 0U; j < J_LEN; j++)
 		{
 			for (uint8_t l = 0U; l < list[i][j].size(); l++)
 			{
-				list[i][j]//up to here
-				
+				// key press of last checked, how many possibilities? lookup value and return count
+				//listPossibilityCntArr[i][j] += 
+				//list[i][j][l][1].kPPositnArr == tempPos;
+				listPossibilityCntArr[i][j] += listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
+			}
+		}
+	}
+
+	cout << "list vector print\n";
+	for (uint8_t i = 0U; i < list.size(); i++)
+	{
+		for (uint8_t j = 0U; j < list[i].size(); j++)
+		{
+			for (uint8_t l = 0U; l < list[i][j].size(); l++)
+			{
+				for (uint8_t k = 0U; k < K_LEN; k++)
+				{
+					//printKeyPressCharFromStdArr({i, j});
+					printKeyPressCharFromStdArr(list[i][j][l][k].kPPositnArr);
+				}
+				cout << "\n";
 			}
 		}
 	}
