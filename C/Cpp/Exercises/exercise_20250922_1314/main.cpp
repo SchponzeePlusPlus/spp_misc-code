@@ -2314,9 +2314,9 @@ void runKeybrdKnightsTopDown()
 			auto lPos = list[i][j].begin();
 			bool bo_lNoEnd = false;
 			std::size_t oldLSz = list[i][j].size();
-			for (uint8_t lOld = 0U; lOld < oldLSz; lOld++)
+			for (uint8_t lOld = 0U; lOld < (uint8_t) oldLSz; lOld++)
 			{
-				l = tempCntr + lOld;
+				l += lOld;
 				
 				
 				cout << "lOld: " << (int) lOld << "\n";
@@ -2331,10 +2331,21 @@ void runKeybrdKnightsTopDown()
 
 				//list[i][j][l][1]
 				//tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
+
+				//l += tempCntr + lOld;
+				//lPos = std::next(list[i][j].begin(), l);
+
+				l += tempCntr;
+				cout << "l: " << (int) l << "\n";
+
+				cout << "Insert New Elements...\n";
+
 				list[i][j].insert(lPos, tempCntr, unassignedCombo);
-				
-				l += tempCntr + lOld;
-				lPos = std::next(list[i][j].begin(), l + 1U);
+
+				cout << "Next position...\n";
+
+				lPos = std::next(list[i][j].begin(), l);
+				//l += tempCntr + lOld;
 			}
 		}
 	}
