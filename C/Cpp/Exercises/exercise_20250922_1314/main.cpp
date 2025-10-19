@@ -2256,24 +2256,36 @@ void runKeybrdKnightsTopDown()
 		unassignedCombo[k].Enum = EState_UNASSIGNED;
 	}
 
+	cout << "HERE\n";
+
 	uint8_t l = 0U;
 	uint8_t tempCntr = 0U;
 	//uint8_t lTempCntr = 0U;
+	auto lPos = list[0][0].begin();
+	bool bo_lNoEnd = false;
 
 	// resize list for next key 
 	for (uint8_t i = 0U; i < I_LEN; i++)
 	{
+		cout << "i: " << (int) i << "\n";
 		for (uint8_t j = 0U; j < J_LEN; j++)
 		{
+			cout << "j: " << (int) j << "\n";
 			l = 0U;
-			while (l < list[i][j].size())
+			lPos = list[i][j].begin();
+			bo_lNoEnd = (lPos < list[i][j].end());
+			tempCntr = 0U;
+			while (bo_lNoEnd)
 			{
-				tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]]; 
-				for (uint8_t lTempCntr = 0U; lTempCntr < tempCntr; lTempCntr++)
-				{
-					list[i][j].insert(list[i][j].begin() + l, unassignedCombo);
-					l++;
-				}
+				//cout << "lPos: " << lPos << "\n";
+				//l = list[i][j].at(lPos);
+				tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
+				cout << "Temp Counter: " << (int) tempCntr << "\n";
+				list[i][j].insert(lPos, tempCntr, unassignedCombo);
+				l += tempCntr;
+				lPos += 1U;
+				//l++;
+				bo_lNoEnd = (lPos < list[i][j].end());
 			}
 		}
 	}
