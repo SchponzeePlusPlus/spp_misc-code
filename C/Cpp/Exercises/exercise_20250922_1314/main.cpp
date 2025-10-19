@@ -104,7 +104,7 @@ enum chessMovKnightTransitnValidtyState : int8_t
 	CMKTVState_VALID = 1,
 };
 
-enum yetAnotherEnum : int8_t
+enum keyPressComboCharProcState : int8_t
 {
 	EState_ERROR = -3,
 	EState_NULL = -2,
@@ -216,10 +216,10 @@ struct keyPressComboBuffrElems
 	uint8_t k;
 };
 
-struct yetAnotherStruct
+struct keyPressComboCharProc
 {
 	std::array<uint8_t, D_LEN> kPPositnArr;
-	enum yetAnotherEnum Enum;
+	enum keyPressComboCharProcState kPPCCPState;
 };
 
 typedef std::array<uint8_t, D_LEN> U8ArrStdOf02;
@@ -1922,29 +1922,11 @@ KPComboArr nextKPCombo(const KPComboArr& currKPComboArr, const PossibilitiesArr&
 	return result;
 }
 
-void runKeybrdKnightsTopDown()
+void printPossibilities(const PossibilitiesArr& possibilitiesRaw)
 {
-	cout << "\n";
-	cout << "C++ Exercise: Keyboard Knights\n";
-	cout << "\n";
-
 	std::array<uint8_t, 2> tempKeyPressPositn = unassignU8ArrTwoDim();
-
-	std::array<std::array<std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN>, J_LEN>, I_LEN> possibilitiesRaw = generateAllChessMoveKnightPositnNewPossiblties();
-
-	// std::array<std::array<std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN>, J_LEN>, I_LEN> possibilities; vector maybe too hard to implement?
-
+	
 	uint64_t u64_possibilityCnt = 0;
-
-	uint8_t currK = 0U;
-	uint8_t currP = 0U;
-
-	struct keyPressComboBuffrElems currKPComboBuffrElems;
-
-	currKPComboBuffrElems.i = 0U;
-	currKPComboBuffrElems.j = 0U;
-	currKPComboBuffrElems.p = 0U;
-	currKPComboBuffrElems.k = 0U;
 
 	cout << "Possibilities:\n";
 	for (uint8_t i = 0; i < I_LEN; i++)
@@ -1973,6 +1955,183 @@ void runKeybrdKnightsTopDown()
 	uint64_t quickGuesskeyPressngCombinatnsTotal = pow(u64_possibilityCnt, K_LEN);
 
 	cout << "Quick Guess at Combination Possibility Count: " << quickGuesskeyPressngCombinatnsTotal << "\n";
+}
+
+void resizePossibilitiesVector(std::vector<std::vector<std::vector<std::array<uint8_t, 2>>>>& possibilities)
+{
+	possibilities.resize(I_LEN);
+
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		possibilities[i].resize(J_LEN);
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			possibilities[i][j].resize(P_LEN);
+		}
+	}
+}
+
+void unassignPossibilitiesVector(std::vector<std::vector<std::vector<std::array<uint8_t, 2>>>>& possibilities)
+{
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			for (uint8_t p = 0U; p < P_LEN; p++)
+			{
+				for (uint8_t d = 0U; d < D_LEN; d++)
+				{
+					possibilities[i][j][p][d] = 0U;
+				}
+			}
+		}
+	}
+}
+
+void copyFiltrdPossibilitiesVector(std::vector<std::vector<std::vector<std::array<uint8_t, 2>>>>& possibilities, const PossibilitiesArr& possibilitiesRaw)
+{
+	uint8_t pVctr = 0U;
+
+	cout << "vector copy from array\n";
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			pVctr = 0U;
+			for (uint8_t p = 0U; p < P_LEN; p++)
+			{
+				if (possibilitiesRaw[i][j][p].enmCMKTVS_transitnValidtyState == CMKTVState_VALID)
+				{
+					//cout << "copy operation\n";
+					possibilities[i][j][pVctr] = possibilitiesRaw[i][j][p].U8StdArr_positnNew;
+					pVctr++;
+				}
+				else
+				{
+					//cout << "erase operation\n";
+					possibilities[i][j].erase (possibilities[i][j].begin() + pVctr);
+				}
+			}
+		}
+	}
+}
+
+void unassignCombo(std::array<struct keyPressComboCharProc, K_LEN>& unassignedCombo)
+{
+	for (uint8_t k = 0U; k < K_LEN; k++)
+	{
+		for (uint8_t d = 0U; d < D_LEN; d++)
+		{
+			unassignedCombo[k].kPPositnArr[d] = 0U;
+		}
+		unassignedCombo[k].kPPCCPState = EState_UNASSIGNED;
+	}
+}
+
+void resizeListVctrLDim(std::vector<std::array<struct keyPressComboCharProc, K_LEN>>& listVctrLDim, const std::array<std::array<uint64_t, J_LEN>, I_LEN>& listPossibilityCntArr2KPs)
+{
+	std::array<struct keyPressComboCharProc, K_LEN> unassignedCombo;
+
+	unassignCombo(unassignedCombo);
+
+	uint8_t l = 0U;
+	uint8_t tempCntr = 0U;
+	//uint8_t lTempCntr = 0U;
+	auto lPos = listVctrLDim.begin();
+	bool bo_lNoEnd = false;
+	std::size_t oldLSz = listVctrLDim.size();
+	std::array<struct keyPressComboCharProc, K_LEN> tempCombo = unassignedCombo;
+	for (uint8_t lOld = 0U; lOld < (uint8_t) oldLSz; lOld++)
+	{
+		//l += lOld;
+
+		cout << "lOld: " << (int) lOld << "\n";
+		cout << "l: " << (int) l << "\n";
+		
+		//l = 
+		//list[i][j].push_back(unassignedCombo);
+		tempCombo = listVctrLDim[l];
+		for (uint8_t k = 0U; k < K_LEN; k++)
+		{
+			//printKeyPressCharFromStdArr({i, j});
+			printKeyPressCharFromStdArr(tempCombo[k].kPPositnArr);
+		}
+		cout << "\n";
+		tempCntr = (listPossibilityCntArr2KPs[listVctrLDim[l][1].kPPositnArr[0]][listVctrLDim[l][1].kPPositnArr[1]] - 1U);
+		cout << "Temp Counter: " << (int) tempCntr << "\n";
+		
+		
+
+		//list[i][j][l][1]
+		//tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
+
+		//l += tempCntr + lOld;
+		//lPos = std::next(list[i][j].begin(), l);
+
+		l += tempCntr;
+		cout << "l: " << (int) l << "\n";
+
+		cout << "Insert New Elements...\n";
+
+		listVctrLDim.insert(lPos, (tempCntr), unassignedCombo);
+
+		cout << "Next position...\n";
+
+		
+		//l += tempCntr + lOld;
+		// increment 1 as lOld increments
+		l++;
+		lPos = std::next(listVctrLDim.begin(), l);
+	}
+	for (uint8_t l = 0U; l < listVctrLDim.size(); l++)
+	{
+		for (uint8_t k = 0U; k < K_LEN; k++)
+		{
+			//printKeyPressCharFromStdArr({i, j});
+			printKeyPressCharFromStdArr(listVctrLDim[l][k].kPPositnArr);
+		}
+		cout << "\n";
+	}
+}
+
+void printPossibilitiesVector(std::vector<std::vector<std::vector<std::array<uint8_t, 2>>>>& possibilities)
+{
+	cout << "vector print\n";
+	for (uint8_t i = 0U; i < possibilities.size(); i++)
+	{
+		for (uint8_t j = 0U; j < possibilities[i].size(); j++)
+		{
+			for (uint8_t p = 0U; p < possibilities[i][j].size(); p++)
+			{
+				printKeyPressCharFromStdArr({i, j});
+				printKeyPressCharFromStdArr(possibilities[i][j][p]);
+				cout << "\n";
+			}
+		}
+	}
+}
+
+void runKeybrdKnightsTopDown()
+{
+	cout << "\n";
+	cout << "C++ Exercise: Keyboard Knights\n";
+	cout << "\n";
+
+	std::array<std::array<std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN>, J_LEN>, I_LEN> possibilitiesRaw = generateAllChessMoveKnightPositnNewPossiblties();
+
+	// std::array<std::array<std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN>, J_LEN>, I_LEN> possibilities; vector maybe too hard to implement?	
+
+	uint8_t currK = 0U;
+	uint8_t currP = 0U;
+
+	struct keyPressComboBuffrElems currKPComboBuffrElems;
+
+	currKPComboBuffrElems.i = 0U;
+	currKPComboBuffrElems.j = 0U;
+	currKPComboBuffrElems.p = 0U;
+	currKPComboBuffrElems.k = 0U;
+
+	printPossibilities(possibilitiesRaw);
 
 	/* KPComboArr kPComboArr_buffr = unassignKPComboArr();
 
@@ -2060,73 +2219,17 @@ void runKeybrdKnightsTopDown()
 
 	std::vector<std::vector<std::vector<std::array<uint8_t, 2>>>> possibilities;
 
-	possibilities.resize(I_LEN);
-
-	for (uint8_t i = 0U; i < I_LEN; i++)
-	{
-		possibilities[i].resize(J_LEN);
-		for (uint8_t j = 0U; j < J_LEN; j++)
-		{
-			possibilities[i][j].resize(P_LEN);
-		}
-	}
+	resizePossibilitiesVector(possibilities);
 	
-	for (uint8_t i = 0U; i < I_LEN; i++)
-	{
-		for (uint8_t j = 0U; j < J_LEN; j++)
-		{
-			for (uint8_t p = 0U; p < P_LEN; p++)
-			{
-				for (uint8_t d = 0U; d < D_LEN; d++)
-				{
-					possibilities[i][j][p][d] = 0U;
-				}
-			}
-		}
-	}
+	unassignPossibilitiesVector(possibilities);
 
-	uint8_t pVctr = 0U;
+	copyFiltrdPossibilitiesVector(possibilities, possibilitiesRaw);
 
-	cout << "vector copy from array\n";
-	for (uint8_t i = 0U; i < I_LEN; i++)
-	{
-		for (uint8_t j = 0U; j < J_LEN; j++)
-		{
-			pVctr = 0U;
-			for (uint8_t p = 0U; p < P_LEN; p++)
-			{
-				if (possibilitiesRaw[i][j][p].enmCMKTVS_transitnValidtyState == CMKTVState_VALID)
-				{
-					//cout << "copy operation\n";
-					possibilities[i][j][pVctr] = possibilitiesRaw[i][j][p].U8StdArr_positnNew;
-					pVctr++;
-				}
-				else
-				{
-					//cout << "erase operation\n";
-					possibilities[i][j].erase (possibilities[i][j].begin() + pVctr);
-				}
-			}
-		}
-	}
-
-	cout << "vector print\n";
-	for (uint8_t i = 0U; i < possibilities.size(); i++)
-	{
-		for (uint8_t j = 0U; j < possibilities[i].size(); j++)
-		{
-			for (uint8_t p = 0U; p < possibilities[i][j].size(); p++)
-			{
-				printKeyPressCharFromStdArr({i, j});
-				printKeyPressCharFromStdArr(possibilities[i][j][p]);
-				cout << "\n";
-			}
-		}
-	}
+	printPossibilitiesVector(possibilities);
 
 	cout << "list vector\n";
 	
-	std::vector<std::vector<std::vector<std::array<struct yetAnotherStruct, K_LEN>>>> list;
+	std::vector<std::vector<std::vector<std::array<struct keyPressComboCharProc, K_LEN>>>> list;
 
 	//cout << "resize list vector i\n";
 
@@ -2155,7 +2258,7 @@ void runKeybrdKnightsTopDown()
 					{
 						list[i][j][l][k].kPPositnArr[d] = 0U;
 					}
-					list[i][j][l][k].Enum = EState_UNASSIGNED;
+					list[i][j][l][k].kPPCCPState = EState_UNASSIGNED;
 				}
 			}
 		}
@@ -2174,7 +2277,7 @@ void runKeybrdKnightsTopDown()
 				for (uint8_t k = 1U; k < 2U; k++)
 				{
 					list[i][j][l][k].kPPositnArr = possibilities[i][j][l];
-					list[i][j][l][k].Enum = EState_VALID;
+					list[i][j][l][k].kPPCCPState = EState_VALID;
 				}
 			}
 		}
@@ -2245,16 +2348,9 @@ void runKeybrdKnightsTopDown()
 		}
 	}
 
-	std::array<struct yetAnotherStruct, K_LEN> unassignedCombo;
+	std::array<struct keyPressComboCharProc, K_LEN> unassignedCombo;
 
-	for (uint8_t k = 0U; k < K_LEN; k++)
-	{
-		for (uint8_t d = 0U; d < D_LEN; d++)
-		{
-			unassignedCombo[k].kPPositnArr[d] = 0U;
-		}
-		unassignedCombo[k].Enum = EState_UNASSIGNED;
-	}
+	unassignCombo(unassignedCombo);
 
 	cout << "HERE\n";
 
@@ -2278,8 +2374,8 @@ void runKeybrdKnightsTopDown()
 	
 
 	/*
-	std::array<struct yetAnotherStruct, K_LEN> tempMovComboA;
-	std::array<struct yetAnotherStruct, K_LEN> tempMovComboB;
+	std::array<struct keyPressComboCharProc, K_LEN> tempMovComboA;
+	std::array<struct keyPressComboCharProc, K_LEN> tempMovComboB;
 
 	// re sort pushed back vector...
 	for (uint8_t i = 0U; i < I_LEN; i++)
@@ -2308,45 +2404,7 @@ void runKeybrdKnightsTopDown()
 		for (uint8_t j = 0U; j < J_LEN; j++)
 		{
 			cout << "j: " << (int) j << "\n";
-			uint8_t l = 0U;
-			uint8_t tempCntr = 0U;
-			//uint8_t lTempCntr = 0U;
-			auto lPos = list[i][j].begin();
-			bool bo_lNoEnd = false;
-			std::size_t oldLSz = list[i][j].size();
-			for (uint8_t lOld = 0U; lOld < (uint8_t) oldLSz; lOld++)
-			{
-				l += lOld;
-				
-				
-				cout << "lOld: " << (int) lOld << "\n";
-				cout << "l: " << (int) l << "\n";
-				
-				//l = 
-				//list[i][j].push_back(unassignedCombo);
-				tempCntr = (listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]] - 1U);
-				cout << "Temp Counter: " << (int) tempCntr << "\n";
-				
-				
-
-				//list[i][j][l][1]
-				//tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
-
-				//l += tempCntr + lOld;
-				//lPos = std::next(list[i][j].begin(), l);
-
-				l += tempCntr;
-				cout << "l: " << (int) l << "\n";
-
-				cout << "Insert New Elements...\n";
-
-				list[i][j].insert(lPos, tempCntr, unassignedCombo);
-
-				cout << "Next position...\n";
-
-				lPos = std::next(list[i][j].begin(), l);
-				//l += tempCntr + lOld;
-			}
+			resizeListVctrLDim(list[i][j], listPossibilityCntArr2KPs);
 		}
 	}
 
