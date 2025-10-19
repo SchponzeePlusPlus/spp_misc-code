@@ -2230,7 +2230,7 @@ void runKeybrdKnightsTopDown()
 				// key press of last checked, how many possibilities? lookup value and return count
 				//listPossibilityCntArr[i][j] += 
 				//list[i][j][l][1].kPPositnArr == tempPos;
-				listPossibilityCntArr[i][j] += listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
+				listPossibilityCntArr[i][j] += (listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]] - 1U);
 			}
 		}
 	}
@@ -2267,25 +2267,16 @@ void runKeybrdKnightsTopDown()
 	// resize list for next key 
 	for (uint8_t i = 0U; i < I_LEN; i++)
 	{
-		cout << "i: " << (int) i << "\n";
+		//cout << "i: " << (int) i << "\n";
 		for (uint8_t j = 0U; j < J_LEN; j++)
 		{
-			cout << "j: " << (int) j << "\n";
-			l = 0U;
-			lPos = list[i][j].begin();
-			bo_lNoEnd = (lPos < list[i][j].end());
-			tempCntr = 0U;
-			while (bo_lNoEnd)
+			//cout << "j: " << (int) j << "\n";
+			std::size_t oldLSz = list[i][j].size();
+			for (uint8_t l = ((uint8_t) oldLSz); l < (uint8_t) (listPossibilityCntArr[i][j]); l++)
 			{
-				//cout << "lPos: " << lPos << "\n";
-				//l = list[i][j].at(lPos);
-				tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
-				cout << "Temp Counter: " << (int) tempCntr << "\n";
-				list[i][j].insert(lPos, tempCntr, unassignedCombo);
-				l += tempCntr;
-				lPos += 1U;
-				//l++;
-				bo_lNoEnd = (lPos < list[i][j].end());
+				list[i][j].push_back(unassignedCombo);
+				//list[i][j][l][1]
+				//tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
 			}
 		}
 	}
