@@ -34,7 +34,7 @@
 #define KEYBRD_LAYOUT_COLUMN_CNT ((uint8_t) 5U)
 
 //#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((unsigned long long int) 10)
-#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 3U)
+#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 6U)
 #define INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((int) KEY_PRESSNG_CORRECT_SEQUENC_LENGTH)
 
 #define KNIGHT_MOVE_01_SHIFT_ELEMS ((uint8_t) 2U)
@@ -1459,9 +1459,9 @@ std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN> returnChessMoveKnigh
 
 				tempKey = returnCharFromKeybrdLayoutStdArr(result[p].U8StdArr_positnNew);
 				
-				tempKeyChkValid = chkKeySelctnValidty(tempKey);
+				//tempKeyChkValid = chkKeySelctnValidty(tempKey);
 				// this is a quick fix to validate 0 and 4 intermediate positions, but in future, I will have to remove the complexity of checking two shifts and moves for each knight move
-				//tempKeyChkValid = chkKeySelctnOnKeybrd(tempKey);
+				tempKeyChkValid = chkKeySelctnOnKeybrd(tempKey);
 
 				if (!tempKeyChkValid)
 				{
@@ -2047,7 +2047,7 @@ void printPossibilitiesVector(const std::vector<std::vector<std::vector<std::arr
 
 void printComboListVctrLDim(const std::vector<std::array<struct keyPressComboCharProc, K_LEN>>& listVctrLDim)
 {
-	for (uint8_t l = 0U; l < listVctrLDim.size(); l++)
+	for (uint64_t l = 0U; l < (uint64_t) listVctrLDim.size(); l++)
 	{
 		for (uint8_t k = 0U; k < K_LEN; k++)
 		{
@@ -2076,14 +2076,14 @@ void resizeListVctrLDim(std::vector<std::array<struct keyPressComboCharProc, K_L
 
 	unassignCombo(unassignedCombo);
 
-	uint8_t l = 0U;
-	uint8_t tempCntr = 0U;
+	uint64_t l = 0U;
+	uint64_t tempCntr = 0U;
 	//uint8_t lTempCntr = 0U;
 	auto lPos = listVctrLDim.begin();
 	//bool bo_lNoEnd = false;
 	std::size_t oldLSz = listVctrLDim.size();
 	std::array<struct keyPressComboCharProc, K_LEN> tempCombo = unassignedCombo;
-	for (uint8_t lOld = 0U; lOld < (uint8_t) oldLSz; lOld++)
+	for (uint64_t lOld = 0U; lOld < (uint64_t) oldLSz; lOld++)
 	{
 		//l += lOld;
 
@@ -2129,18 +2129,19 @@ void resizeListVctrLDim(std::vector<std::array<struct keyPressComboCharProc, K_L
 
 void removeListVctrLDimVowelChk(std::vector<std::array<struct keyPressComboCharProc, K_LEN>>& listVctrLDim, const uint8_t& k)
 {
-	uint8_t l = 0U;
-	uint8_t lOldSz = listVctrLDim.size();
-	for (uint8_t lOld = 0U; lOld < lOldSz; lOld++)
+	uint64_t l = 0U;
+	uint64_t lOldSz = (uint64_t) listVctrLDim.size();
+	for (uint64_t lOld = 0U; lOld < lOldSz; lOld++)
 	{
-		cout << "Target Combo: ";
-		for (uint8_t kPrint = 0U; kPrint < K_LEN; kPrint++)
+		//cout << "Target Combo: ";
+		// remove for() loop print below this comment from this procedure, but maybe make it its own procedure for reference?
+		/* for (uint8_t kPrint = 0U; kPrint < K_LEN; kPrint++)
 		{
 			//printKeyPressCharFromStdArr({i, j});
 			printKeyPressCharFromStdArr(listVctrLDim[l][kPrint].kPPositnArr);
-		}
-		cout << "\n";
-		cout << "lOld: " << (int) lOld << "\n";
+		} */
+		//cout << "\n";
+		//cout << "lOld: " << (int) lOld << "\n";
 		uint8_t cntVowels = 0U;
 		if (listVctrLDim.size() > 0U)
 		{
@@ -2149,16 +2150,17 @@ void removeListVctrLDimVowelChk(std::vector<std::array<struct keyPressComboCharP
 				cntVowels = (chkCharIsVowel(returnCharFromKeybrdLayoutStdArr(listVctrLDim[l][kVowelChk].kPPositnArr))) ? cntVowels + 1U : cntVowels;
 			}
 		}
-		cout << "cntVowels: " << (int) cntVowels << "\n";
+		//cout << "cntVowels: " << (int) cntVowels << "\n";
 		if (cntVowels > 2U)
 		{
-			cout << "Erasing (due to containing 3 + vowels): ";
-			for (uint8_t kPrint = 0U; kPrint < K_LEN; kPrint++)
+			//cout << "Erasing (due to containing 3 + vowels): ";
+			// remove for() loop print below this comment from this procedure, but maybe make it its own procedure for reference?
+			/* for (uint8_t kPrint = 0U; kPrint < K_LEN; kPrint++)
 			{
 				//printKeyPressCharFromStdArr({i, j});
 				printKeyPressCharFromStdArr(listVctrLDim[l][kPrint].kPPositnArr);
 			}
-			cout << "\n";
+			cout << "\n"; */
 			listVctrLDim.erase(listVctrLDim.begin() + l);
 		}
 		else
@@ -2188,7 +2190,7 @@ void runKeybrdKnightsTopDown()
 	currKPComboBuffrElems.p = 0U;
 	currKPComboBuffrElems.k = 0U;
 
-	printPossibilities(possibilitiesRaw);
+	//printPossibilities(possibilitiesRaw);
 
 	/* KPComboArr kPComboArr_buffr = unassignKPComboArr();
 
@@ -2274,7 +2276,7 @@ void runKeybrdKnightsTopDown()
 	}
 	while(currKPComboBuffrElems.i < (I_LEN - 1U)); */
 
-	std::vector<std::vector<std::vector<std::array<uint8_t, 2>>>> possibilities;
+	std::vector<std::vector<std::vector<std::array<uint8_t, 2U>>>> possibilities;
 
 	resizePossibilitiesVector(possibilities);
 	
@@ -2282,7 +2284,7 @@ void runKeybrdKnightsTopDown()
 
 	copyFiltrdPossibilitiesVector(possibilities, possibilitiesRaw);
 
-	printPossibilitiesVector(possibilities);
+	//printPossibilitiesVector(possibilities);
 
 	cout << "list vector\n";
 	
@@ -2307,7 +2309,7 @@ void runKeybrdKnightsTopDown()
 	{
 		for (uint8_t j = 0U; j < list[i].size(); j++)
 		{
-			for (uint8_t l = 0U; l < list[i][j].size(); l++)
+			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
 			{
 				for (uint8_t k = 0U; k < K_LEN; k++)
 				{
@@ -2325,7 +2327,7 @@ void runKeybrdKnightsTopDown()
 	{
 		for (uint8_t j = 0U; j < list[i].size(); j++)
 		{
-			for (uint8_t l = 0U; l < list[i][j].size(); l++)
+			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
 			{
 				for (uint8_t k = 0U; k < 1U; k++)
 				{
@@ -2340,12 +2342,13 @@ void runKeybrdKnightsTopDown()
 		}
 	}
 
-	cout << "list vector print\n";
+	// remove for() loop print below this comment from this procedure, but maybe make it its own procedure for reference?
+	/* cout << "list vector print\n";
 	for (uint8_t i = 0U; i < list.size(); i++)
 	{
 		for (uint8_t j = 0U; j < list[i].size(); j++)
 		{
-			for (uint8_t l = 0U; l < list[i][j].size(); l++)
+			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
 			{
 				for (uint8_t k = 0U; k < K_LEN; k++)
 				{
@@ -2355,7 +2358,7 @@ void runKeybrdKnightsTopDown()
 				cout << "\n";
 			}
 		}
-	}
+	} */
 
 	std:array<std::array<uint64_t, J_LEN>, I_LEN> listPossibilityCntArr;
 
@@ -2369,7 +2372,8 @@ void runKeybrdKnightsTopDown()
 
 	std::array<std::array<uint64_t, J_LEN>, I_LEN> listPossibilityCntArr2KPs = listPossibilityCntArr;
 
-	cout << "list possibility counts per key\n";
+	// remove for() loop print below this comment from this procedure, but maybe make it its own procedure for reference?
+	/* cout << "list possibility counts per key\n";
 	for (uint8_t i = 0U; i < I_LEN; i++)
 	{
 		for (uint8_t j = 0U; j < J_LEN; j++)
@@ -2377,7 +2381,7 @@ void runKeybrdKnightsTopDown()
 			printKeyPressCharFromStdArr({i, j});
 			cout << ": " << listPossibilityCntArr[i][j] << "\n";
 		}
-	}
+	} */
 
 	std::array<uint8_t, D_LEN> tempPos = {0U, 0U};
 
@@ -2385,7 +2389,7 @@ void runKeybrdKnightsTopDown()
 	{
 		for (uint8_t j = 0U; j < J_LEN; j++)
 		{
-			for (uint8_t l = 0U; l < list[i][j].size(); l++)
+			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
 			{
 				// key press of last checked, how many possibilities? lookup value and return count
 				//listPossibilityCntArr[i][j] += 
@@ -2395,7 +2399,8 @@ void runKeybrdKnightsTopDown()
 		}
 	}
 
-	cout << "list possibility counts per key\n";
+	// remove for() loop print below this comment from this procedure, but maybe make it its own procedure for reference?
+	/* cout << "list possibility counts per key\n";
 	for (uint8_t i = 0U; i < I_LEN; i++)
 	{
 		for (uint8_t j = 0U; j < J_LEN; j++)
@@ -2403,7 +2408,7 @@ void runKeybrdKnightsTopDown()
 			printKeyPressCharFromStdArr({i, j});
 			cout << ": " << listPossibilityCntArr[i][j] << "\n";
 		}
-	}
+	} */
 
 	std::array<struct keyPressComboCharProc, K_LEN> unassignedCombo;
 
@@ -2468,7 +2473,7 @@ void runKeybrdKnightsTopDown()
 			}
 		}
 
-		printComboListVctr(list);
+		//printComboListVctr(list);
 
 		// the next step is to fill 3rd character, using the possibilities vector to lookup k and fill the transitions for k + 1, the vector has already been resized to accomodate
 		// the fill or assign or populate or generate or whatever procedure might be similar to the resize in the way that that the resize l dim looks up the count and resizes accordingly
@@ -2496,7 +2501,7 @@ void runKeybrdKnightsTopDown()
 					possibilitiesJIndxPrev = possibilitiesJIndx;
 				}
 				//cout << "j: " << (int) j << "\n";
-				for (uint8_t l = 0U; l < list[i][j].size(); l++)
+				for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
 				{
 					//cout << "l: " << (int) l << "\n";
 					//possibilities[i][j];
