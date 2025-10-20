@@ -2621,19 +2621,7 @@ void runKeybrdKnightsTopDown()
 
 int main()
 {
-	cout << "\n";
-	cout << "\n";
-	cout << "Program Initialised.\n";
-
-	//runKeybrdKnightsBruteForce();
 	runKeybrdKnightsTopDown();
-
-	cout << "Program Complete.\n";
-	cout << "\n";
-	cout << "\n";
-
-	/* // Close the file
-	log.close(); */
 
 	return 0;
 }
