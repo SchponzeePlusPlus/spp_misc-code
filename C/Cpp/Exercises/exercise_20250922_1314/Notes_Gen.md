@@ -6,6 +6,15 @@
 
 #### 2025/10
 
+##### 2025/10/21
+
+###### 08:00
+
+Things i can do to further clean the code:
+- note: do easier stuff first before more significant changes
+- any simple unassign functions, like for enums, replace with = 0; when it would be called
+- condense the shift...
+
 ##### 2025/10/18
 
 ###### 13:53
