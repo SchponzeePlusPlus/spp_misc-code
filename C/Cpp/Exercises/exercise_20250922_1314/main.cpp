@@ -2461,10 +2461,14 @@ void runKeybrdKnightsTopDown()
 				if (possibilitiesIIndx == possibilitiesIIndxPrev && possibilitiesJIndx == possibilitiesJIndxPrev && possibilitiesPIndx < possibilities[possibilitiesIIndx][possibilitiesJIndx].size())
 				{
 					// already incremented below
+					cout << "condition 1st check true no action\n";
 				}
 				else
 				{
 					possibilitiesPIndx = 0U;
+					possibilitiesIIndxPrev = possibilitiesIIndx;
+					possibilitiesJIndxPrev = possibilitiesJIndx;
+					cout << "condition 1st check false, reset P Index\n";
 				}
 
 				cout << "possibilitiesIIndx: " << (int) possibilitiesIIndx << "\n";
@@ -2520,11 +2524,13 @@ void runKeybrdKnightsTopDown()
 				if (possibilitiesIIndx == possibilitiesIIndxPrev && possibilitiesJIndx == possibilitiesJIndxPrev && possibilitiesPIndx < possibilities[possibilitiesIIndx][possibilitiesJIndx].size())
 				{
 					possibilitiesPIndx++;
+					cout << "condition 2nd check true, increment p index\n";
 				}
 				else
 				{
 					//already done above?
 					//possibilitiesPIndx = 0U;
+					cout << "condition 2nd check false, no action\n";
 				}				
 			}
 		}
