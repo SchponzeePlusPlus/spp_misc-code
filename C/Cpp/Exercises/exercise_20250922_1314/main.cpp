@@ -2424,6 +2424,121 @@ void runKeybrdKnightsTopDown()
 	// the next step is to fill 3rd character, using the possibilities vector to lookup k and fill the transitions for k + 1, the vector has already been resized to accomodate
 	// the fill or assign or populate or generate or whatever procedure might be similar to the resize in the way that that the resize l dim looks up the count and resizes accordingly
 
+	// fill next key press (3rd key for now); k = 2
+	cout << "fill stage\n";
+	for (uint8_t i = 0U; i < I_LEN; i++)
+	{
+		cout << "i: " << (int) i << "\n";
+		for (uint8_t j = 0U; j < J_LEN; j++)
+		{
+			uint8_t possibilitiesIIndx = 0U;
+			uint8_t possibilitiesJIndx = 0U;
+			cout << "possibilitiesIIndx: " << (int) possibilitiesIIndx << "\n";
+			cout << "possibilitiesJIndx: " << (int) possibilitiesJIndx << "\n";
+			uint8_t possibilitiesPIndx = 0U;
+			uint8_t possibilitiesIIndxPrev = 0U;
+			uint8_t possibilitiesJIndxPrev = 0U;
+			// if the L Dim is not empty
+			if (list[i][j].size() > 0U)
+			{
+				possibilitiesIIndx = list[i][j][0][1].kPPositnArr[0];
+				possibilitiesJIndx = list[i][j][0][1].kPPositnArr[1];
+				possibilitiesIIndxPrev = possibilitiesIIndx;
+				possibilitiesJIndxPrev = possibilitiesJIndx;
+			}
+			cout << "j: " << (int) j << "\n";
+			for (uint8_t l = 0U; l < list[i][j].size(); l++)
+			{
+				cout << "l: " << (int) l << "\n";
+				//possibilities[i][j];
+
+				possibilitiesIIndxPrev = possibilitiesIIndx;
+				possibilitiesJIndxPrev = possibilitiesJIndx;
+				
+				possibilitiesIIndx = list[i][j][l][1].kPPositnArr[0];
+				possibilitiesJIndx = list[i][j][l][1].kPPositnArr[1];
+
+				if (possibilitiesIIndx == possibilitiesIIndxPrev && possibilitiesJIndx == possibilitiesJIndxPrev && possibilitiesPIndx < possibilities[possibilitiesIIndx][possibilitiesJIndx].size())
+				{
+					// already incremented below
+				}
+				else
+				{
+					possibilitiesPIndx = 0U;
+				}
+
+				cout << "possibilitiesIIndx: " << (int) possibilitiesIIndx << "\n";
+				cout << "possibilitiesJIndx: " << (int) possibilitiesJIndx << "\n";
+				cout << "possibilitiesPIndx: " << (int) possibilitiesPIndx << "\n";
+
+				cout << "Possibility: ";
+				printKeyPressCharFromStdArr({possibilitiesIIndx, possibilitiesJIndx});
+				printKeyPressCharFromStdArr(possibilities[possibilitiesIIndx][possibilitiesJIndx][possibilitiesPIndx]);
+				cout << "\n";
+
+				list[i][j][l][2].kPPositnArr = possibilities[possibilitiesIIndx][possibilitiesJIndx][possibilitiesPIndx];
+				//l += lOld;
+
+				//cout << "lOld: " << (int) lOld << "\n";
+				
+				
+				//l = 
+				//list[i][j].push_back(unassignedCombo);
+				//tempCombo = listVctrLDim[l];
+				/* for (uint8_t k = 0U; k < K_LEN; k++)
+				{
+					//printKeyPressCharFromStdArr({i, j});
+					printKeyPressCharFromStdArr(tempCombo[k].kPPositnArr);
+				}
+				cout << "\n";*/
+				//tempCntr = (listPossibilityCntArr2KPs[listVctrLDim[l][1].kPPositnArr[0]][listVctrLDim[l][1].kPPositnArr[1]] - 1U);
+				//cout << "Temp Counter: " << (int) tempCntr << "\n";
+				
+				
+
+				//list[i][j][l][1]
+				//tempCntr = listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]];
+
+				//l += tempCntr + lOld;
+				//lPos = std::next(list[i][j].begin(), l);
+
+				//l += tempCntr;
+				//cout << "l: " << (int) l << "\n";
+
+				//cout << "Insert New Elements...\n";
+
+				//listVctrLDim.insert(lPos, (tempCntr), tempCombo);
+
+				//cout << "Next position...\n";
+
+				
+				//l += tempCntr + lOld;
+				// increment 1 as lOld increments
+				//l++;
+				//lPos = std::next(listVctrLDim.begin(), l);
+
+				if (possibilitiesIIndx == possibilitiesIIndxPrev && possibilitiesJIndx == possibilitiesJIndxPrev && possibilitiesPIndx < possibilities[possibilitiesIIndx][possibilitiesJIndx].size())
+				{
+					possibilitiesPIndx++;
+				}
+				else
+				{
+					//already done above?
+					//possibilitiesPIndx = 0U;
+				}				
+			}
+		}
+	}
+
+	cout << "list vector print\n";
+	for (uint8_t i = 0U; i < list.size(); i++)
+	{
+		for (uint8_t j = 0U; j < list[i].size(); j++)
+		{
+			printComboListVctrLDim(list[i][j]);
+		}
+	}
+
 	cout << endl;
 }
 
