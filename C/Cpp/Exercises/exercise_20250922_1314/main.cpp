@@ -34,7 +34,7 @@
 #define KEYBRD_LAYOUT_COLUMN_CNT ((uint8_t) 5U)
 
 //#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((unsigned long long int) 10)
-#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 4U)
+#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 10U)
 #define INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((int) KEY_PRESSNG_CORRECT_SEQUENC_LENGTH)
 
 #define KNIGHT_MOVE_01_SHIFT_ELEMS ((uint8_t) 2U)
@@ -2539,6 +2539,45 @@ void runKeybrdKnightsTopDown()
 			}
 		}
 
+		// remove combinations with more than 2 vowels
+		cout << "vowel check stage\n";
+		for (uint8_t i = 0U; i < list.size(); i++)
+		{
+			for (uint8_t j = 0U; j < list[i].size(); j++)
+			{
+				uint8_t l = 0U;
+				uint8_t lOldSz = list[i][j].size();
+				for (uint8_t lOld = 0U; lOld < lOldSz; lOld++)
+				{
+					cout << "lOld: " << (int) lOld << "\n";
+					uint8_t cntVowels = 0U;
+					if (list[i][j].size() > 0U)
+					{
+						for (uint8_t kVowelChk = 0U; kVowelChk < k; kVowelChk++)
+						{
+							cntVowels = (chkCharIsVowel(returnCharFromKeybrdLayoutStdArr(list[i][j][l][kVowelChk].kPPositnArr))) ? cntVowels + 1U : cntVowels;
+						}
+					}
+					cout << "cntVowels: " << (int) cntVowels << "\n";
+					if (cntVowels > 2U)
+					{
+						cout << "Erasing (due to containing 3 + vowels): ";
+						for (uint8_t kPrint = 0U; kPrint < K_LEN; kPrint++)
+						{
+							//printKeyPressCharFromStdArr({i, j});
+							printKeyPressCharFromStdArr(list[i][j][l][kPrint].kPPositnArr);
+						}
+						cout << "\n";
+						list[i][j].erase(list[i][j].begin() + l);
+					}
+					else
+					{
+						l++;
+					}
+				}
+			}
+		}
+
 		cout << "list vector print\n";
 		for (uint8_t i = 0U; i < list.size(); i++)
 		{
@@ -2557,6 +2596,16 @@ void runKeybrdKnightsTopDown()
 			printComboListVctrLDim(list[i][j]);
 		}
 	}
+
+	uint64_t cntKPCombos = 0U;
+	for (uint8_t i = 0U; i < list.size(); i++)
+	{
+		for (uint8_t j = 0U; j < list[i].size(); j++)
+		{
+			cntKPCombos += (uint64_t) list[i][j].size();
+		}
+	}
+	cout << "list vector total count: " << (long long int) cntKPCombos << "\n";
 
 	cout << endl;
 }
