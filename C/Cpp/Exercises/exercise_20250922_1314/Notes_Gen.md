@@ -4,6 +4,17 @@
 
 ### 2025
 
+#### 2025/10
+
+##### 2025/10/18
+
+###### 13:53
+
+- Make a vector for list
+- vector of a struct, struct which contains char pos and enum to say whether current combo has been calculated
+- make a vector for 2 pos buffer
+- maybe an i x j (2d) array of counts of combos for each combo
+
 #### 2025/09
 
 ##### 2025/09/29
