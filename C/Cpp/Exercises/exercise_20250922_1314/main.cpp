@@ -34,7 +34,7 @@
 #define KEYBRD_LAYOUT_COLUMN_CNT ((uint8_t) 5U)
 
 //#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((unsigned long long int) 10)
-#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 10U)
+#define KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((uint8_t) 3U)
 #define INT_KEY_PRESSNG_CORRECT_SEQUENC_LENGTH ((int) KEY_PRESSNG_CORRECT_SEQUENC_LENGTH)
 
 #define KNIGHT_MOVE_01_SHIFT_ELEMS ((uint8_t) 2U)
@@ -1459,9 +1459,9 @@ std::array<struct chessMoveKnightPositnNewPossiblty, P_LEN> returnChessMoveKnigh
 
 				tempKey = returnCharFromKeybrdLayoutStdArr(result[p].U8StdArr_positnNew);
 				
-				//tempKeyChkValid = chkKeySelctnValidty(tempKey);
+				tempKeyChkValid = chkKeySelctnValidty(tempKey);
 				// this is a quick fix to validate 0 and 4 intermediate positions, but in future, I will have to remove the complexity of checking two shifts and moves for each knight move
-				tempKeyChkValid = chkKeySelctnOnKeybrd(tempKey);
+				//tempKeyChkValid = chkKeySelctnOnKeybrd(tempKey);
 
 				if (!tempKeyChkValid)
 				{
@@ -2058,6 +2058,18 @@ void printComboListVctrLDim(const std::vector<std::array<struct keyPressComboCha
 	}
 }
 
+void printComboListVctr(const std::vector<std::vector<std::vector<std::array<struct keyPressComboCharProc, K_LEN>>>>& comboListVctr)
+{
+	cout << "list vector print\n";
+	for (uint8_t i = 0U; i < comboListVctr.size(); i++)
+	{
+		for (uint8_t j = 0U; j < comboListVctr[i].size(); j++)
+		{
+			printComboListVctrLDim(comboListVctr[i][j]);
+		}
+	}
+}
+
 void resizeListVctrLDim(std::vector<std::array<struct keyPressComboCharProc, K_LEN>>& listVctrLDim, const std::array<std::array<uint64_t, J_LEN>, I_LEN>& listPossibilityCntArr2KPs, const uint8_t& k)
 {
 	std::array<struct keyPressComboCharProc, K_LEN> unassignedCombo;
@@ -2112,6 +2124,47 @@ void resizeListVctrLDim(std::vector<std::array<struct keyPressComboCharProc, K_L
 		// increment 1 as lOld increments
 		l++;
 		lPos = std::next(listVctrLDim.begin(), l);
+	}
+}
+
+void removeListVctrLDimVowelChk(std::vector<std::array<struct keyPressComboCharProc, K_LEN>>& listVctrLDim, const uint8_t& k)
+{
+	uint8_t l = 0U;
+	uint8_t lOldSz = listVctrLDim.size();
+	for (uint8_t lOld = 0U; lOld < lOldSz; lOld++)
+	{
+		cout << "Target Combo: ";
+		for (uint8_t kPrint = 0U; kPrint < K_LEN; kPrint++)
+		{
+			//printKeyPressCharFromStdArr({i, j});
+			printKeyPressCharFromStdArr(listVctrLDim[l][kPrint].kPPositnArr);
+		}
+		cout << "\n";
+		cout << "lOld: " << (int) lOld << "\n";
+		uint8_t cntVowels = 0U;
+		if (listVctrLDim.size() > 0U)
+		{
+			for (uint8_t kVowelChk = 0U; kVowelChk < k + 1; kVowelChk++)
+			{
+				cntVowels = (chkCharIsVowel(returnCharFromKeybrdLayoutStdArr(listVctrLDim[l][kVowelChk].kPPositnArr))) ? cntVowels + 1U : cntVowels;
+			}
+		}
+		cout << "cntVowels: " << (int) cntVowels << "\n";
+		if (cntVowels > 2U)
+		{
+			cout << "Erasing (due to containing 3 + vowels): ";
+			for (uint8_t kPrint = 0U; kPrint < K_LEN; kPrint++)
+			{
+				//printKeyPressCharFromStdArr({i, j});
+				printKeyPressCharFromStdArr(listVctrLDim[l][kPrint].kPPositnArr);
+			}
+			cout << "\n";
+			listVctrLDim.erase(listVctrLDim.begin() + l);
+		}
+		else
+		{
+			l++;
+		}
 	}
 }
 
@@ -2407,22 +2460,15 @@ void runKeybrdKnightsTopDown()
 
 		for (uint8_t i = 0U; i < I_LEN; i++)
 		{
-			cout << "i: " << (int) i << "\n";
+			//cout << "i: " << (int) i << "\n";
 			for (uint8_t j = 0U; j < J_LEN; j++)
 			{
-				cout << "j: " << (int) j << "\n";
+				//cout << "j: " << (int) j << "\n";
 				resizeListVctrLDim(list[i][j], listPossibilityCntArr2KPs, k);
 			}
 		}
 
-		cout << "list vector print\n";
-		for (uint8_t i = 0U; i < list.size(); i++)
-		{
-			for (uint8_t j = 0U; j < list[i].size(); j++)
-			{
-				printComboListVctrLDim(list[i][j]);
-			}
-		}
+		printComboListVctr(list);
 
 		// the next step is to fill 3rd character, using the possibilities vector to lookup k and fill the transitions for k + 1, the vector has already been resized to accomodate
 		// the fill or assign or populate or generate or whatever procedure might be similar to the resize in the way that that the resize l dim looks up the count and resizes accordingly
@@ -2431,13 +2477,13 @@ void runKeybrdKnightsTopDown()
 		cout << "fill stage\n";
 		for (uint8_t i = 0U; i < I_LEN; i++)
 		{
-			cout << "i: " << (int) i << "\n";
+			//cout << "i: " << (int) i << "\n";
 			for (uint8_t j = 0U; j < J_LEN; j++)
 			{
 				uint8_t possibilitiesIIndx = 0U;
 				uint8_t possibilitiesJIndx = 0U;
-				cout << "possibilitiesIIndx: " << (int) possibilitiesIIndx << "\n";
-				cout << "possibilitiesJIndx: " << (int) possibilitiesJIndx << "\n";
+				//cout << "possibilitiesIIndx: " << (int) possibilitiesIIndx << "\n";
+				//cout << "possibilitiesJIndx: " << (int) possibilitiesJIndx << "\n";
 				uint8_t possibilitiesPIndx = 0U;
 				uint8_t possibilitiesIIndxPrev = 0U;
 				uint8_t possibilitiesJIndxPrev = 0U;
@@ -2449,10 +2495,10 @@ void runKeybrdKnightsTopDown()
 					possibilitiesIIndxPrev = possibilitiesIIndx;
 					possibilitiesJIndxPrev = possibilitiesJIndx;
 				}
-				cout << "j: " << (int) j << "\n";
+				//cout << "j: " << (int) j << "\n";
 				for (uint8_t l = 0U; l < list[i][j].size(); l++)
 				{
-					cout << "l: " << (int) l << "\n";
+					//cout << "l: " << (int) l << "\n";
 					//possibilities[i][j];
 
 					possibilitiesIIndxPrev = possibilitiesIIndx;
@@ -2464,24 +2510,24 @@ void runKeybrdKnightsTopDown()
 					if (possibilitiesIIndx == possibilitiesIIndxPrev && possibilitiesJIndx == possibilitiesJIndxPrev && possibilitiesPIndx < possibilities[possibilitiesIIndx][possibilitiesJIndx].size())
 					{
 						// already incremented below
-						cout << "condition 1st check true no action\n";
+						//cout << "condition 1st check true no action\n";
 					}
 					else
 					{
 						possibilitiesPIndx = 0U;
 						possibilitiesIIndxPrev = possibilitiesIIndx;
 						possibilitiesJIndxPrev = possibilitiesJIndx;
-						cout << "condition 1st check false, reset P Index\n";
+						//cout << "condition 1st check false, reset P Index\n";
 					}
 
-					cout << "possibilitiesIIndx: " << (int) possibilitiesIIndx << "\n";
-					cout << "possibilitiesJIndx: " << (int) possibilitiesJIndx << "\n";
-					cout << "possibilitiesPIndx: " << (int) possibilitiesPIndx << "\n";
+					//cout << "possibilitiesIIndx: " << (int) possibilitiesIIndx << "\n";
+					//cout << "possibilitiesJIndx: " << (int) possibilitiesJIndx << "\n";
+					//cout << "possibilitiesPIndx: " << (int) possibilitiesPIndx << "\n";
 
-					cout << "Possibility: ";
-					printKeyPressCharFromStdArr({possibilitiesIIndx, possibilitiesJIndx});
-					printKeyPressCharFromStdArr(possibilities[possibilitiesIIndx][possibilitiesJIndx][possibilitiesPIndx]);
-					cout << "\n";
+					//cout << "Possibility: ";
+					//printKeyPressCharFromStdArr({possibilitiesIIndx, possibilitiesJIndx});
+					//printKeyPressCharFromStdArr(possibilities[possibilitiesIIndx][possibilitiesJIndx][possibilitiesPIndx]);
+					//cout << "\n";
 
 					list[i][j][l][k].kPPositnArr = possibilities[possibilitiesIIndx][possibilitiesJIndx][possibilitiesPIndx];
 					//l += lOld;
@@ -2527,13 +2573,13 @@ void runKeybrdKnightsTopDown()
 					if (possibilitiesIIndx == possibilitiesIIndxPrev && possibilitiesJIndx == possibilitiesJIndxPrev && possibilitiesPIndx < possibilities[possibilitiesIIndx][possibilitiesJIndx].size())
 					{
 						possibilitiesPIndx++;
-						cout << "condition 2nd check true, increment p index\n";
+						//cout << "condition 2nd check true, increment p index\n";
 					}
 					else
 					{
 						//already done above?
 						//possibilitiesPIndx = 0U;
-						cout << "condition 2nd check false, no action\n";
+						//cout << "condition 2nd check false, no action\n";
 					}				
 				}
 			}
@@ -2545,57 +2591,15 @@ void runKeybrdKnightsTopDown()
 		{
 			for (uint8_t j = 0U; j < list[i].size(); j++)
 			{
-				uint8_t l = 0U;
-				uint8_t lOldSz = list[i][j].size();
-				for (uint8_t lOld = 0U; lOld < lOldSz; lOld++)
-				{
-					cout << "lOld: " << (int) lOld << "\n";
-					uint8_t cntVowels = 0U;
-					if (list[i][j].size() > 0U)
-					{
-						for (uint8_t kVowelChk = 0U; kVowelChk < k; kVowelChk++)
-						{
-							cntVowels = (chkCharIsVowel(returnCharFromKeybrdLayoutStdArr(list[i][j][l][kVowelChk].kPPositnArr))) ? cntVowels + 1U : cntVowels;
-						}
-					}
-					cout << "cntVowels: " << (int) cntVowels << "\n";
-					if (cntVowels > 2U)
-					{
-						cout << "Erasing (due to containing 3 + vowels): ";
-						for (uint8_t kPrint = 0U; kPrint < K_LEN; kPrint++)
-						{
-							//printKeyPressCharFromStdArr({i, j});
-							printKeyPressCharFromStdArr(list[i][j][l][kPrint].kPPositnArr);
-						}
-						cout << "\n";
-						list[i][j].erase(list[i][j].begin() + l);
-					}
-					else
-					{
-						l++;
-					}
-				}
+				removeListVctrLDimVowelChk(list[i][j], k);
 			}
 		}
 
-		cout << "list vector print\n";
-		for (uint8_t i = 0U; i < list.size(); i++)
-		{
-			for (uint8_t j = 0U; j < list[i].size(); j++)
-			{
-				printComboListVctrLDim(list[i][j]);
-			}
-		}
+		//printComboListVctr(list);
 	}
 
 	cout << "final list vector print\n";
-	for (uint8_t i = 0U; i < list.size(); i++)
-	{
-		for (uint8_t j = 0U; j < list[i].size(); j++)
-		{
-			printComboListVctrLDim(list[i][j]);
-		}
-	}
+	printComboListVctr(list);
 
 	uint64_t cntKPCombos = 0U;
 	for (uint8_t i = 0U; i < list.size(); i++)
