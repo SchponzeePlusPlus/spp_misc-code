@@ -4,9 +4,9 @@
  * 
  * Author: SchponzeePlusPlus
  * 
- * Version: V0.0.0.1 (WIP)
+ * Version: V0.0.0.2
  * 
- * Solution Attempt: No. 2
+ * Solution Attempt: No. 3
  * 
  * SPP GitHub Link: https://github.com/SchponzeePlusPlus/spp_misc-code/tree/main/C/Cpp/Exercises/exercise_20250922_1314
  *
