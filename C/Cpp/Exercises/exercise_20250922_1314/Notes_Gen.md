@@ -10,7 +10,7 @@
 
 ###### 08:00
 
-Things i can do to further clean the code:
+Brainstorm for things that i could consider in order to further clean the code for solution attempt no. 4:
 - note: do easier stuff first before more significant changes
 - any simple unassign functions, like for enums, replace with = 0; when it would be called
 - condense the shift from 2 move check to 1 move check (refer to local issue #18)
