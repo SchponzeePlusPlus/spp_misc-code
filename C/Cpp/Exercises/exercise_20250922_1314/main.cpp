@@ -877,7 +877,7 @@ int main()
 
 	//printPossibilities(possibilitiesRaw);
 
-	std::array<std::array<std::vector<std::array<uint8_t, 2U>>, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH> possibilities;
+	static std::array<std::array<std::vector<std::array<uint8_t, 2U>>, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH> possibilities;
 
 	resizePossibilitiesVector(possibilities);
 	
@@ -889,7 +889,7 @@ int main()
 
 	cout << "list vector\n";
 	
-	std::array<std::array<std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH> list;
+	static std::array<std::array<std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH> list;
 
 	//cout << "resize list vector i\n";
 
