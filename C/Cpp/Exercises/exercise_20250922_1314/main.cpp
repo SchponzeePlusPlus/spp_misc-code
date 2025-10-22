@@ -93,15 +93,6 @@ enum chessMovKnightTransitnValidtyState : int8_t
 	CMKTVState_VALID = 1,
 };
 
-enum keyPressComboCharProcState : int8_t
-{
-	EState_ERROR = -3,
-	EState_NULL = -2,
-	EState_CEASED = -1,
-	EState_UNASSIGNED = 0,
-	EState_VALID = 1,
-};
-
 struct chessMoveKnightPositnNewPossiblty
 {
 	// old -> new position direction
@@ -109,12 +100,6 @@ struct chessMoveKnightPositnNewPossiblty
 	std::array<enum dirTwoDimState, 2U> transitnmovsDirArr;
 	enum chessMovKnightTransitnValidtyState enmCMKTVS_transitnValidtyState;
 	std::array<uint8_t, 2> U8StdArr_positnNew;
-};
-
-struct keyPressComboCharProc
-{
-	std::array<uint8_t, DIM_CNT_2D> kPPositnArr;
-	enum keyPressComboCharProcState kPPCCPState;
 };
 
 typedef std::array<uint8_t, DIM_CNT_2D> U8ArrStdOf02;
@@ -180,20 +165,20 @@ std::array<enum dirTwoDimState, 2U> unassignArrStdTwoDimEnumDirTwoDimState()
 	return result;
 }
 
-std::array<uint8_t, 2> unassignU8ArrTwoDim()
+std::array<uint8_t, 2U> unassignU8ArrTwoDim()
 {
-	std::array<uint8_t,2> result;
-	for (uint8_t arrIndx = 0U; arrIndx < 2; arrIndx++)
+	std::array<uint8_t, 2U> result;
+	for (uint8_t arrIndx = 0U; arrIndx < 2U; arrIndx++)
 	{
 		result[arrIndx] = 0U;
 	}
 	return result;
 }
 
-std::array<int8_t, 2> unassignI8ArrOf02Elems()
+std::array<int8_t, 2U> unassignI8ArrOf02Elems()
 {
-	std::array<int8_t, 2> result;
-	for (uint8_t arrIndx = 0U; arrIndx < 2; arrIndx++)
+	std::array<int8_t, 2U> result;
+	for (uint8_t arrIndx = 0U; arrIndx < 2U; arrIndx++)
 	{
 		result[arrIndx] = 0;
 	}
@@ -769,16 +754,13 @@ void copyFiltrdPossibilitiesVector(std::vector<std::vector<std::vector<std::arra
 	}
 }
 
-std::array<struct keyPressComboCharProc, KEY_PRESSNG_CHAR_COMBO_LENGTH> unassignCombo()
+std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH> unassignCombo()
 {
-	std::array<struct keyPressComboCharProc, KEY_PRESSNG_CHAR_COMBO_LENGTH> result;
+	std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH> result;
 	for (uint8_t k = 0U; k < KEY_PRESSNG_CHAR_COMBO_LENGTH; k++)
 	{
-		for (uint8_t d = 0U; d < DIM_CNT_2D; d++)
-		{
-			result[k].kPPositnArr[d] = 0U;
-		}
-		result[k].kPPCCPState = EState_UNASSIGNED;
+		result[k] = unassignU8ArrTwoDim();
+		//result[k].kPPCCPState = EState_UNASSIGNED;
 	}
 	return result;
 }
@@ -800,20 +782,20 @@ void printPossibilitiesVector(const std::vector<std::vector<std::vector<std::arr
 	}
 }
 
-void printComboListVctrLDim(const std::vector<std::array<struct keyPressComboCharProc, KEY_PRESSNG_CHAR_COMBO_LENGTH>>& listVctrLDim)
+void printComboListVctrLDim(const std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>& listVctrLDim)
 {
 	for (uint64_t l = 0U; l < (uint64_t) listVctrLDim.size(); l++)
 	{
 		for (uint8_t k = 0U; k < KEY_PRESSNG_CHAR_COMBO_LENGTH; k++)
 		{
 			//printKeyPressCharFromStdArr({i, j});
-			printKeyPressCharFromStdArr(listVctrLDim[l][k].kPPositnArr);
+			printKeyPressCharFromStdArr(listVctrLDim[l][k]);
 		}
 		cout << "\n";
 	}
 }
 
-void printComboListVctr(const std::vector<std::vector<std::vector<std::array<struct keyPressComboCharProc, KEY_PRESSNG_CHAR_COMBO_LENGTH>>>>& comboListVctr)
+void printComboListVctr(const std::vector<std::vector<std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>>>& comboListVctr)
 {
 	cout << "list vector print\n";
 	for (uint8_t i = 0U; i < comboListVctr.size(); i++)
@@ -825,13 +807,13 @@ void printComboListVctr(const std::vector<std::vector<std::vector<std::array<str
 	}
 }
 
-void resizeListVctrLDim(std::vector<std::array<struct keyPressComboCharProc, KEY_PRESSNG_CHAR_COMBO_LENGTH>>& listVctrLDim, const std::array<std::array<uint64_t, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH>& listPossibilityCntArr2KPs, const uint8_t& k)
+void resizeListVctrLDim(std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>& listVctrLDim, const std::array<std::array<uint64_t, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH>& listPossibilityCntArr2KPs, const uint8_t& k)
 {
 	uint64_t l = 0U;
 	uint64_t tempCntr = 0U;
 	auto lPos = listVctrLDim.begin();
 	std::size_t oldLSz = listVctrLDim.size();
-	std::array<struct keyPressComboCharProc, KEY_PRESSNG_CHAR_COMBO_LENGTH> tempCombo = unassignCombo();
+	std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH> tempCombo = unassignCombo();
 	for (uint64_t lOld = 0U; lOld < (uint64_t) oldLSz; lOld++)
 	{
 		tempCombo = listVctrLDim[l];
@@ -841,7 +823,7 @@ void resizeListVctrLDim(std::vector<std::array<struct keyPressComboCharProc, KEY
 			printKeyPressCharFromStdArr(tempCombo[k].kPPositnArr);
 		}
 		cout << "\n";*/
-		tempCntr = (listPossibilityCntArr2KPs[listVctrLDim[l][k - 1U].kPPositnArr[0]][listVctrLDim[l][k - 1U].kPPositnArr[1]] - 1U);
+		tempCntr = (listPossibilityCntArr2KPs[listVctrLDim[l][k - 1U][0]][listVctrLDim[l][k - 1U][1]] - 1U);
 		l += tempCntr;
 		listVctrLDim.insert(lPos, (tempCntr), tempCombo);
 		l++;
@@ -849,7 +831,7 @@ void resizeListVctrLDim(std::vector<std::array<struct keyPressComboCharProc, KEY
 	}
 }
 
-void removeListVctrLDimVowelChk(std::vector<std::array<struct keyPressComboCharProc, KEY_PRESSNG_CHAR_COMBO_LENGTH>>& listVctrLDim, const uint8_t& k)
+void removeListVctrLDimVowelChk(std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>& listVctrLDim, const uint8_t& k)
 {
 	uint64_t l = 0U;
 	uint64_t lOldSz = (uint64_t) listVctrLDim.size();
@@ -869,7 +851,7 @@ void removeListVctrLDimVowelChk(std::vector<std::array<struct keyPressComboCharP
 		{
 			for (uint8_t kVowelChk = 0U; kVowelChk < k + 1; kVowelChk++)
 			{
-				cntVowels = (chkCharIsVowel(returnCharFromKeybrdLayoutStdArr(listVctrLDim[l][kVowelChk].kPPositnArr))) ? cntVowels + 1U : cntVowels;
+				cntVowels = (chkCharIsVowel(returnCharFromKeybrdLayoutStdArr(listVctrLDim[l][kVowelChk]))) ? cntVowels + 1U : cntVowels;
 			}
 		}
 		//cout << "cntVowels: " << (int) cntVowels << "\n";
@@ -910,7 +892,7 @@ int main()
 
 	cout << "list vector\n";
 	
-	std::vector<std::vector<std::vector<std::array<struct keyPressComboCharProc, KEY_PRESSNG_CHAR_COMBO_LENGTH>>>> list;
+	std::vector<std::vector<std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>>> list;
 
 	//cout << "resize list vector i\n";
 
@@ -937,9 +919,9 @@ int main()
 				{
 					for (uint8_t d = 0U; d < DIM_CNT_2D; d++)
 					{
-						list[i][j][l][k].kPPositnArr[d] = 0U;
+						list[i][j][l][k][d] = 0U;
 					}
-					list[i][j][l][k].kPPCCPState = EState_UNASSIGNED;
+					//list[i][j][l][k].kPPCCPState = EState_UNASSIGNED;
 				}
 			}
 		}
@@ -953,12 +935,12 @@ int main()
 			{
 				for (uint8_t k = 0U; k < 1U; k++)
 				{
-					list[i][j][l][k].kPPositnArr = {i, j};
+					list[i][j][l][k] = {i, j};
 				}
 				for (uint8_t k = 1U; k < 2U; k++)
 				{
-					list[i][j][l][k].kPPositnArr = possibilities[i][j][l];
-					list[i][j][l][k].kPPCCPState = EState_VALID;
+					list[i][j][l][k] = possibilities[i][j][l];
+					//list[i][j][l][k].kPPCCPState = EState_VALID;
 				}
 			}
 		}
@@ -1016,7 +998,7 @@ int main()
 				// key press of last checked, how many possibilities? lookup value and return count
 				//listPossibilityCntArr[i][j] += 
 				//list[i][j][l][1].kPPositnArr == tempPos;
-				listPossibilityCntArr[i][j] += (listPossibilityCntArr2KPs[list[i][j][l][1].kPPositnArr[0]][list[i][j][l][1].kPPositnArr[1]] - 1U);
+				listPossibilityCntArr[i][j] += (listPossibilityCntArr2KPs[list[i][j][l][1][0]][list[i][j][l][1][1]] - 1U);
 			}
 		}
 	}
@@ -1069,8 +1051,8 @@ int main()
 				// if the L Dim is not empty
 				if (list[i][j].size() > 0U)
 				{
-					possibilitiesIIndx = list[i][j][0][k - 1U].kPPositnArr[0];
-					possibilitiesJIndx = list[i][j][0][k - 1U].kPPositnArr[1];
+					possibilitiesIIndx = list[i][j][0][k - 1U][0];
+					possibilitiesJIndx = list[i][j][0][k - 1U][1];
 					possibilitiesIIndxPrev = possibilitiesIIndx;
 					possibilitiesJIndxPrev = possibilitiesJIndx;
 				}
@@ -1083,8 +1065,8 @@ int main()
 					possibilitiesIIndxPrev = possibilitiesIIndx;
 					possibilitiesJIndxPrev = possibilitiesJIndx;
 					
-					possibilitiesIIndx = list[i][j][l][k - 1U].kPPositnArr[0];
-					possibilitiesJIndx = list[i][j][l][k - 1U].kPPositnArr[1];
+					possibilitiesIIndx = list[i][j][l][k - 1U][0];
+					possibilitiesJIndx = list[i][j][l][k - 1U][1];
 
 					if (possibilitiesIIndx == possibilitiesIIndxPrev && possibilitiesJIndx == possibilitiesJIndxPrev && possibilitiesPIndx < possibilities[possibilitiesIIndx][possibilitiesJIndx].size())
 					{
@@ -1104,7 +1086,7 @@ int main()
 					//printKeyPressCharFromStdArr(possibilities[possibilitiesIIndx][possibilitiesJIndx][possibilitiesPIndx]);
 					//cout << "\n";
 
-					list[i][j][l][k].kPPositnArr = possibilities[possibilitiesIIndx][possibilitiesJIndx][possibilitiesPIndx];
+					list[i][j][l][k] = possibilities[possibilitiesIIndx][possibilitiesJIndx][possibilitiesPIndx];
 					
 					//list[i][j].push_back(unassignedCombo);
 					//tempCombo = listVctrLDim[l];
