@@ -463,9 +463,9 @@ std::array<int8_t, 2> returnChessMovKnightTransitningShiftOneDim(std::array<enum
 	return result;
 }
 
-std::array<int8_t, 2> returnChessMovKnightTransitnShiftV2(std::array<enum dirTwoDimState, 2U> movDirArr, uint8_t u8_movSelect)
+std::array<int8_t, 2U> returnChessMovKnightTransitnShiftV2(std::array<enum dirTwoDimState, 2U> movDirArr, uint8_t u8_movSelect)
 {
-	std::array<int8_t, 2> result = unassignI8ArrOf02Elems();
+	std::array<int8_t, 2U> result = unassignI8ArrOf02Elems();
 
 	uint8_t d = 0U;
 
@@ -697,13 +697,13 @@ void printPossibilities(const PossibilitiesArr& possibilitiesRaw)
 	cout << "Possibility Count: " << u64_possibilityCnt << "\n";
 }
 
-void resizePossibilitiesVector(std::vector<std::vector<std::vector<std::array<uint8_t, 2>>>>& possibilities)
+void resizePossibilitiesVector(std::array<std::array<std::vector<std::array<uint8_t, 2U>>, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH>& possibilities)
 {
-	possibilities.resize(KEYBRD_ROW_LENGTH);
+	//possibilities.resize(KEYBRD_ROW_LENGTH);
 
 	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
 	{
-		possibilities[i].resize(KEYBRD_COLMN_LENGTH);
+		//possibilities[i].resize(KEYBRD_COLMN_LENGTH);
 		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
 		{
 			possibilities[i][j].resize(MOV_KNIGHT_POSITN_SHFT_POSSIBILITIES_RAW);
@@ -711,7 +711,7 @@ void resizePossibilitiesVector(std::vector<std::vector<std::vector<std::array<ui
 	}
 }
 
-void unassignPossibilitiesVector(std::vector<std::vector<std::vector<std::array<uint8_t, 2>>>>& possibilities)
+void unassignPossibilitiesVector(std::array<std::array<std::vector<std::array<uint8_t, 2U>>, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH>& possibilities)
 {
 	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
 	{
@@ -719,16 +719,13 @@ void unassignPossibilitiesVector(std::vector<std::vector<std::vector<std::array<
 		{
 			for (uint8_t p = 0U; p < MOV_KNIGHT_POSITN_SHFT_POSSIBILITIES_RAW; p++)
 			{
-				for (uint8_t d = 0U; d < DIM_CNT_2D; d++)
-				{
-					possibilities[i][j][p][d] = 0U;
-				}
+				possibilities[i][j][p] = unassignU8ArrTwoDim();
 			}
 		}
 	}
 }
 
-void copyFiltrdPossibilitiesVector(std::vector<std::vector<std::vector<std::array<uint8_t, 2>>>>& possibilities, const PossibilitiesArr& possibilitiesRaw)
+void copyFiltrdPossibilitiesVector(std::array<std::array<std::vector<std::array<uint8_t, 2>>, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH>& possibilities, const PossibilitiesArr& possibilitiesRaw)
 {
 	uint8_t pVctr = 0U;
 
@@ -765,12 +762,12 @@ std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH> unass
 	return result;
 }
 
-void printPossibilitiesVector(const std::vector<std::vector<std::vector<std::array<uint8_t, 2>>>>& possibilities)
+void printPossibilitiesVector(const std::array<std::array<std::vector<std::array<uint8_t, 2U>>, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH>& possibilities)
 {
 	cout << "vector print\n";
-	for (uint8_t i = 0U; i < possibilities.size(); i++)
+	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
 	{
-		for (uint8_t j = 0U; j < possibilities[i].size(); j++)
+		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
 		{
 			for (uint8_t p = 0U; p < possibilities[i][j].size(); p++)
 			{
@@ -795,7 +792,7 @@ void printComboListVctrLDim(const std::vector<std::array<std::array<uint8_t, DIM
 	}
 }
 
-void printComboListVctr(const std::vector<std::vector<std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>>>& comboListVctr)
+void printComboListVctr(const std::array<std::array<std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH>& comboListVctr)
 {
 	cout << "list vector print\n";
 	for (uint8_t i = 0U; i < comboListVctr.size(); i++)
@@ -880,7 +877,7 @@ int main()
 
 	//printPossibilities(possibilitiesRaw);
 
-	std::vector<std::vector<std::vector<std::array<uint8_t, 2U>>>> possibilities;
+	std::array<std::array<std::vector<std::array<uint8_t, 2U>>, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH> possibilities;
 
 	resizePossibilitiesVector(possibilities);
 	
@@ -892,16 +889,16 @@ int main()
 
 	cout << "list vector\n";
 	
-	std::vector<std::vector<std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>>> list;
+	std::array<std::array<std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH> list;
 
 	//cout << "resize list vector i\n";
 
-	list.resize(KEYBRD_ROW_LENGTH);
+	//list.resize(KEYBRD_ROW_LENGTH);
 
 	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
 	{
 		//cout << "resize list vector j\n";
-		list[i].resize(KEYBRD_COLMN_LENGTH);
+		//list[i].resize(KEYBRD_COLMN_LENGTH);
 		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
 		{
 			//cout << "size: " << possibilities[i][j].size() << "\n";
@@ -909,27 +906,24 @@ int main()
 		}
 	}
 
-	for (uint8_t i = 0U; i < list.size(); i++)
+	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
 	{
-		for (uint8_t j = 0U; j < list[i].size(); j++)
+		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
 		{
 			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
 			{
 				for (uint8_t k = 0U; k < KEY_PRESSNG_CHAR_COMBO_LENGTH; k++)
 				{
-					for (uint8_t d = 0U; d < DIM_CNT_2D; d++)
-					{
-						list[i][j][l][k][d] = 0U;
-					}
+					list[i][j][l][k] = unassignU8ArrTwoDim();
 					//list[i][j][l][k].kPPCCPState = EState_UNASSIGNED;
 				}
 			}
 		}
 	}
 
-	for (uint8_t i = 0U; i < list.size(); i++)
+	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
 	{
-		for (uint8_t j = 0U; j < list[i].size(); j++)
+		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
 		{
 			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
 			{
@@ -948,9 +942,9 @@ int main()
 
 	// remove for() loop print below this comment from this procedure, but maybe make it its own procedure for reference?
 	/* cout << "list vector print\n";
-	for (uint8_t i = 0U; i < list.size(); i++)
+	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
 	{
-		for (uint8_t j = 0U; j < list[i].size(); j++)
+		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
 		{
 			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
 			{
@@ -1114,9 +1108,9 @@ int main()
 
 		// remove combinations with more than 2 vowels
 		cout << "vowel check stage\n";
-		for (uint8_t i = 0U; i < list.size(); i++)
+		for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
 		{
-			for (uint8_t j = 0U; j < list[i].size(); j++)
+			for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
 			{
 				removeListVctrLDimVowelChk(list[i][j], k);
 			}
@@ -1129,9 +1123,9 @@ int main()
 	printComboListVctr(list);
 
 	uint64_t cntKPCombos = 0U;
-	for (uint8_t i = 0U; i < list.size(); i++)
+	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
 	{
-		for (uint8_t j = 0U; j < list[i].size(); j++)
+		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
 		{
 			cntKPCombos += (uint64_t) list[i][j].size();
 		}
