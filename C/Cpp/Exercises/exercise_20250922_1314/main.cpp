@@ -4,9 +4,9 @@
  * 
  * Author: SchponzeePlusPlus
  * 
- * Version: V0.0.0.2
+ * Version: V0.0.0.3 (WIP)
  * 
- * Solution Attempt: No. 3
+ * Solution Attempt: No. 4
  * 
  * SPP GitHub Link: https://github.com/SchponzeePlusPlus/spp_misc-code/tree/main/C/Cpp/Exercises/exercise_20250922_1314
  *
@@ -804,13 +804,15 @@ void printComboListVctr(const std::array<std::array<std::vector<std::array<std::
 	}
 }
 
-void resizeListVctrLDim(std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>& listVctrLDim, const std::array<std::array<uint64_t, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH>& listPossibilityCntArr2KPs, const uint8_t& k)
+void resizeListVctrLDim(std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>& listVctrLDim, const std::array<std::array<std::vector<std::array<uint8_t, 2U>>, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH>& possibilities, const uint8_t& k)
 {
 	uint64_t l = 0U;
 	uint64_t tempCntr = 0U;
 	auto lPos = listVctrLDim.begin();
 	std::size_t oldLSz = listVctrLDim.size();
 	std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH> tempCombo = unassignCombo();
+	uint8_t possibilitiesIIndx = 0U;
+	uint8_t possibilitiesJIndx = 0U;
 	for (uint64_t lOld = 0U; lOld < (uint64_t) oldLSz; lOld++)
 	{
 		tempCombo = listVctrLDim[l];
@@ -820,7 +822,9 @@ void resizeListVctrLDim(std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, 
 			printKeyPressCharFromStdArr(tempCombo[k].kPPositnArr);
 		}
 		cout << "\n";*/
-		tempCntr = (listPossibilityCntArr2KPs[listVctrLDim[l][k - 1U][0]][listVctrLDim[l][k - 1U][1]] - 1U);
+		possibilitiesIIndx = listVctrLDim[l][k - 1U][0];
+		possibilitiesJIndx = listVctrLDim[l][k - 1U][1];
+		tempCntr = (possibilities[possibilitiesIIndx][possibilitiesJIndx].size() - 1U);
 		l += tempCntr;
 		listVctrLDim.insert(lPos, (tempCntr), tempCombo);
 		l++;
@@ -891,27 +895,9 @@ int main()
 	
 	static std::array<std::array<std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH> list;
 
-	std:array<std::array<uint64_t, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH> listPossibilityCntArr;
-
-	std::array<std::array<uint64_t, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH> listPossibilityCntArr2KPs;
-
-	std::array<uint8_t, DIM_CNT_2D> tempPos = unassignU8ArrTwoDim();
-
-	uint64_t cntKPCombos = 0U;
+	static uint64_t cntKPCombos = 0U;
 
 	//cout << "resize list vector i\n";
-
-	//list.resize(KEYBRD_ROW_LENGTH);
-
-	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
-	{
-		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
-		{
-			//listPossibilityCntArr[i][j] = list[i][j].size();
-
-			listPossibilityCntArr2KPs[i][j] = possibilities[i][j].size();
-		}
-	}
 
 	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
 	{
@@ -925,43 +911,27 @@ int main()
 			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
 			{
 				list[i][j][l] = unassignCombo();
-			}
-
-			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
-			{
-				for (uint8_t k = 0U; k < 1U; k++)
+				for (uint8_t k = 0U; k < 1U; k++) // todo: don't need this in a for() loop
 				{
 					list[i][j][l][k] = {i, j};
 				}
-				for (uint8_t k = 1U; k < 2U; k++)
+				for (uint8_t k = 1U; k < 2U; k++) // todo: don't need this in a for() loop
 				{
 					list[i][j][l][k] = possibilities[i][j][l];
-					//list[i][j][l][k].kPPCCPState = EState_VALID;
 				}
 			}
-
-			
-
-			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
-			{
-				// key press of last checked, how many possibilities? lookup value and return count
-				//listPossibilityCntArr[i][j] += 
-				//list[i][j][l][1].kPPositnArr == tempPos;
-				//listPossibilityCntArr[i][j] += (listPossibilityCntArr2KPs[list[i][j][l][1][0]][list[i][j][l][1][1]] - 1U);
-			}
-
 			cout << "HERE\n";
 
 			for (uint8_t k = 2U; k < KEY_PRESSNG_CHAR_COMBO_LENGTH; k++)
 			{
-				resizeListVctrLDim(list[i][j], listPossibilityCntArr2KPs, k); // resize vector
+				resizeListVctrLDim(list[i][j], possibilities, k); // resize vector
 				
 				// the next step is to fill 3rd character, using the possibilities vector to lookup k and fill the transitions for k + 1, the vector has already been resized to accomodate
 				// the fill or assign or populate or generate or whatever procedure might be similar to the resize in the way that that the resize l dim looks up the count and resizes accordingly
 
 				// fill next key press (3rd key for now); k = 2
 				cout << "fill stage\n";
-				uint8_t possibilitiesIIndx = 0U;
+				uint8_t possibilitiesIIndx = 0U; // todo: possibilities i and j index can go in it's own array of 2
 				uint8_t possibilitiesJIndx = 0U;
 				//cout << "possibilitiesIIndx: " << (int) possibilitiesIIndx << "\n";
 				//cout << "possibilitiesJIndx: " << (int) possibilitiesJIndx << "\n";
@@ -993,7 +963,7 @@ int main()
 						// already incremented below
 						//cout << "condition 1st check true no action\n";
 					}
-					else
+					else // todo: this if-else can be condensed quite easily
 					{
 						possibilitiesPIndx = 0U;
 						possibilitiesIIndxPrev = possibilitiesIIndx;
@@ -1032,7 +1002,6 @@ int main()
 				// remove combinations with more than 2 vowels
 				cout << "vowel check stage\n";
 				removeListVctrLDimVowelChk(list[i][j], k);
-				cout << "next k?\n";
 			}
 			//printComboListVctr(list);
 			cntKPCombos += (uint64_t) list[i][j].size();
@@ -1054,28 +1023,6 @@ int main()
 				}
 				cout << "\n";
 			}
-		}
-	} */
-
-	// remove for() loop print below this comment from this procedure, but maybe make it its own procedure for reference?
-	/* cout << "list possibility counts per key\n";
-	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
-	{
-		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
-		{
-			printKeyPressCharFromStdArr({i, j});
-			cout << ": " << listPossibilityCntArr[i][j] << "\n";
-		}
-	} */
-
-	// remove for() loop print below this comment from this procedure, but maybe make it its own procedure for reference?
-	/* cout << "list possibility counts per key\n";
-	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
-	{
-		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
-		{
-			printKeyPressCharFromStdArr({i, j});
-			cout << ": " << listPossibilityCntArr[i][j] << "\n";
 		}
 	} */
 
