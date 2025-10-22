@@ -6,6 +6,25 @@
 
 #### 2025/10
 
+##### 2025/10/21
+
+###### 08:00
+
+Brainstorm for things that i could consider in order to further clean the code for solution attempt no. 4:
+- note: do easier stuff first before more significant changes
+- any simple unassign functions, like for enums, replace with = 0; when it would be called
+- condense the shift from 2 move check to 1 move check (refer to local issue #18)
+- instead of creating possibilities raw array and then copying valid combos to possibilities vector, just make the possibilities vector, and erase any nonvalid combos as they are processed
+- put i and j loop before k loop (when k is index 2 or beyond) when resizing and refilling combo list array 
+- merge resize and fill operations if possible?
+- instead of the combo count objects, just resd size of l dimension when needed
+- combo list vector does not need that enum and therefore doesn't need a struct, so data type can be simplified
+- can i make i and j in the multi dim vectors std array instead of vector? i can define size during declaration and not worry about i and j resizing, the only concern is where the memory gets stored?
+- do i need enums at all? i think structs and enums might not be necessary for this challenge as per company software engineering manager saying that this problem doesn't need object oriented programming
+  - saying that, do i need the enum and safe check when checking shift in array?
+- delete print procedures at the end of this solution attempt, when diagnostics is no longet needed
+- would classes help clean my code?
+
 ##### 2025/10/18
 
 ###### 13:53
