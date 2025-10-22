@@ -891,9 +891,27 @@ int main()
 	
 	static std::array<std::array<std::vector<std::array<std::array<uint8_t, DIM_CNT_2D>, KEY_PRESSNG_CHAR_COMBO_LENGTH>>, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH> list;
 
+	std:array<std::array<uint64_t, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH> listPossibilityCntArr;
+
+	std::array<std::array<uint64_t, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH> listPossibilityCntArr2KPs;
+
+	std::array<uint8_t, DIM_CNT_2D> tempPos = unassignU8ArrTwoDim();
+
+	uint64_t cntKPCombos = 0U;
+
 	//cout << "resize list vector i\n";
 
 	//list.resize(KEYBRD_ROW_LENGTH);
+
+	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
+	{
+		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
+		{
+			//listPossibilityCntArr[i][j] = list[i][j].size();
+
+			listPossibilityCntArr2KPs[i][j] = possibilities[i][j].size();
+		}
+	}
 
 	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
 	{
@@ -903,28 +921,12 @@ int main()
 		{
 			//cout << "size: " << possibilities[i][j].size() << "\n";
 			list[i][j].resize(possibilities[i][j].size());
-		}
-	}
 
-	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
-	{
-		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
-		{
 			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
 			{
-				for (uint8_t k = 0U; k < KEY_PRESSNG_CHAR_COMBO_LENGTH; k++)
-				{
-					list[i][j][l][k] = unassignU8ArrTwoDim();
-					//list[i][j][l][k].kPPCCPState = EState_UNASSIGNED;
-				}
+				list[i][j][l] = unassignCombo();
 			}
-		}
-	}
 
-	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
-	{
-		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
-		{
 			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
 			{
 				for (uint8_t k = 0U; k < 1U; k++)
@@ -937,104 +939,28 @@ int main()
 					//list[i][j][l][k].kPPCCPState = EState_VALID;
 				}
 			}
-		}
-	}
 
-	// remove for() loop print below this comment from this procedure, but maybe make it its own procedure for reference?
-	/* cout << "list vector print\n";
-	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
-	{
-		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
-		{
-			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
-			{
-				for (uint8_t k = 0U; k < KEY_PRESSNG_CHAR_COMBO_LENGTH; k++)
-				{
-					//printKeyPressCharFromStdArr({i, j});
-					printKeyPressCharFromStdArr(list[i][j][l][k].kPPositnArr);
-				}
-				cout << "\n";
-			}
-		}
-	} */
+			
 
-	std:array<std::array<uint64_t, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH> listPossibilityCntArr;
-
-	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
-	{
-		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
-		{
-			listPossibilityCntArr[i][j] = list[i][j].size();
-		}
-	}
-
-	std::array<std::array<uint64_t, KEYBRD_COLMN_LENGTH>, KEYBRD_ROW_LENGTH> listPossibilityCntArr2KPs = listPossibilityCntArr;
-
-	// remove for() loop print below this comment from this procedure, but maybe make it its own procedure for reference?
-	/* cout << "list possibility counts per key\n";
-	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
-	{
-		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
-		{
-			printKeyPressCharFromStdArr({i, j});
-			cout << ": " << listPossibilityCntArr[i][j] << "\n";
-		}
-	} */
-
-	std::array<uint8_t, DIM_CNT_2D> tempPos = {0U, 0U};
-
-	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
-	{
-		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
-		{
 			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
 			{
 				// key press of last checked, how many possibilities? lookup value and return count
 				//listPossibilityCntArr[i][j] += 
 				//list[i][j][l][1].kPPositnArr == tempPos;
-				listPossibilityCntArr[i][j] += (listPossibilityCntArr2KPs[list[i][j][l][1][0]][list[i][j][l][1][1]] - 1U);
+				//listPossibilityCntArr[i][j] += (listPossibilityCntArr2KPs[list[i][j][l][1][0]][list[i][j][l][1][1]] - 1U);
 			}
-		}
-	}
 
-	// remove for() loop print below this comment from this procedure, but maybe make it its own procedure for reference?
-	/* cout << "list possibility counts per key\n";
-	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
-	{
-		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
-		{
-			printKeyPressCharFromStdArr({i, j});
-			cout << ": " << listPossibilityCntArr[i][j] << "\n";
-		}
-	} */
+			cout << "HERE\n";
 
-	cout << "HERE\n";
-	
-	for (uint8_t k = 2U; k < KEY_PRESSNG_CHAR_COMBO_LENGTH; k++)
-	{
-		// resize vector
-		for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
-		{
-			//cout << "i: " << (int) i << "\n";
-			for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
+			for (uint8_t k = 2U; k < KEY_PRESSNG_CHAR_COMBO_LENGTH; k++)
 			{
-				//cout << "j: " << (int) j << "\n";
-				resizeListVctrLDim(list[i][j], listPossibilityCntArr2KPs, k);
-			}
-		}
+				resizeListVctrLDim(list[i][j], listPossibilityCntArr2KPs, k); // resize vector
+				
+				// the next step is to fill 3rd character, using the possibilities vector to lookup k and fill the transitions for k + 1, the vector has already been resized to accomodate
+				// the fill or assign or populate or generate or whatever procedure might be similar to the resize in the way that that the resize l dim looks up the count and resizes accordingly
 
-		//printComboListVctr(list);
-
-		// the next step is to fill 3rd character, using the possibilities vector to lookup k and fill the transitions for k + 1, the vector has already been resized to accomodate
-		// the fill or assign or populate or generate or whatever procedure might be similar to the resize in the way that that the resize l dim looks up the count and resizes accordingly
-
-		// fill next key press (3rd key for now); k = 2
-		cout << "fill stage\n";
-		for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
-		{
-			//cout << "i: " << (int) i << "\n";
-			for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
-			{
+				// fill next key press (3rd key for now); k = 2
+				cout << "fill stage\n";
 				uint8_t possibilitiesIIndx = 0U;
 				uint8_t possibilitiesJIndx = 0U;
 				//cout << "possibilitiesIIndx: " << (int) possibilitiesIIndx << "\n";
@@ -1103,33 +1029,59 @@ int main()
 						//cout << "condition 2nd check false, no action\n";
 					}				
 				}
-			}
-		}
-
-		// remove combinations with more than 2 vowels
-		cout << "vowel check stage\n";
-		for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
-		{
-			for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
-			{
+				// remove combinations with more than 2 vowels
+				cout << "vowel check stage\n";
 				removeListVctrLDimVowelChk(list[i][j], k);
+				cout << "next k?\n";
 			}
+			//printComboListVctr(list);
+			cntKPCombos += (uint64_t) list[i][j].size();
 		}
-
-		//printComboListVctr(list);
 	}
 
-	cout << "final list vector print\n";
-	printComboListVctr(list);
-
-	uint64_t cntKPCombos = 0U;
+	// remove for() loop print below this comment from this procedure, but maybe make it its own procedure for reference?
+	/* cout << "list vector print\n";
 	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
 	{
 		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
 		{
-			cntKPCombos += (uint64_t) list[i][j].size();
+			for (uint64_t l = 0U; l < (uint64_t) list[i][j].size(); l++)
+			{
+				for (uint8_t k = 0U; k < KEY_PRESSNG_CHAR_COMBO_LENGTH; k++)
+				{
+					//printKeyPressCharFromStdArr({i, j});
+					printKeyPressCharFromStdArr(list[i][j][l][k].kPPositnArr);
+				}
+				cout << "\n";
+			}
 		}
-	}
+	} */
+
+	// remove for() loop print below this comment from this procedure, but maybe make it its own procedure for reference?
+	/* cout << "list possibility counts per key\n";
+	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
+	{
+		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
+		{
+			printKeyPressCharFromStdArr({i, j});
+			cout << ": " << listPossibilityCntArr[i][j] << "\n";
+		}
+	} */
+
+	// remove for() loop print below this comment from this procedure, but maybe make it its own procedure for reference?
+	/* cout << "list possibility counts per key\n";
+	for (uint8_t i = 0U; i < KEYBRD_ROW_LENGTH; i++)
+	{
+		for (uint8_t j = 0U; j < KEYBRD_COLMN_LENGTH; j++)
+		{
+			printKeyPressCharFromStdArr({i, j});
+			cout << ": " << listPossibilityCntArr[i][j] << "\n";
+		}
+	} */
+
+	cout << "final list vector print\n";
+	printComboListVctr(list);
+
 	cout << "list vector total count: " << (long long int) cntKPCombos << "\n";
 
 	cout << endl;
